@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31025.194
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "komm-rein.api", "komm-rein.api\komm-rein.api.csproj", "{EA7161EB-6469-4298-B89C-DC813DD5B853}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "komm-rein.api.test", "komm-rein.api.test\komm-rein.api.test.csproj", "{445E9C39-D15D-45E6-B1A4-FC1E0901D2E6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EA7161EB-6469-4298-B89C-DC813DD5B853}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA7161EB-6469-4298-B89C-DC813DD5B853}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA7161EB-6469-4298-B89C-DC813DD5B853}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA7161EB-6469-4298-B89C-DC813DD5B853}.Release|Any CPU.Build.0 = Release|Any CPU
+		{445E9C39-D15D-45E6-B1A4-FC1E0901D2E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{445E9C39-D15D-45E6-B1A4-FC1E0901D2E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{445E9C39-D15D-45E6-B1A4-FC1E0901D2E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{445E9C39-D15D-45E6-B1A4-FC1E0901D2E6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {65AC2BBF-C92E-416B-891C-7D4086D062AE}
+	EndGlobalSection
+EndGlobal
