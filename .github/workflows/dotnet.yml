@@ -21,6 +21,8 @@ jobs:
       working-directory: backend/komm-rein.api/
       run: dotnet restore
     - name: Build
+      working-directory: backend/komm-rein.api/
       run: dotnet build --no-restore
     - name: Test
+      working-directory: backend/komm-rein.api/
       run: dotnet test --no-build --verbosity normal
