@@ -1,4 +1,4 @@
-name: .NET
+name: komm_rein.api net5.0
 
 on:
   push:
