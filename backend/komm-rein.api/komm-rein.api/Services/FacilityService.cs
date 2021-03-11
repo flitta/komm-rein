@@ -17,15 +17,26 @@ namespace komm_rein.api.Services
             _repository = repository;
         }
 
-        public IEnumerable<Slot> GetAvailableSlots(Guid facilityId, DateTime day, int numberOfPax = 1)
+        public IEnumerable<Slot> GetAvailableSlots(Guid facilityId, DateTime selectedDay, DateTime now, int numberOfPax = 1)
         {
-            if(day.ToUniversalTime() < DateTime.Now.ToUniversalTime())
+            var startofSelectedDay = selectedDay.Date;
+            if (startofSelectedDay.Date < now.Date)
             {
-                throw new ArgumentException("Day must not be in the past!");
+                throw new ArgumentException("Selected day must not be in the past!");
             }
 
-            throw new NotImplementedException();
+            var facility = _repository.GetById(facilityId);
+           
+            var startForSlots = now < startofSelectedDay ? startofSelectedDay : now;
+            var endForSlots = startofSelectedDay.AddDays(1);
 
+            // create list of slots for timespan
+            TimeSpan timeSpan = endForSlots - startForSlots;
+            int numberOfSlots = (int)(timeSpan.TotalMinutes / facility.Settings.SlotSize.TotalMinutes);
+                        
+            var slots = Enumerable.Range(1, numberOfSlots).Select((i) => new Slot { });
+
+            return slots;
         }
     }
 }
