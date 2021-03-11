@@ -17,21 +17,11 @@ namespace komm_rein.api.Services
             _repository = repository;
         }
 
-        public IEnumerable<Slot> GetAvailableSlots(Guid id, DateTime from, DateTime to, int numberOfPax = 1)
+        public IEnumerable<Slot> GetAvailableSlots(Guid facilityId, DateTime day, int numberOfPax = 1)
         {
-            // from should be after to
-            if(to <= from)
+            if(day.ToUniversalTime() < DateTime.Now.ToUniversalTime())
             {
-                throw new ArgumentException("To date must be after from date!");
-            }
-
-            // load facility
-            var facility = _repository.GetById(id);
-                                    
-            // validate from
-            if(from <= DateTime.Now + facility.Settings.TimeToPlanAhead)
-            {
-                throw new ArgumentException($"From date must not be before {(DateTime.Now + facility.Settings.TimeToPlanAhead).ToString()}!");
+                throw new ArgumentException("Day must not be in the past!");
             }
 
             throw new NotImplementedException();
