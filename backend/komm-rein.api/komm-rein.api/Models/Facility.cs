@@ -11,6 +11,8 @@ namespace komm_rein.api.Models
         public Guid ID { get; set; }
 
         public FacilitySettings Settings { get; set; }
-        
+                
+        public IList<OpeningHours> OpeningHours { get; set; }
+
     }
 }

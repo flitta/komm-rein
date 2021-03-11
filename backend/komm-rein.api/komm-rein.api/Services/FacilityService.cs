@@ -38,5 +38,17 @@ namespace komm_rein.api.Services
 
             return slots;
         }
+
+        public OpeningHours FindOpeningHours(Guid facilityId, DateTime time)
+        {
+            var facility = _repository.GetById(facilityId);
+            var dayOfWeek = time.DayOfWeek.FromSystem();
+
+            var result = facility.OpeningHours.FirstOrDefault(o =>
+                (o.DayOfWeek & dayOfWeek) == dayOfWeek
+                && o.From.TimeOfDay <= time.TimeOfDay && o.To.TimeOfDay >= time.TimeOfDay);
+
+            return result;
+        }
     }
 }

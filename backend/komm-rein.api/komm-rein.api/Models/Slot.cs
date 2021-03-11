@@ -9,5 +9,7 @@ namespace komm_rein.api.Models
     public class Slot
     {
         public Facility Facility { get; set; }
+        public DateTime From { get; set; }
+        public DateTime To { get; set; }
     }
 }
