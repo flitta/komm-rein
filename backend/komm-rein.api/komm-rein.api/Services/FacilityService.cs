@@ -17,38 +17,51 @@ namespace komm_rein.api.Services
             _repository = repository;
         }
 
-        public IEnumerable<Slot> GetAvailableSlots(Guid facilityId, DateTime selectedDay, DateTime now, int numberOfPax = 1)
+
+
+        public IEnumerable<Slot> GetAvailableSlots(Guid facilityId, DateTime selectedDate, DateTime currentTime, int numberOfPax = 1)
         {
-            var startofSelectedDay = selectedDay.Date;
-            if (startofSelectedDay.Date < now.Date)
+            var seletecedDayDate = selectedDate.Date;
+            var currentTimeTime = (new DateTime() + currentTime.TimeOfDay);
+
+            if (seletecedDayDate < currentTime.Date)
             {
                 throw new ArgumentException("Selected day must not be in the past!");
             }
 
             var facility = _repository.GetById(facilityId);
-           
-            var startForSlots = now < startofSelectedDay ? startofSelectedDay : now;
-            var endForSlots = startofSelectedDay.AddDays(1);
 
-            // create list of slots for timespan
-            TimeSpan timeSpan = endForSlots - startForSlots;
-            int numberOfSlots = (int)(timeSpan.TotalMinutes / facility.Settings.SlotSize.TotalMinutes);
-                        
-            var slots = Enumerable.Range(1, numberOfSlots).Select((i) => new Slot { });
+            var result = new List<Slot>();
 
-            return slots;
-        }
+            foreach (var openingHours in facility.OpeningHours.RemainingForDay(seletecedDayDate, currentTime))
+            {
+                // if current time is after open-from , use current time
+                var startForSlots = currentTimeTime > openingHours.From ? currentTimeTime : openingHours.From;
+                var endForSlots = openingHours.To;
 
-        public OpeningHours FindOpeningHours(Guid facilityId, DateTime time)
-        {
-            var facility = _repository.GetById(facilityId);
-            var dayOfWeek = time.DayOfWeek.FromSystem();
+                TimeSpan timeSpan = endForSlots - startForSlots;
+                int numberOfSlots = (int)(timeSpan/ facility.Settings.SlotSize);
 
-            var result = facility.OpeningHours.FirstOrDefault(o =>
-                (o.DayOfWeek & dayOfWeek) == dayOfWeek
-                && o.From.TimeOfDay <= time.TimeOfDay && o.To.TimeOfDay >= time.TimeOfDay);
+                // to leave the gap at the beginning of a timespan (an already started unusable slot), the list is build up form the end
+                var slots = Enumerable.Range(1, numberOfSlots).Select((i) => {
+                        var from = (endForSlots - facility.Settings.SlotSize * i);
+                        var to = from + facility.Settings.SlotSize;
+                        return new Slot
+                        {
+                            From = from,
+                            To = to,
+                            OpeningHours = openingHours,
+                            Facility = facility,
+                        };
+                    }
+                );
+
+                // because the list was build in reverse order, it will be reversed before insert
+                result.AddRange(slots.Reverse());
+            }
 
             return result;
         }
+             
     }
 }

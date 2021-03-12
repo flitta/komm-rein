@@ -14,7 +14,14 @@ namespace komm_rein.api.test.Services
 {
     public class FacilityServiceTest
     {
-        Facility _facility = new () { ID = Guid.NewGuid(), Settings = new (), OpeningHours = new List<OpeningHours>()};
+        Facility _facility = new () { ID = Guid.NewGuid(), 
+            Settings = new() {SlotSize = TimeSpan.FromMinutes(15) }, 
+            OpeningHours = new List<OpeningHours>() 
+            { 
+                new() { From = new DateTime().AddHours(0), To = new DateTime().AddHours(24), DayOfWeek = Models.DayOfWeek.All }
+            } 
+        };
+
         Mock<IFacilityRepository> _repo = new ();
         DateTime _now = new DateTime(2021, 3, 11);
 
@@ -37,7 +44,6 @@ namespace komm_rein.api.test.Services
         public void GetAllSlotsBySize()
         {
             // Arrange
-            _facility.Settings.SlotSize = TimeSpan.FromMinutes(15);
             _repo.Setup(x => x.GetById(_facility.ID)).Returns(_facility);
             var service = new FacilityService(_repo.Object);
 
@@ -48,6 +54,27 @@ namespace komm_rein.api.test.Services
             // expect all slots for one 24h day: 24*4==96
             result.Should().HaveCount(96);
         }
+
+        [Fact]
+        public void GetAllSlotsForOpeningHours()
+        {
+            // Arrange
+            _facility.OpeningHours = new List<OpeningHours>
+            {
+                new () {From = new DateTime().AddHours(8), To = new DateTime().AddHours(20), DayOfWeek = Models.DayOfWeek.All},
+            };
+
+            _repo.Setup(x => x.GetById(_facility.ID)).Returns(_facility);
+            var service = new FacilityService(_repo.Object);
+
+            // Act
+            var result = service.GetAvailableSlots(_facility.ID, _now, _now);
+
+            // Assert
+            // expect all slots for one 12h day: 12*4==48 slots
+            result.Should().HaveCount(48);
+        }
+
 
         [Fact]
         public void GetAllRemainingSlots()
@@ -69,100 +96,27 @@ namespace komm_rein.api.test.Services
         }
 
         [Fact]
-        public void FindCorrectOpeningHours()
+        public void SlotsMustAlignWithStartTime()
         {
             // Arrange
-            // 2021-03-11 10:30
-            _now = _now += TimeSpan.FromHours(16.5);
-
-            _facility.OpeningHours = new List<OpeningHours>
-            {
-                new () {From = new DateTime().AddHours(7), To = new DateTime().AddHours(12), DayOfWeek = Models.DayOfWeek.All},
-                new () {From = new DateTime().AddHours(15), To = new DateTime().AddHours(20),DayOfWeek = Models.DayOfWeek.All},
-            };
-
+            // today 12:10
+            _now = DateTime.Now.Date + TimeSpan.FromHours(12) + TimeSpan.FromMinutes(20);
+            
             _repo.Setup(x => x.GetById(_facility.ID)).Returns(_facility);
             var service = new FacilityService(_repo.Object);
 
             // Act
-            var result = service.FindOpeningHours(_facility.ID, _now);
+            var result = service.GetAvailableSlots(_facility.ID, _now, _now);
 
             // Assert
-            result.Should().Be(_facility.OpeningHours.Last());
+            // expect all slots for one 24h day: 12*4==48 - 1
+            // one less, because we started 10 minutes later
+            result.Should().HaveCount(46);
+
+            // it must skip the 12.00 - 12:15 slot
+            // it should start with 12:15
+            result.First().From.TimeOfDay.Hours.Should().Be(12);
+            result.First().From.TimeOfDay.Minutes.Should().Be(30);
         }
-
-        [Fact]
-        public void FindNoOpeningHours()
-        {
-            // Arrange
-            // 2021-03-11 10:30
-            _now = _now += TimeSpan.FromHours(13.5);
-
-            _facility.OpeningHours = new List<OpeningHours>
-            {
-                new () {From = new DateTime().AddHours(7), To = new DateTime().AddHours(12), DayOfWeek = Models.DayOfWeek.All},
-                new () {From = new DateTime().AddHours(15), To = new DateTime().AddHours(20),DayOfWeek = Models.DayOfWeek.All},
-            };
-
-            _repo.Setup(x => x.GetById(_facility.ID)).Returns(_facility);
-            var service = new FacilityService(_repo.Object);
-
-            // Act
-            var result = service.FindOpeningHours(_facility.ID, _now);
-
-            // Assert
-            // expect all slots for one 24h day: 12*4==48
-            result.Should().BeNull();
-        }
-
-
-        [Fact]
-        public void FindCorrectWeekDayOpeningHours_ShouldNotFind()
-        {
-            // Arrange
-            // 2021-03-11 10:30 - Thursday
-            _now = _now += TimeSpan.FromHours(13.5);
-
-            _facility.OpeningHours = new List<OpeningHours>
-            {
-                new () {From = new DateTime().AddHours(7), To = new DateTime().AddHours(12), DayOfWeek = Models.DayOfWeek.All},
-                new () {From = new DateTime().AddHours(15), To = new DateTime().AddHours(20),DayOfWeek = Models.DayOfWeek.All},
-                new () {From = new DateTime().AddHours(12), To = new DateTime().AddHours(15),DayOfWeek = Models.DayOfWeek.Weekend},
-            };
-
-            _repo.Setup(x => x.GetById(_facility.ID)).Returns(_facility);
-            var service = new FacilityService(_repo.Object);
-
-            // Act
-            var result = service.FindOpeningHours(_facility.ID, _now);
-
-            // Assert
-            result.Should().BeNull();
-        }
-
-
-        //[Fact]
-        //public void SlotsMustAlignWithStartTime()
-        //{
-        //    // Arrange
-        //    // today 12:00
-        //    _now = DateTime.Now.Date + TimeSpan.FromHours(12) + TimeSpan.FromMinutes(10);
-
-        //    _facility.Settings.SlotSize = TimeSpan.FromMinutes(15);
-        //    _repo.Setup(x => x.GetById(_facility.ID)).Returns(_facility);
-        //    var service = new FacilityService(_repo.Object);
-
-        //    // Act
-        //    var result = service.GetAvailableSlots(_facility.ID, _now, _now);
-
-        //    // Assert
-        //    // expect all slots for one 24h day: 12*4==48 - 1
-        //    // one less, because we started 10 minutes later
-        //    result.Should().HaveCount(47);
-
-
-        //    result.First().From.Should().Be()
-
-        //}
     }
 }
