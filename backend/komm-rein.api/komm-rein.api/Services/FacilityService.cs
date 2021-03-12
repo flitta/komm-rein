@@ -16,13 +16,14 @@ namespace komm_rein.api.Services
         {
             _repository = repository;
         }
-
+               
         public IEnumerable<Slot> GetAvailableSlots(Guid facilityId, DateTime selectedDate, DateTime currentTime)
         {
-            return GetAvailableSlots(facilityId, selectedDate, currentTime, 1);
+            var facility = _repository.GetById(facilityId);
+            return GetAvailableSlots(facility, selectedDate, currentTime);
         }
 
-        public IEnumerable<Slot> GetAvailableSlots(Guid facilityId, DateTime selectedDate, DateTime currentTime, int numberOfPax)
+        public IEnumerable<Slot> GetAvailableSlots(Facility facility, DateTime selectedDate, DateTime currentTime)
         {
             var seletecedDayDate = selectedDate.Date;
             var currentTimeTime = (new DateTime() + currentTime.TimeOfDay);
@@ -31,8 +32,6 @@ namespace komm_rein.api.Services
             {
                 throw new ArgumentException("Selected day must not be in the past!");
             }
-
-            var facility = _repository.GetById(facilityId);
 
             var result = new List<Slot>();
 
@@ -71,6 +70,15 @@ namespace komm_rein.api.Services
             return result;
         }
 
+        public IEnumerable<Slot> GetSlotsForVisit(Guid facilityId, DateTime day, Visit visit, DateTime currentTime)
+        {
+            Facility facility = _repository.GetById(facilityId);
+            var slots = this.GetAvailableSlots(facilityId, day, currentTime);
+            ApplySlotStatus(slots, facility, day.Date, day.Date.AddDays(1));
+
+            return slots;
+        }
+
         public void ApplySlotStatus(Slot slot, Facility facility, DateTime from, DateTime to)
         {
             ApplySlotStatus(new[] { slot }, facility, from, to);
@@ -78,7 +86,20 @@ namespace komm_rein.api.Services
 
         public void ApplySlotStatus(IEnumerable<Slot> slots, Facility facility, DateTime from, DateTime to)
         {
+            ApplySlotStatus(slots, facility, from, to, null);
+        }
+
+        public void ApplySlotStatus(IEnumerable<Slot> slots, Facility facility, DateTime from, DateTime to, Visit newVisit)
+        {
+            // load existing visits
             var visits = _repository.GetVisits(facility.ID, from, to);
+
+            // add newVisit (transient) for evaluation
+            if(newVisit != null)
+            {
+                visits = visits.Concat(new[] { newVisit });
+            }
+
             double crowdedAt = facility.Settings.CrowdedAt;
 
             foreach (var slot in slots)
