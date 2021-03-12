@@ -15,7 +15,7 @@ namespace komm_rein.api.Models
         Saturday = 1 << 6,
         Weekend = 1 << 0 | 1 << 6,
         WorkDays = 1 << 1 | 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5,
-        All = short.MaxValue
+        All = Weekend | WorkDays
     }
 
     public class OpeningHours
