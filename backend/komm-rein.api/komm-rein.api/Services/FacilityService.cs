@@ -74,7 +74,7 @@ namespace komm_rein.api.Services
         {
             Facility facility = _repository.GetById(facilityId);
             var slots = this.GetAvailableSlots(facilityId, day, currentTime);
-            ApplySlotStatus(slots, facility, day.Date, day.Date.AddDays(1));
+            ApplySlotStatus(slots, facility, day.Date, day.Date.AddDays(1), visit);
 
             return slots;
         }
@@ -91,6 +91,9 @@ namespace komm_rein.api.Services
 
         public void ApplySlotStatus(IEnumerable<Slot> slots, Facility facility, DateTime from, DateTime to, Visit newVisit)
         {
+            // different status when counting new (transient) visit
+            bool crowdedIfFull = newVisit != null;
+
             // load existing visits
             var visits = _repository.GetVisits(facility.ID, from, to);
 
@@ -123,9 +126,21 @@ namespace komm_rein.api.Services
                     _ => throw new NotImplementedException(),
                 };
 
-                if (paxCount > facility.Settings.MaxNumberofVisitors)
+
+
+                if (crowdedIfFull && paxCount > facility.Settings.MaxNumberofVisitors)
+                {
+                    slot.Status = SlotStatus.Full;
+                }
+                else if (paxCount > facility.Settings.MaxNumberofVisitors)
                 {
                     slot.Status = SlotStatus.Invalid;
+                }
+                else if (crowdedIfFull && paxCount == facility.Settings.MaxNumberofVisitors)
+                {
+                    // the new (planned and transient visit) matches exactly the allowd visitors
+                    // we show crowded, as we are only full after the visit would be booked
+                    slot.Status = SlotStatus.Crowded;
                 }
                 else if (paxCount == facility.Settings.MaxNumberofVisitors)
                 {
