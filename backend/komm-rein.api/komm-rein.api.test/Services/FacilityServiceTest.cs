@@ -14,15 +14,16 @@ namespace komm_rein.api.test.Services
 {
     public class FacilityServiceTest
     {
-        Facility _facility = new () { ID = Guid.NewGuid(), 
+        readonly Facility _facility = new () { ID = Guid.NewGuid(), 
             Settings = new() {SlotSize = TimeSpan.FromMinutes(15) }, 
-            OpeningHours = new List<OpeningHours>() 
+            OpeningHours = new List<OpeningHours>
             { 
                 new() { From = new DateTime().AddHours(0), To = new DateTime().AddHours(24), DayOfWeek = Models.DayOfWeek.All }
             } 
         };
 
-        Mock<IFacilityRepository> _repo = new ();
+        readonly Mock<IFacilityRepository> _repo = new ();
+
         DateTime _now = new DateTime(2021, 3, 11);
 
         [Fact]
