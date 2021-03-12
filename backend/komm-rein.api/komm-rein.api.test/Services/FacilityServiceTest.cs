@@ -432,7 +432,9 @@ namespace komm_rein.api.test.Services
 
             // Assert
             var targetSlot = slots.First(s => s.From == visit.From);
-            targetSlot.Status.Should().Be(SlotStatus.Full);
+
+            // it should be crowded to allow the new visit to be added
+            targetSlot.Status.Should().Be(SlotStatus.Crowded);
         }
 
 
@@ -468,6 +470,40 @@ namespace komm_rein.api.test.Services
             // Assert
             var targetSlot = result.First(s => s.From == visit_new.From);
             targetSlot.Status.Should().Be(SlotStatus.Crowded);
+        }
+
+        [Fact]
+        public void TestGetSlotsForVisitFull()
+        {
+            // Arrange
+            // one household with 2 person
+            Visit visit = new()
+            {
+                Facility = _facility,
+                From = _fixedNowDate.AddHours(10),
+                To = _fixedNowDate.AddHours(10).AddMinutes(15),
+                Households = new List<Household> { new() { NumberOfPersons = 1, NumberOfChildren = 1 } }
+            };
+
+            // another household with 2 person
+            Visit visit_new = new()
+            {
+                Facility = _facility,
+                From = _fixedNowDate.AddHours(10),
+                To = _fixedNowDate.AddHours(10).AddMinutes(15),
+                Households = new List<Household> { new() { NumberOfPersons = 4, NumberOfChildren = 1 } }
+            };
+
+            _repo.Setup(x => x.GetById(_facility.ID)).Returns(_facility);
+            _repo.Setup(x => x.GetVisits(_facility.ID, _fixedNowDate.Date, _fixedNowDate.Date.AddDays(1))).Returns(new List<Visit> { visit });
+            IFacilityService service = new FacilityService(_repo.Object);
+
+            // Act
+            var result = service.GetSlotsForVisit(_facility.ID, _fixedNowDate, visit_new, _fixedNowDate);
+
+            // Assert
+            var targetSlot = result.First(s => s.From == visit_new.From);
+            targetSlot.Status.Should().Be(SlotStatus.Full);
         }
 
     }
