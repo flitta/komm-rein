@@ -43,62 +43,80 @@ namespace komm_rein.api.Services
                 var endForSlots = openingHours.To;
 
                 TimeSpan timeSpan = endForSlots - startForSlots;
-                int numberOfSlots = (int)(timeSpan/ facility.Settings.SlotSize);
+                int numberOfSlots = (int)(timeSpan / facility.Settings.SlotSize);
 
                 // to leave the gap at the beginning of a timespan (an already started unusable slot), the list is build up form the end
-                var slots = Enumerable.Range(1, numberOfSlots).Select((i) => {
-                        var from = (endForSlots - facility.Settings.SlotSize * i);
-                        var to = from + facility.Settings.SlotSize;
-                        return new Slot
-                        {
-                            From = seletecedDayDate + from.TimeOfDay,
-                            To = seletecedDayDate + to.TimeOfDay,
-                            OpeningHours = openingHours,
-                            Facility = facility,
-                        };
-                    }
+                var slots = Enumerable.Range(1, numberOfSlots).Select((i) =>
+                {
+                    var from = (endForSlots - facility.Settings.SlotSize * i);
+                    var to = from + facility.Settings.SlotSize;
+
+                    // if we have to add a day:
+                    var deltaDays = to.Date - from.Date;
+
+                    return new Slot
+                    {
+                        From = seletecedDayDate + from.TimeOfDay,
+                        To = seletecedDayDate + to.TimeOfDay + deltaDays,
+                        OpeningHours = openingHours,
+                        Facility = facility,
+                    };
+                }
                 );
 
                 // because the list was build in reverse order, it will be reversed before insert
                 result.AddRange(slots.Reverse());
             }
 
-
             return result;
         }
 
-        public void ApplySlotStatusBatch(IEnumerable<Slot> slots, Facility facility, DateTime from, DateTime to)
+        public void ApplySlotStatus(Slot slot, Facility facility, DateTime from, DateTime to)
+        {
+            ApplySlotStatus(new[] { slot }, facility, from, to);
+        }
+
+        public void ApplySlotStatus(IEnumerable<Slot> slots, Facility facility, DateTime from, DateTime to)
         {
             var visits = _repository.GetVisits(facility.ID, from, to);
             double crowdedAt = facility.Settings.CrowdedAt;
 
-            foreach(var slot in slots)
+            foreach (var slot in slots)
             {
-                var visitsInSlot = visits.Where(visit => (slot.From <= visit.From && slot.To >= visit.From) || (slot.From <= visit.To && slot.To >= visit.To));
+                var visitsInSlot = visits.Where(visit =>
+                (slot.From == visit.From && slot.To == visit.To)
+                ||
+                (slot.From > visit.From && slot.To < visit.To)
+                ||
+                (slot.From <= visit.From && slot.To > visit.From && slot.To < visit.To)
+                ||
+                (slot.From < visit.To && slot.To >= visit.To)
+                )
+                    .ToList();
 
                 int paxCount = facility.Settings.CountingMode switch
-                    {
-                        CountingMode.EverySinglePerson => visitsInSlot.SelectMany(v => v.Households).Sum(h => h.NumberOfPersons + h.NumberOfChildren),
-                        CountingMode.SinglePersonWithoutChildren => visitsInSlot.SelectMany(v => v.Households).Sum(h => h.NumberOfPersons),
-                        CountingMode.HouseHolds => visitsInSlot.SelectMany(v => v.Households).Count(),
-                        _ => throw new NotImplementedException(),  
-                    };
+                {
+                    CountingMode.EverySinglePerson => visitsInSlot.SelectMany(v => v.Households).Sum(h => h.NumberOfPersons + h.NumberOfChildren),
+                    CountingMode.SinglePersonWithoutChildren => visitsInSlot.SelectMany(v => v.Households).Sum(h => h.NumberOfPersons),
+                    CountingMode.HouseHolds => visitsInSlot.SelectMany(v => v.Households).Count(),
+                    _ => throw new NotImplementedException(),
+                };
 
                 if (paxCount > facility.Settings.MaxNumberofVisitors)
                 {
-                    slot.Status = Slot.SlotStatus.Invalid;
+                    slot.Status = SlotStatus.Invalid;
                 }
                 else if (paxCount == facility.Settings.MaxNumberofVisitors)
                 {
-                    slot.Status = Slot.SlotStatus.Full;
+                    slot.Status = SlotStatus.Full;
                 }
                 else if (paxCount >= crowdedAt)
                 {
-                    slot.Status = Slot.SlotStatus.Crowded;
+                    slot.Status = SlotStatus.Crowded;
                 }
                 else
                 {
-                    slot.Status = Slot.SlotStatus.Free;
+                    slot.Status = SlotStatus.Free;
                 }
             }
         }
