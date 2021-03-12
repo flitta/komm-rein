@@ -11,5 +11,7 @@ namespace komm_rein.api.Services
     {
         IEnumerable<Slot> GetAvailableSlots(Guid facilityId, DateTime selectedDate, DateTime currentTime);
         IEnumerable<Slot> GetAvailableSlots(Guid facilityId, DateTime selectedDate, DateTime currentTime, int numberOfPax);
+
+        void ApplySlotStatusBatch(IEnumerable<Slot> slots, Facility facility, DateTime from, DateTime to);
     }
 }

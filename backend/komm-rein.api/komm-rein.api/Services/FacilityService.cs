@@ -51,8 +51,8 @@ namespace komm_rein.api.Services
                         var to = from + facility.Settings.SlotSize;
                         return new Slot
                         {
-                            From = from,
-                            To = to,
+                            From = seletecedDayDate + from.TimeOfDay,
+                            To = seletecedDayDate + to.TimeOfDay,
                             OpeningHours = openingHours,
                             Facility = facility,
                         };
@@ -63,7 +63,38 @@ namespace komm_rein.api.Services
                 result.AddRange(slots.Reverse());
             }
 
+
             return result;
+        }
+
+        public void ApplySlotStatusBatch(IEnumerable<Slot> slots, Facility facility, DateTime from, DateTime to)
+        {
+            var visits = _repository.GetVisits(facility.ID, from, to);
+            double crowdedAt = facility.Settings.CrowdedAt;
+
+            foreach(var slot in slots)
+            {
+                var visitsInSlot = visits.Where(visit => (slot.From <= visit.From && slot.To >= visit.From) || (slot.From <= visit.To && slot.To >= visit.To));
+                
+                int pax = visitsInSlot.SelectMany(v => v.Households).Sum(h => h.NumberOfPersons);
+
+                if (pax > facility.Settings.MaxNumberofVisitors)
+                {
+                    slot.Status = Slot.SlotStatus.Invalid;
+                }
+                else if (pax == facility.Settings.MaxNumberofVisitors)
+                {
+                    slot.Status = Slot.SlotStatus.Full;
+                }
+                else if (pax >= crowdedAt)
+                {
+                    slot.Status = Slot.SlotStatus.Crowded;
+                }
+                else
+                {
+                    slot.Status = Slot.SlotStatus.Free;
+                }
+            }
         }
              
     }

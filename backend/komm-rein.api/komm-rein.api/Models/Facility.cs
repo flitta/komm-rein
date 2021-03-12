@@ -14,5 +14,7 @@ namespace komm_rein.api.Models
                 
         public IList<OpeningHours> OpeningHours { get; set; }
 
+
+
     }
 }

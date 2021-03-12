@@ -10,5 +10,7 @@ namespace komm_rein.api.Repositories
     public interface IFacilityRepository
     {
         public Facility GetById(Guid id);
+
+        public IEnumerable<Visit> GetVisits(Guid facilityId, DateTime from, DateTime to);
     }
 }
