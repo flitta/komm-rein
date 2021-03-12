@@ -108,32 +108,7 @@ namespace komm_rein.api.test.Helper
             // 15.00-20.00 and 20:00-22:00
             result.Should().HaveCount(2);
         }
-
-        //[Fact]
-        //public void GetFullDay()
-        //{
-        //    // Testing the case that a 24h day ends add the following day
-        //    // 01.01.2021 + 1 day == 02.01.2021
-
-        //    // Arrange
-        //    // 2021-03-11 10:30 - Thursday
-        //    var thursday = new DateTime(2021, 3, 11);
-            
-
-        //    var openingHours = new List<OpeningHours>
-        //    {
-        //        new () {From = new DateTime().AddHours(0), To = new DateTime().AddHours(24), DayOfWeek = Models.DayOfWeek.All},
-        //    };
-
-        //    // Act
-        //    var result = openingHours.RemainingForDay(thursday, thursday);
-
-        //    // Assert
-        //    // should return 96 slots for 24 hours * 4
-        //    result.Should().HaveCount(96);
-        //}
     }
-
 }
 
 

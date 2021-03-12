@@ -10,16 +10,19 @@ namespace komm_rein.api.Services
 {
     public class FacilityService : IFacilityService
     {
-        IFacilityRepository _repository;
+        readonly IFacilityRepository _repository;
 
         public FacilityService(IFacilityRepository repository)
         {
             _repository = repository;
         }
 
+        public IEnumerable<Slot> GetAvailableSlots(Guid facilityId, DateTime selectedDate, DateTime currentTime)
+        {
+            return GetAvailableSlots(facilityId, selectedDate, currentTime, 1);
+        }
 
-
-        public IEnumerable<Slot> GetAvailableSlots(Guid facilityId, DateTime selectedDate, DateTime currentTime, int numberOfPax = 1)
+        public IEnumerable<Slot> GetAvailableSlots(Guid facilityId, DateTime selectedDate, DateTime currentTime, int numberOfPax)
         {
             var seletecedDayDate = selectedDate.Date;
             var currentTimeTime = (new DateTime() + currentTime.TimeOfDay);
