@@ -397,5 +397,78 @@ namespace komm_rein.api.test.Services
         }
 
 
+        [Fact]
+        public void TestNewVisitOnSlots()
+        {
+            // Arrange
+            // one household with 2 person
+            Visit visit = new()
+            {
+                Facility = _facility,
+                From = _fixedNowDate.AddHours(10),
+                To = _fixedNowDate.AddHours(10).AddMinutes(15),
+                Households = new List<Household> { new() { NumberOfPersons = 1, NumberOfChildren = 1 } }
+            };
+
+            // another household with 2 person
+            Visit visit_new = new()
+            {
+                Facility = _facility,
+                From = _fixedNowDate.AddHours(10),
+                To = _fixedNowDate.AddHours(10).AddMinutes(15),
+                Households = new List<Household> { new() { NumberOfPersons = 1, NumberOfChildren = 1 } }
+            };
+
+            Slot slot = new() { Facility = visit.Facility, From = visit.From, To = visit.To };
+
+            _repo.Setup(x => x.GetById(_facility.ID)).Returns(_facility);
+            _repo.Setup(x => x.GetVisits(_facility.ID, slot.From.Date, slot.From.Date.AddHours(24))).Returns(new List<Visit> { visit});
+
+            IFacilityService service = new FacilityService(_repo.Object);
+            var slots = service.GetAvailableSlots(_facility.ID, _fixedNowDate, _fixedNowDate);
+
+            // Act
+            service.ApplySlotStatus(slots, _facility, slot.From.Date, slot.From.Date.AddHours(24), visit_new);
+
+            // Assert
+            var targetSlot = slots.First(s => s.From == visit.From);
+            targetSlot.Status.Should().Be(SlotStatus.Full);
+        }
+
+
+        [Fact]
+        public void TestGetSlotsForVisit()
+        {
+            // Arrange
+            // one household with 2 person
+            Visit visit = new()
+            {
+                Facility = _facility,
+                From = _fixedNowDate.AddHours(10),
+                To = _fixedNowDate.AddHours(10).AddMinutes(15),
+                Households = new List<Household> { new() { NumberOfPersons = 1, NumberOfChildren = 1 } }
+            };
+
+            // another household with 2 person
+            Visit visit_new = new()
+            {
+                Facility = _facility,
+                From = _fixedNowDate.AddHours(10),
+                To = _fixedNowDate.AddHours(10).AddMinutes(15),
+                Households = new List<Household> { new() { NumberOfPersons = 1, NumberOfChildren = 1 } }
+            };
+
+            _repo.Setup(x => x.GetById(_facility.ID)).Returns(_facility);
+            _repo.Setup(x => x.GetVisits(_facility.ID, _fixedNowDate.Date, _fixedNowDate.Date.AddDays(1))).Returns(new List<Visit> { visit });
+            IFacilityService service = new FacilityService(_repo.Object);
+
+            // Act
+            var result = service.GetSlotsForVisit(_facility.ID, _fixedNowDate, visit, _fixedNowDate);
+
+            // Assert
+            var targetSlot = result.First(s => s.From == visit_new.From);
+            targetSlot.Status.Should().Be(SlotStatus.Crowded);
+        }
+
     }
 }
