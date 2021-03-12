@@ -10,7 +10,5 @@ namespace komm_rein.api.Services
     public interface IFacilityService
     {
         IEnumerable<Slot> GetAvailableSlots(Guid facilityId, DateTime selectedDay, DateTime now, int numberOfPax = 1);
-        
-        OpeningHours FindOpeningHours(Guid facilityId, DateTime time);
     }
 }

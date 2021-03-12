@@ -11,5 +11,6 @@ namespace komm_rein.api.Models
         public Facility Facility { get; set; }
         public DateTime From { get; set; }
         public DateTime To { get; set; }
+        public OpeningHours OpeningHours { get; internal set; }
     }
 }
