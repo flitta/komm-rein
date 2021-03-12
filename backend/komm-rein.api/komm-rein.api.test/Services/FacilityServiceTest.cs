@@ -20,7 +20,7 @@ namespace komm_rein.api.test.Services
                 SlotSize = TimeSpan.FromMinutes(15), 
                 SlotStatusThreshold = .5,
                 MaxNumberofVisitors = 4,
-                CountHousehold = true
+                CountingMode = CountingMode.EverySinglePerson,
             }, 
             OpeningHours = new List<OpeningHours>
             { 
@@ -175,6 +175,129 @@ namespace komm_rein.api.test.Services
             // Assert
             var targetSlot = slots.First(s => s.From == visit.From);
             targetSlot.Status.Should().Be(Slot.SlotStatus.Crowded);
+        }
+
+
+        [Fact]
+        public void TestSlotStatusConsiderHouseholdSetting()
+        {
+            // Arrange
+            _facility.Settings.CountingMode = CountingMode.HouseHolds;
+
+            // one household with 2 person
+            Visit visit = new()
+            {
+                Facility = _facility,
+                From = _fixedNowDate.AddHours(10),
+                To = _fixedNowDate.AddHours(10).AddMinutes(15),
+                Households = new List<Household> { new() { NumberOfPersons = 2 } }
+            };
+
+            // another household with 2 person
+            Visit visit_2 = new()
+            {
+                Facility = _facility,
+                From = _fixedNowDate.AddHours(10),
+                To = _fixedNowDate.AddHours(10).AddMinutes(15),
+                Households = new List<Household> { new() { NumberOfPersons = 2 } }
+            };
+
+            Slot slot = new() { Facility = visit.Facility, From = visit.From, To = visit.To };
+
+            _repo.Setup(x => x.GetById(_facility.ID)).Returns(_facility);
+            _repo.Setup(x => x.GetVisits(_facility.ID, slot.From.Date, slot.From.Date.AddHours(24))).Returns(new List<Visit> { visit, visit_2 });
+
+            IFacilityService service = new FacilityService(_repo.Object);
+            var slots = service.GetAvailableSlots(_facility.ID, _fixedNowDate, _fixedNowDate);
+
+            // Act
+            service.ApplySlotStatusBatch(slots, _facility, slot.From.Date, slot.From.Date.AddHours(24));
+
+            // Assert
+            var targetSlot = slots.First(s => s.From == visit.From);
+            targetSlot.Status.Should().Be(Slot.SlotStatus.Crowded);
+        }
+
+
+        [Fact]
+        public void TestSlotStatusConsiderChildrenSetting()
+        {
+            // Arrange
+            _facility.Settings.CountingMode = CountingMode.SinglePersonWithoutChildren;
+
+            // one household with 2 person
+            Visit visit = new()
+            {
+                Facility = _facility,
+                From = _fixedNowDate.AddHours(10),
+                To = _fixedNowDate.AddHours(10).AddMinutes(15),
+                Households = new List<Household> { new() { NumberOfPersons = 1, NumberOfChildren = 4 } }
+            };
+
+            // another household with 2 person
+            Visit visit_2 = new()
+            {
+                Facility = _facility,
+                From = _fixedNowDate.AddHours(10),
+                To = _fixedNowDate.AddHours(10).AddMinutes(15),
+                Households = new List<Household> { new() { NumberOfPersons = 1 , NumberOfChildren = 2} }
+            };
+
+            Slot slot = new() { Facility = visit.Facility, From = visit.From, To = visit.To };
+
+            _repo.Setup(x => x.GetById(_facility.ID)).Returns(_facility);
+            _repo.Setup(x => x.GetVisits(_facility.ID, slot.From.Date, slot.From.Date.AddHours(24))).Returns(new List<Visit> { visit, visit_2 });
+
+            IFacilityService service = new FacilityService(_repo.Object);
+            var slots = service.GetAvailableSlots(_facility.ID, _fixedNowDate, _fixedNowDate);
+
+            // Act
+            service.ApplySlotStatusBatch(slots, _facility, slot.From.Date, slot.From.Date.AddHours(24));
+
+            // Assert
+            var targetSlot = slots.First(s => s.From == visit.From);
+            targetSlot.Status.Should().Be(Slot.SlotStatus.Crowded);
+        }
+
+
+        [Fact]
+        public void TestSlotStatusCountAll()
+        {
+            // Arrange
+            _facility.Settings.CountingMode = CountingMode.EverySinglePerson;
+
+            // one household with 2 person
+            Visit visit = new()
+            {
+                Facility = _facility,
+                From = _fixedNowDate.AddHours(10),
+                To = _fixedNowDate.AddHours(10).AddMinutes(15),
+                Households = new List<Household> { new() { NumberOfPersons = 1, NumberOfChildren = 1 } }
+            };
+
+            // another household with 2 person
+            Visit visit_2 = new()
+            {
+                Facility = _facility,
+                From = _fixedNowDate.AddHours(10),
+                To = _fixedNowDate.AddHours(10).AddMinutes(15),
+                Households = new List<Household> { new() { NumberOfPersons = 1, NumberOfChildren = 1 } }
+            };
+
+            Slot slot = new() { Facility = visit.Facility, From = visit.From, To = visit.To };
+
+            _repo.Setup(x => x.GetById(_facility.ID)).Returns(_facility);
+            _repo.Setup(x => x.GetVisits(_facility.ID, slot.From.Date, slot.From.Date.AddHours(24))).Returns(new List<Visit> { visit, visit_2 });
+
+            IFacilityService service = new FacilityService(_repo.Object);
+            var slots = service.GetAvailableSlots(_facility.ID, _fixedNowDate, _fixedNowDate);
+
+            // Act
+            service.ApplySlotStatusBatch(slots, _facility, slot.From.Date, slot.From.Date.AddHours(24));
+
+            // Assert
+            var targetSlot = slots.First(s => s.From == visit.From);
+            targetSlot.Status.Should().Be(Slot.SlotStatus.Full);
         }
 
 
