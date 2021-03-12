@@ -4,7 +4,7 @@
     {
         public int NumberOfPersons { get; set; }
 
-        public int? NumberOfChildren { get; set; }
+        public int NumberOfChildren { get; set; }
 
     }
 }

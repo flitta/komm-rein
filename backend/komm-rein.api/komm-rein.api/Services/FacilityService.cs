@@ -75,18 +75,24 @@ namespace komm_rein.api.Services
             foreach(var slot in slots)
             {
                 var visitsInSlot = visits.Where(visit => (slot.From <= visit.From && slot.To >= visit.From) || (slot.From <= visit.To && slot.To >= visit.To));
-                
-                int pax = visitsInSlot.SelectMany(v => v.Households).Sum(h => h.NumberOfPersons);
 
-                if (pax > facility.Settings.MaxNumberofVisitors)
+                int paxCount = facility.Settings.CountingMode switch
+                    {
+                        CountingMode.EverySinglePerson => visitsInSlot.SelectMany(v => v.Households).Sum(h => h.NumberOfPersons + h.NumberOfChildren),
+                        CountingMode.SinglePersonWithoutChildren => visitsInSlot.SelectMany(v => v.Households).Sum(h => h.NumberOfPersons),
+                        CountingMode.HouseHolds => visitsInSlot.SelectMany(v => v.Households).Count(),
+                        _ => throw new NotImplementedException(),  
+                    };
+
+                if (paxCount > facility.Settings.MaxNumberofVisitors)
                 {
                     slot.Status = Slot.SlotStatus.Invalid;
                 }
-                else if (pax == facility.Settings.MaxNumberofVisitors)
+                else if (paxCount == facility.Settings.MaxNumberofVisitors)
                 {
                     slot.Status = Slot.SlotStatus.Full;
                 }
-                else if (pax >= crowdedAt)
+                else if (paxCount >= crowdedAt)
                 {
                     slot.Status = Slot.SlotStatus.Crowded;
                 }
@@ -96,6 +102,5 @@ namespace komm_rein.api.Services
                 }
             }
         }
-             
     }
 }
