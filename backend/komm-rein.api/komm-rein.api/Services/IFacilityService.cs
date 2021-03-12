@@ -10,7 +10,6 @@ namespace komm_rein.api.Services
     public interface IFacilityService
     {
         IEnumerable<Slot> GetAvailableSlots(Guid facilityId, DateTime selectedDate, DateTime currentTime);
-
-        IEnumerable<Slot> GetAvailableSlots(Guid facilityId, DateTime selectedDay, DateTime now, int numberOfPax);
+        IEnumerable<Slot> GetAvailableSlots(Guid facilityId, DateTime selectedDate, DateTime currentTime, int numberOfPax);
     }
 }
