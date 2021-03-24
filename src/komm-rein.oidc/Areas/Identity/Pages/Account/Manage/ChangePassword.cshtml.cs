@@ -48,6 +48,8 @@ namespace komm_rein.oidc.Areas.Identity.Pages.Account.Manage
             [Display(Name = "Confirm new password")]
             [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+            
+            public string ReturnUrl { get; set; }
         }
 
         public async Task<IActionResult> OnGetAsync()
