@@ -74,7 +74,8 @@ namespace komm_rein.oidc
                 options.SlidingExpiration = true;
             });
 
-      
+            // IdentityServer4
+            services.AddIds4WithConfig(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -96,6 +97,8 @@ namespace komm_rein.oidc
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseIdentityServer();
 
             app.UseAuthentication();
             app.UseAuthorization();

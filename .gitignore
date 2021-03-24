@@ -339,3 +339,6 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 /src/*.ncrunchsolution
+
+appsettings.Development.json
+/src/komm-rein.oidc/appsettings.Development.json

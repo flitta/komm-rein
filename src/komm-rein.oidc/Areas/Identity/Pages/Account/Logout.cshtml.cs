@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authentication;
+using IdentityServer4.Services;
+using IdentityServer4.Events;
+using IdentityServer4.Extensions;
 
 namespace komm_rein.oidc.Areas.Identity.Pages.Account
 {
@@ -15,11 +19,13 @@ namespace komm_rein.oidc.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LogoutModel> _logger;
+        private readonly IEventService _events;
 
-        public LogoutModel(SignInManager<IdentityUser> signInManager, ILogger<LogoutModel> logger)
+        public LogoutModel(SignInManager<IdentityUser> signInManager, ILogger<LogoutModel> logger, IEventService events)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _events = events;
         }
 
         public void OnGet()
@@ -28,7 +34,27 @@ namespace komm_rein.oidc.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPost(string returnUrl = null)
         {
-            await _signInManager.SignOutAsync();
+            if (User?.Identity.IsAuthenticated == true)
+            {
+                // delete local authentication cookie
+                await _signInManager.SignOutAsync();
+                // raise the logout event
+                await _events.RaiseAsync(new UserLogoutSuccessEvent(User.GetSubjectId(), User.GetDisplayName()));
+            }
+
+            // todo: needed?
+            // check if we need to trigger sign-out at an upstream identity provider
+            //if (vm.TriggerExternalSignout)
+            //{
+            //    // build a return URL so the upstream provider will redirect back
+            //    // to us after the user has logged out. this allows us to then
+            //    // complete our single sign-out processing.
+            //    string url = Url.Action("Logout", new { logoutId = vm.LogoutId });
+
+            //    // this triggers a redirect to the external provider for sign-out
+            //    return SignOut(new AuthenticationProperties { RedirectUri = url }, vm.ExternalAuthenticationScheme);
+            //}
+
             _logger.LogInformation("User logged out.");
             if (returnUrl != null)
             {
