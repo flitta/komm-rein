@@ -64,8 +64,6 @@ namespace komm_rein.oidc.Areas.Identity.Pages.Account
 
             [Display(Name = "Remember me?")]
             public bool RememberMe { get; set; }
-
-            public string ReturnUrl { get; set; }
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -90,7 +88,7 @@ namespace komm_rein.oidc.Areas.Identity.Pages.Account
             returnUrl ??= Url.Content("~/");
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-            var context = await _interaction.GetAuthorizationContextAsync(Input.ReturnUrl);
+            var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
 
             // todo: implement this use case
             //// the user clicked the "cancel" button
@@ -156,19 +154,19 @@ namespace komm_rein.oidc.Areas.Identity.Pages.Account
                         {
                             // The client is native, so this change in how to
                             // return the response is for better UX for the end user.
-                            return this.LoadingPage("Redirect", Input.ReturnUrl);
+                            return this.LoadingPage("Redirect", returnUrl);
                         }
 
                         // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
-                        return Redirect(Input.ReturnUrl);
+                        return Redirect(returnUrl);
                     }
 
                     // request for a local page
-                    if (Url.IsLocalUrl(Input.ReturnUrl))
+                    if (Url.IsLocalUrl(returnUrl))
                     {
-                        return Redirect(Input.ReturnUrl);
+                        return Redirect(returnUrl);
                     }
-                    else if (string.IsNullOrEmpty(Input.ReturnUrl))
+                    else if (string.IsNullOrEmpty(returnUrl))
                     {
                         return Redirect("~/");
                     }
