@@ -59,7 +59,6 @@ namespace komm_rein.oidc.Services
             services.AddAuthentication()
              .AddGoogle("Google", options =>
              {
-                 options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
                  configuration.GetSection("Google").Bind(options);
              });
 
