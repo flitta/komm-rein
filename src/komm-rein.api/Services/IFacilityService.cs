@@ -1,4 +1,4 @@
-﻿using komm_rein.api.Models;
+﻿using komm_rein.model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +9,8 @@ namespace komm_rein.api.Services
 {
     public interface IFacilityService
     {
+        void Create(Facility newItem, string ownerSid);
+
         IEnumerable<Slot> GetAvailableSlots(Facility facility, DateTime selectedDate, DateTime currentTime);
 
         IEnumerable<Slot> GetAvailableSlots(Guid facilityId, DateTime selectedDate, DateTime currentTime);

@@ -24,6 +24,7 @@
 
   <ItemGroup>
 	<ProjectReference Include="..\komm-rein.api\komm-rein.api.csproj" />
+	<ProjectReference Include="..\komm-rein.model\komm-rein.model.csproj" />
   </ItemGroup>
 
 </Project>

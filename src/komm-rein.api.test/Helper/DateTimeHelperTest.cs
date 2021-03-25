@@ -7,7 +7,7 @@ using Xunit;
 
 using FluentAssertions;
 
-using komm_rein.api.Models;
+using komm_rein.model;
 
 namespace komm_rein.api.test.Helper
 {
@@ -18,22 +18,22 @@ namespace komm_rein.api.test.Helper
         {
 
             // Act
-            Models.DayOfWeek result_1 = System.DayOfWeek.Sunday.FromSystem();
-            Models.DayOfWeek result_2 = System.DayOfWeek.Monday.FromSystem();
-            Models.DayOfWeek result_3 = System.DayOfWeek.Tuesday.FromSystem();
-            Models.DayOfWeek result_4 = System.DayOfWeek.Wednesday.FromSystem();
-            Models.DayOfWeek result_5 = System.DayOfWeek.Thursday.FromSystem();
-            Models.DayOfWeek result_6 = System.DayOfWeek.Friday.FromSystem();
-            Models.DayOfWeek result_7 = System.DayOfWeek.Saturday.FromSystem();
+            model.DayOfWeek result_1 = System.DayOfWeek.Sunday.FromSystem();
+            model.DayOfWeek result_2 = System.DayOfWeek.Monday.FromSystem();
+            model.DayOfWeek result_3 = System.DayOfWeek.Tuesday.FromSystem();
+            model.DayOfWeek result_4 = System.DayOfWeek.Wednesday.FromSystem();
+            model.DayOfWeek result_5 = System.DayOfWeek.Thursday.FromSystem();
+            model.DayOfWeek result_6 = System.DayOfWeek.Friday.FromSystem();
+            model.DayOfWeek result_7 = System.DayOfWeek.Saturday.FromSystem();
 
             // Assert
-            result_1.Should().Be(Models.DayOfWeek.Sunday);
-            result_2.Should().Be(Models.DayOfWeek.Monday);
-            result_3.Should().Be(Models.DayOfWeek.Tuesday);
-            result_4.Should().Be(Models.DayOfWeek.Wednesday);
-            result_5.Should().Be(Models.DayOfWeek.Thursday);
-            result_6.Should().Be(Models.DayOfWeek.Friday);
-            result_7.Should().Be(Models.DayOfWeek.Saturday);
+            result_1.Should().Be(model.DayOfWeek.Sunday);
+            result_2.Should().Be(model.DayOfWeek.Monday);
+            result_3.Should().Be(model.DayOfWeek.Tuesday);
+            result_4.Should().Be(model.DayOfWeek.Wednesday);
+            result_5.Should().Be(model.DayOfWeek.Thursday);
+            result_6.Should().Be(model.DayOfWeek.Friday);
+            result_7.Should().Be(model.DayOfWeek.Saturday);
         }
 
         [Fact]
@@ -45,9 +45,9 @@ namespace komm_rein.api.test.Helper
 
             var openingHours = new List<OpeningHours>
             {
-                new () {From = new DateTime().AddHours(7), To = new DateTime().AddHours(12), DayOfWeek = Models.DayOfWeek.All},
-                new () {From = new DateTime().AddHours(15), To = new DateTime().AddHours(20),DayOfWeek = Models.DayOfWeek.All},
-                new () {From = new DateTime().AddHours(12), To = new DateTime().AddHours(15),DayOfWeek = Models.DayOfWeek.Weekend},
+                new () {From = new DateTime().AddHours(7), To = new DateTime().AddHours(12), DayOfWeek = model.DayOfWeek.All},
+                new () {From = new DateTime().AddHours(15), To = new DateTime().AddHours(20),DayOfWeek = model.DayOfWeek.All},
+                new () {From = new DateTime().AddHours(12), To = new DateTime().AddHours(15),DayOfWeek = model.DayOfWeek.Weekend},
             };
 
             // Act
@@ -67,10 +67,10 @@ namespace komm_rein.api.test.Helper
 
             var openingHours = new List<OpeningHours>
             {
-                new () {From = new DateTime().AddHours(7), To = new DateTime().AddHours(12), DayOfWeek = Models.DayOfWeek.All},
-                new () {From = new DateTime().AddHours(15), To = new DateTime().AddHours(20),DayOfWeek = Models.DayOfWeek.All},
-                new () {From = new DateTime().AddHours(12), To = new DateTime().AddHours(15),DayOfWeek = Models.DayOfWeek.Weekend},
-                new () {From = new DateTime().AddHours(20), To = new DateTime().AddHours(22),DayOfWeek = Models.DayOfWeek.Saturday},
+                new () {From = new DateTime().AddHours(7), To = new DateTime().AddHours(12), DayOfWeek = model.DayOfWeek.All},
+                new () {From = new DateTime().AddHours(15), To = new DateTime().AddHours(20),DayOfWeek = model.DayOfWeek.All},
+                new () {From = new DateTime().AddHours(12), To = new DateTime().AddHours(15),DayOfWeek = model.DayOfWeek.Weekend},
+                new () {From = new DateTime().AddHours(20), To = new DateTime().AddHours(22),DayOfWeek = model.DayOfWeek.Saturday},
             };
 
             // Act
@@ -95,10 +95,10 @@ namespace komm_rein.api.test.Helper
 
             var openingHours = new List<OpeningHours>
             {
-                new () {From = new DateTime().AddHours(7), To = new DateTime().AddHours(12), DayOfWeek = Models.DayOfWeek.All},
-                new () {From = new DateTime().AddHours(15), To = new DateTime().AddHours(20),DayOfWeek = Models.DayOfWeek.All},
-                new () {From = new DateTime().AddHours(12), To = new DateTime().AddHours(15),DayOfWeek = Models.DayOfWeek.Weekend},
-                new () {From = new DateTime().AddHours(20), To = new DateTime().AddHours(22),DayOfWeek = Models.DayOfWeek.Saturday},
+                new () {From = new DateTime().AddHours(7), To = new DateTime().AddHours(12), DayOfWeek = model.DayOfWeek.All},
+                new () {From = new DateTime().AddHours(15), To = new DateTime().AddHours(20),DayOfWeek = model.DayOfWeek.All},
+                new () {From = new DateTime().AddHours(12), To = new DateTime().AddHours(15),DayOfWeek = model.DayOfWeek.Weekend},
+                new () {From = new DateTime().AddHours(20), To = new DateTime().AddHours(22),DayOfWeek = model.DayOfWeek.Saturday},
             };
 
             // Act
