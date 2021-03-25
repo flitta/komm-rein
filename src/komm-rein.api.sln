@@ -17,28 +17,45 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "komm-rein.oidc", "komm-rein
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "komm-rein.model", "komm-rein.model\komm-rein.model.csproj", "{0BA368DF-EC8D-45DA-97CC-DF51E2FCE79C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "komm-rein.ui.web", "komm-rein.ui.web\komm-rein.ui.web.csproj", "{9C36D912-D7AD-4DD7-A232-134F920CC03B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+		UI integration|Any CPU = UI integration|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{EA7161EB-6469-4298-B89C-DC813DD5B853}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EA7161EB-6469-4298-B89C-DC813DD5B853}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA7161EB-6469-4298-B89C-DC813DD5B853}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA7161EB-6469-4298-B89C-DC813DD5B853}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA7161EB-6469-4298-B89C-DC813DD5B853}.UI integration|Any CPU.ActiveCfg = UI integration|Any CPU
+		{EA7161EB-6469-4298-B89C-DC813DD5B853}.UI integration|Any CPU.Build.0 = UI integration|Any CPU
 		{445E9C39-D15D-45E6-B1A4-FC1E0901D2E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{445E9C39-D15D-45E6-B1A4-FC1E0901D2E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{445E9C39-D15D-45E6-B1A4-FC1E0901D2E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{445E9C39-D15D-45E6-B1A4-FC1E0901D2E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{445E9C39-D15D-45E6-B1A4-FC1E0901D2E6}.UI integration|Any CPU.ActiveCfg = UI integration|Any CPU
+		{445E9C39-D15D-45E6-B1A4-FC1E0901D2E6}.UI integration|Any CPU.Build.0 = UI integration|Any CPU
 		{97915852-6599-4978-AAB9-88253ED0BB86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{97915852-6599-4978-AAB9-88253ED0BB86}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97915852-6599-4978-AAB9-88253ED0BB86}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97915852-6599-4978-AAB9-88253ED0BB86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97915852-6599-4978-AAB9-88253ED0BB86}.UI integration|Any CPU.ActiveCfg = UI integration|Any CPU
+		{97915852-6599-4978-AAB9-88253ED0BB86}.UI integration|Any CPU.Build.0 = UI integration|Any CPU
 		{0BA368DF-EC8D-45DA-97CC-DF51E2FCE79C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0BA368DF-EC8D-45DA-97CC-DF51E2FCE79C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0BA368DF-EC8D-45DA-97CC-DF51E2FCE79C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0BA368DF-EC8D-45DA-97CC-DF51E2FCE79C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BA368DF-EC8D-45DA-97CC-DF51E2FCE79C}.UI integration|Any CPU.ActiveCfg = UI integration|Any CPU
+		{0BA368DF-EC8D-45DA-97CC-DF51E2FCE79C}.UI integration|Any CPU.Build.0 = UI integration|Any CPU
+		{9C36D912-D7AD-4DD7-A232-134F920CC03B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C36D912-D7AD-4DD7-A232-134F920CC03B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C36D912-D7AD-4DD7-A232-134F920CC03B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C36D912-D7AD-4DD7-A232-134F920CC03B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C36D912-D7AD-4DD7-A232-134F920CC03B}.UI integration|Any CPU.ActiveCfg = UI integration|Any CPU
+		{9C36D912-D7AD-4DD7-A232-134F920CC03B}.UI integration|Any CPU.Build.0 = UI integration|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

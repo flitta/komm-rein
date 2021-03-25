@@ -342,3 +342,8 @@ healthchecksdb
 
 appsettings.Development.json
 /src/komm-rein.oidc/appsettings.Development.json
+/src/komm-rein.oidc/app.db
+/src/db-backub
+/src/db-data
+/src/komm-rein.oidc/app.db-shm
+/src/komm-rein.oidc/app.db-wal
