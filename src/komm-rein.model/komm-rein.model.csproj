@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>komm_rein.model</RootNamespace>
+    <Configurations>Debug;Release;UI integration</Configurations>
+  </PropertyGroup>
+
+</Project>

@@ -5,6 +5,8 @@
     <RootNamespace>komm_rein.api.test</RootNamespace>
 
     <IsPackable>false</IsPackable>
+
+    <Configurations>Debug;Release;UI integration</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
