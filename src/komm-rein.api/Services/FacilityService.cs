@@ -1,4 +1,4 @@
-﻿using komm_rein.api.Models;
+﻿using komm_rein.model;
 using komm_rein.api.Repositories;
 using System;
 using System.Collections.Generic;
@@ -155,6 +155,12 @@ namespace komm_rein.api.Services
                     slot.Status = SlotStatus.Free;
                 }
             }
+        }
+
+        public void Create(Facility newItem, string ownerSid)
+        {
+            newItem.AddCreatedInfo(ownerSid);
+            _repository.Create(newItem);
         }
     }
 }

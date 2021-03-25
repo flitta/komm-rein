@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace komm_rein.api.Models
+namespace komm_rein.model
 {
     public static class DateTimeHelper
     {

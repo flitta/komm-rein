@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using komm_rein.api.Models;
+using komm_rein.model;
 using komm_rein.api.Repositories;
 using komm_rein.api.Services;
 using Moq;
@@ -24,13 +24,32 @@ namespace komm_rein.api.test.Services
             }, 
             OpeningHours = new List<OpeningHours>
             { 
-                new() { From = new DateTime().AddHours(0), To = new DateTime().AddHours(24), DayOfWeek = Models.DayOfWeek.All }
+                new() { From = new DateTime().AddHours(0), To = new DateTime().AddHours(24), DayOfWeek = model.DayOfWeek.All }
             } 
         };
 
         readonly Mock<IFacilityRepository> _repo = new ();
 
         DateTime _fixedNowDate = new DateTime(2021, 3, 11);
+
+
+
+        [Fact]
+        public void TestCreate()
+        {
+            // Arrange
+            IFacilityService service = new FacilityService(_repo.Object);
+            Facility newItem = new() { Name = "Aylins Blumeneck" };
+
+            String testSid = "testsid";
+
+            // Act
+            service.Create(newItem, testSid);
+
+            // Assert
+            _repo.Verify(mock => mock.Create(newItem), Times.Once());
+            newItem.OwnerSid.Should().Be(testSid);
+        }
 
         [Fact]
         public void GetFacility_date_is_future()
@@ -68,7 +87,7 @@ namespace komm_rein.api.test.Services
             // Arrange
             _facility.OpeningHours = new List<OpeningHours>
             {
-                new () {From = new DateTime().AddHours(8), To = new DateTime().AddHours(20), DayOfWeek = Models.DayOfWeek.All},
+                new () {From = new DateTime().AddHours(8), To = new DateTime().AddHours(20), DayOfWeek = model.DayOfWeek.All},
             };
 
             _repo.Setup(x => x.GetById(_facility.ID)).Returns(_facility);
