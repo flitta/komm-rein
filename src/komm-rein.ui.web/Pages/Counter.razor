@@ -15,8 +15,32 @@
         try
         {
             var client = ClientFactory.CreateClient("ServerAPI");
+            var responseCreate = await client.PostAsJsonAsync($"Facility", new Facility() { Name = "Hannes Blumenecke" });
 
-            await client.PostAsJsonAsync($"Facility", new Facility() { Name = "Hannes Blumenecke" });
+            var newFacility = await responseCreate.Content.ReadFromJsonAsync<Facility>();
+
+            await client.PutAsJsonAsync($"Facility/{newFacility.ID}/settings", new FacilitySettings()
+            {
+                SlotSize = TimeSpan.FromMinutes(20),
+                MaxNumberofVisitors = 4,
+                CountingMode = CountingMode.HouseHolds
+
+            });
+
+            var responseSettings = await client.GetFromJsonAsync<FacilitySettings>($"Facility/{newFacility.ID}/settings");
+
+            await client.PutAsJsonAsync($"Facility/{newFacility.ID}/openinghours", new OpeningHours[]
+            {
+                new() { From = new DateTime().AddHours(7), To = new DateTime().AddHours(12), DayOfWeek = model.DayOfWeek.All },
+                new() { From = new DateTime().AddHours(15), To = new DateTime().AddHours(20), DayOfWeek = model.DayOfWeek.All }
+            });
+
+            var responseOpeningHours = await client.GetFromJsonAsync<OpeningHours[]>($"Facility/{newFacility.ID}/openinghours");
+
+
+
+
+
         }
         catch (AccessTokenNotAvailableException exception)
         {

@@ -43,21 +43,21 @@ namespace komm_rein.api.Controllers
             }
         }
 
-        [HttpPut("/{id}/settings")]
+        [HttpPut("{id}/settings")]
         public async Task<ActionResult<FacilitySettings>> Settings(Guid id, [FromBody] FacilitySettings value)
         {
             try
             {
                return  await _service.SetSettings(id, value, User.Sid());
             }
-            catch
+            catch(Exception ex)
             {
                 return BadRequest();
             }
         }
 
         // GET api/<ValuesController>/settings
-        [HttpGet("/{id}/settings")]
+        [HttpGet("{id}/settings")]
         public async Task<ActionResult<FacilitySettings>> Settings(Guid id)
         {
             try
@@ -71,7 +71,8 @@ namespace komm_rein.api.Controllers
         }
 
 
-        [HttpGet("/{id}/openinghours")]
+        [HttpGet("{id}/openinghours")]
+        [AllowAnonymous]
         public async Task<ActionResult<OpeningHours[]>> OpeningHours(Guid id)
         {
             try
@@ -84,7 +85,7 @@ namespace komm_rein.api.Controllers
             }
         }
 
-        [HttpPut("/{id}/openinghours")]
+        [HttpPut("{id}/openinghours")]
         public async Task<ActionResult<OpeningHours[]>> OpeningHours([FromBody] OpeningHours[] value, Guid id)
         {
             try
