@@ -40,18 +40,21 @@ namespace komm_rein.oidc.Services
               new Client
                 {
                     ClientId = CLIENT_WASM,
+                    ClientName = "Blazor WASM UI",
                     AllowedGrantTypes = GrantTypes.Code,
-                    RequirePkce = true,
                     RequireClientSecret = false,
+
                     AllowedCorsOrigins = { ids4Options.ClientUrl },
+                    RedirectUris = { $"{ids4Options.ClientUrl}/authentication/login-callback" },
+                    PostLogoutRedirectUris = { $"{ids4Options.ClientUrl}/authentication/logout-callback" },
+
                     AllowedScopes =
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         API_SCOPE_KOMM_REIN
                     },
-                    RedirectUris = { $"{ids4Options.ClientUrl}/authentication/login-callback" },
-                    PostLogoutRedirectUris = { $"{ids4Options.ClientUrl}/authentication/logout-callback" }
+                    
                 }
             })
             .AddAspNetIdentity<IdentityUser>();

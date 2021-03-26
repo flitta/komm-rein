@@ -1,3 +1,5 @@
+using komm_rein.api.Repositories;
+using komm_rein.api.Services;
 using komm_rein.model;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -36,12 +38,11 @@ namespace komm_rein.api
             services.AddAuthentication("Bearer")
                .AddJwtBearer("Bearer", options =>
                {
+                   Configuration.GetSection("JwtBearer").Bind(options);
                    options.TokenValidationParameters = new TokenValidationParameters
                    {
                        ValidateAudience = false
                    };
-
-                   Configuration.GetSection("JwtBearer").Bind(options);
                });
 
             services.AddSwaggerGen(c =>
@@ -63,11 +64,14 @@ namespace komm_rein.api
                 // this defines a CORS policy called "default"
                 options.AddPolicy("default", policy =>
                 {
-                    policy.WithOrigins("https://localhost:5003", "https://localhost:44374/")
+                    policy.WithOrigins("https://localhost:44374")
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });
             });
+
+            services.AddScoped<IFacilityRepository, FacilityRepository>();
+            services.AddScoped<IFacilityService, FacilityService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -93,7 +97,8 @@ namespace komm_rein.api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers()
-                    .RequireAuthorization("ApiScope");
+                    //.RequireAuthorization("ApiScope")
+                    ;
             });
         }
     }

@@ -17,9 +17,9 @@ namespace komm_rein.api.Services
             _repository = repository;
         }
                
-        public IEnumerable<Slot> GetAvailableSlots(Guid facilityId, DateTime selectedDate, DateTime currentTime)
+        public async ValueTask<IEnumerable<Slot>> GetAvailableSlots(Guid facilityId, DateTime selectedDate, DateTime currentTime)
         {
-            var facility = _repository.GetById(facilityId);
+            var facility = await _repository.GetById(facilityId);
             return GetAvailableSlots(facility, selectedDate, currentTime);
         }
 
@@ -70,32 +70,32 @@ namespace komm_rein.api.Services
             return result;
         }
 
-        public IEnumerable<Slot> GetSlotsForVisit(Guid facilityId, DateTime day, Visit visit, DateTime currentTime)
+        public async ValueTask<IEnumerable<Slot>> GetSlotsForVisit(Guid facilityId, DateTime day, Visit visit, DateTime currentTime)
         {
-            Facility facility = _repository.GetById(facilityId);
-            var slots = this.GetAvailableSlots(facilityId, day, currentTime);
-            ApplySlotStatus(slots, facility, day.Date, day.Date.AddDays(1), visit);
+            Facility facility = await _repository.GetById(facilityId);
+            var slots = await this.GetAvailableSlots(facilityId, day, currentTime);
+            await ApplySlotStatus(slots, facility, day.Date, day.Date.AddDays(1), visit);
 
             return slots;
         }
 
-        public void ApplySlotStatus(Slot slot, Facility facility, DateTime from, DateTime to)
+        public async Task ApplySlotStatus(Slot slot, Facility facility, DateTime from, DateTime to)
         {
-            ApplySlotStatus(new[] { slot }, facility, from, to);
+            await ApplySlotStatus(new[] { slot }, facility, from, to);
         }
 
-        public void ApplySlotStatus(IEnumerable<Slot> slots, Facility facility, DateTime from, DateTime to)
+        public async Task ApplySlotStatus(IEnumerable<Slot> slots, Facility facility, DateTime from, DateTime to)
         {
-            ApplySlotStatus(slots, facility, from, to, null);
+            await ApplySlotStatus(slots, facility, from, to, null);
         }
 
-        public void ApplySlotStatus(IEnumerable<Slot> slots, Facility facility, DateTime from, DateTime to, Visit newVisit)
+        public async Task ApplySlotStatus(IEnumerable<Slot> slots, Facility facility, DateTime from, DateTime to, Visit newVisit)
         {
             // different status when counting new (transient) visit
             bool crowdedIfFull = newVisit != null;
 
             // load existing visits
-            var visits = _repository.GetVisits(facility.ID, from, to);
+            var visits = await _repository.GetVisits(facility.ID, from, to);
 
             // add newVisit (transient) for evaluation
             if(newVisit != null)
@@ -157,10 +157,10 @@ namespace komm_rein.api.Services
             }
         }
 
-        public void Create(Facility newItem, string ownerSid)
+        public async Task Create(Facility newItem, string ownerSid)
         {
             newItem.AddCreatedInfo(ownerSid);
-            _repository.Create(newItem);
+            await _repository.Create(newItem);
         }
     }
 }

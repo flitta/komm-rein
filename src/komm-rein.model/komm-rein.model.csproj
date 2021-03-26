@@ -1,9 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>komm_rein.model</RootNamespace>
-    <Configurations>Debug;Release;UI integration</Configurations>
+    <Configurations>Debug;Release;UI integration;Backend only</Configurations>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="5.0.1" />
+  </ItemGroup>
 
 </Project>
