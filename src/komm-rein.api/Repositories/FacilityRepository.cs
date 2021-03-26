@@ -49,5 +49,22 @@ namespace komm_rein.api.Repositories
         {
             return await _dbContext.Facilities.Include(p => p.OpeningHours).SingleAsync(x => x.ID == id);
         }
+
+        public async ValueTask<Facility> GetByName(string name)
+        {
+            return await _dbContext.Facilities
+                    .Include(p => p.OpeningHours)
+                    .Include(p => p.Settings)
+                .FirstAsync(x => x.Name == name);
+        }
+
+        public async ValueTask<List<Facility>> GetAll()
+        {
+            return await _dbContext.Facilities
+                  .Include(p => p.OpeningHours)
+                  .Include(p => p.Settings)
+                  .Take(100)  
+              .ToListAsync();
+        }
     }
 }

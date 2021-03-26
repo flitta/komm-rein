@@ -20,5 +20,9 @@ namespace komm_rein.api.Repositories
         ValueTask<Facility> SaveItem(Facility item);
 
         ValueTask<Facility> GetWithOpeningHours(Guid id);
+        
+        ValueTask<Facility> GetByName(string name);
+
+        ValueTask<List<Facility>> GetAll();
     }
 }
