@@ -19,6 +19,8 @@ namespace komm_rein.api.Services
         ValueTask<IList<OpeningHours>> GetOpeningHours(Guid facilityId);
 
         ValueTask<IList<OpeningHours>> SetOpeningHours(Guid facilityId, OpeningHours[] value, string ownerSid);
+        ValueTask<Facility> GetByName(string name);
+        ValueTask<List<Facility>> GetAll();
 
         //Task<IEnumerable<Slot>> GetAvailableSlots(Facility facility, DateTime selectedDate, DateTime currentTime);
 

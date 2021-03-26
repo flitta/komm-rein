@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Security;
+using Microsoft.AspNetCore.Mvc;
 
 namespace komm_rein.api.Services
 {
@@ -212,6 +213,17 @@ namespace komm_rein.api.Services
             var result = await _repository.SaveItem(facility);
 
             return result.OpeningHours;
+        }
+
+        public async ValueTask<Facility> GetByName(string name)
+        {
+            return await _repository.GetByName(name);
+        }
+
+        public async ValueTask<List<Facility>> GetAll()
+        {
+
+            return await _repository.GetAll();
         }
     }
 }

@@ -29,6 +29,35 @@ namespace komm_rein.api.Controllers
             _service = service;
         }
 
+
+        [HttpGet("{name}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<Facility>> Get(string name)
+        {
+            try
+            {
+                return await _service.GetByName(name);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+              
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<ActionResult<List<Facility>>> Get()
+        {
+            try
+            {
+                return await _service.GetAll();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
         [HttpPost]
         public async Task<ActionResult<Facility>> Post([FromBody] Facility value)
         {
@@ -50,7 +79,7 @@ namespace komm_rein.api.Controllers
             {
                return  await _service.SetSettings(id, value, User.Sid());
             }
-            catch(Exception ex)
+            catch()
             {
                 return BadRequest();
             }
