@@ -1,4 +1,5 @@
 ﻿using komm_rein.model;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,15 @@ namespace komm_rein.api.Services
 {
     public interface IFacilityService
     {
-        Task Create(Facility newItem, string ownerSid);
+        ValueTask<Facility> Create(Facility newItem, string ownerSid);
+
+        ValueTask<FacilitySettings> SetSettings(FacilitySettings value, Guid facilityId);
+
+        ValueTask<FacilitySettings> GetSettings(Guid facilityId);
+
+        ValueTask<OpeningHours> GetOpeningHours(Guid facilityId);
+        
+        ValueTask<OpeningHours> SetOpeningHours(OpeningHours[] value, Guid facilityId);
 
         //Task<IEnumerable<Slot>> GetAvailableSlots(Facility facility, DateTime selectedDate, DateTime currentTime);
 
