@@ -12,13 +12,13 @@ namespace komm_rein.api.Services
     {
         ValueTask<Facility> Create(Facility newItem, string ownerSid);
 
-        ValueTask<FacilitySettings> SetSettings(FacilitySettings value, Guid facilityId);
+        ValueTask<FacilitySettings> SetSettings(Guid facilityId, FacilitySettings value, string ownerSid);
 
-        ValueTask<FacilitySettings> GetSettings(Guid facilityId);
+        ValueTask<FacilitySettings> GetSettings(Guid facilityId, string ownerSid);
 
-        ValueTask<OpeningHours> GetOpeningHours(Guid facilityId);
-        
-        ValueTask<OpeningHours> SetOpeningHours(OpeningHours[] value, Guid facilityId);
+        ValueTask<IList<OpeningHours>> GetOpeningHours(Guid facilityId);
+
+        ValueTask<IList<OpeningHours>> SetOpeningHours(Guid facilityId, OpeningHours[] value, string ownerSid);
 
         //Task<IEnumerable<Slot>> GetAvailableSlots(Facility facility, DateTime selectedDate, DateTime currentTime);
 

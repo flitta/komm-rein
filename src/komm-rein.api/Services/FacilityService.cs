@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Security;
 
 namespace komm_rein.api.Services
 {
@@ -164,24 +165,53 @@ namespace komm_rein.api.Services
             return newItem;
         }
 
-        public ValueTask<FacilitySettings> SetSettings(FacilitySettings value, Guid facilityId)
+        public async ValueTask<FacilitySettings> SetSettings(Guid facilityId, FacilitySettings value, string ownerSid)
         {
-            throw new NotImplementedException();
+            var facility = await _repository.GetWithSettings(facilityId);
+            if(facility.OwnerSid != ownerSid)
+            {
+                throw new SecurityException();
+            }
+
+            facility.Settings = value;
+            
+            var result = await _repository.SaveItem(facility);
+
+            return result.Settings;
         }
 
-        public ValueTask<FacilitySettings> GetSettings(Guid facilityId)
+        public async ValueTask<FacilitySettings> GetSettings(Guid facilityId, string ownerSid)
         {
-            throw new NotImplementedException();
+
+            var facility = await _repository.GetWithSettings(facilityId);
+
+            if (facility.OwnerSid != ownerSid)
+            {
+                throw new SecurityException();
+            }
+
+            return facility.Settings;
         }
 
-        public ValueTask<OpeningHours> GetOpeningHours(Guid facilityId)
+        public async ValueTask<IList<OpeningHours>> GetOpeningHours(Guid facilityId)
         {
-            throw new NotImplementedException();
+            var facility = await _repository.GetWithOpeningHours(facilityId);
+            return facility.OpeningHours;
         }
 
-        public ValueTask<OpeningHours> SetOpeningHours(OpeningHours[] value, Guid facilityId)
+        public async ValueTask<IList<OpeningHours>> SetOpeningHours(Guid facilityId, OpeningHours[] value, string ownerSid)
         {
-            throw new NotImplementedException();
+            var facility = await _repository.GetWithOpeningHours(facilityId);
+            if (facility.OwnerSid != ownerSid)
+            {
+                throw new SecurityException();
+            }
+
+            facility.OpeningHours = value;
+
+            var result = await _repository.SaveItem(facility);
+
+            return result.OpeningHours;
         }
     }
 }

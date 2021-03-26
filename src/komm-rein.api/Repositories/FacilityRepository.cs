@@ -23,6 +23,13 @@ namespace komm_rein.api.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
+        public async ValueTask<Facility> SaveItem(Facility item)
+        {
+            _dbContext.Update(item);
+            await _dbContext.SaveChangesAsync();
+            return item;
+        }
+
         public async ValueTask<Facility> GetById(Guid id)
         {
             return await _dbContext.Facilities.FindAsync(id);
@@ -31,6 +38,16 @@ namespace komm_rein.api.Repositories
         public async ValueTask<IEnumerable<Visit>> GetVisits(Guid facilityId, DateTime from, DateTime to)
         {
             return await _dbContext.Visits.Where(v => v.Facility.ID == facilityId && v.From >= from && v.To <= to).ToListAsync();
+        }
+
+        public ValueTask<Facility> GetWithSettings(Guid facilityId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ValueTask<Facility> GetWithOpeningHours(Guid id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
