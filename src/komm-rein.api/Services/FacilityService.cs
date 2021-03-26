@@ -157,10 +157,31 @@ namespace komm_rein.api.Services
             }
         }
 
-        public async Task Create(Facility newItem, string ownerSid)
+        public async ValueTask<Facility> Create(Facility newItem, string ownerSid)
         {
             newItem.AddCreatedInfo(ownerSid);
             await _repository.Create(newItem);
+            return newItem;
+        }
+
+        public ValueTask<FacilitySettings> SetSettings(FacilitySettings value, Guid facilityId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ValueTask<FacilitySettings> GetSettings(Guid facilityId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ValueTask<OpeningHours> GetOpeningHours(Guid facilityId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ValueTask<OpeningHours> SetOpeningHours(OpeningHours[] value, Guid facilityId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -19,7 +19,7 @@ namespace komm_rein.api.Controllers
     {
         private readonly ILogger<FacilityController> _logger;
         private readonly IFacilityService _service;
-        
+
         public FacilityController(
             IFacilityService service,
             ILogger<FacilityController> logger
@@ -29,39 +29,72 @@ namespace komm_rein.api.Controllers
             _service = service;
         }
 
-        // GET: api/<ValuesController>
-        [HttpGet]
-        public IEnumerable<Facility> Get()
-        {
-            return new []{ new Facility { } };
-        }
-
-        // GET api/<ValuesController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<ValuesController>
         [HttpPost]
-        public async ValueTask<Facility> Post([FromBody] Facility value)
+        public async Task<ActionResult<Facility>> Post([FromBody] Facility value)
         {
-            await _service.Create(value, User.Sid());
-            
-            return new() {ID= value.ID ,Name = value.Name };
+            try
+            {
+                await _service.Create(value, User.Sid());
+                return new Facility() { ID = value.ID, Name = value.Name };
+            }
+            catch
+            {
+                return BadRequest();
+            }
         }
 
-        // PUT api/<ValuesController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] Facility value)
+        [HttpPut("/{id}/settings")]
+        public async Task<ActionResult<FacilitySettings>> Settings(Guid id, [FromBody] FacilitySettings value)
         {
+            try
+            {
+               return  await _service.SetSettings(value, id);
+            }
+            catch
+            {
+                return BadRequest();
+            }
         }
 
-        // DELETE api/<ValuesController>/5
-        [HttpDelete("{id}")]
-        public void Delete(Guid id)
+        // GET api/<ValuesController>/settings
+        [HttpGet("/{id}/settings")]
+        public async Task<ActionResult<FacilitySettings>> Settings(Guid id)
         {
+            try
+            {
+                return await _service.GetSettings(id);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+
+        [HttpGet("/{id}/openinghours")]
+        public async Task<ActionResult<OpeningHours>> OpeningHours(Guid id)
+        {
+            try
+            {
+                return await _service.GetOpeningHours(id);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPut("/{id}/openinghours")]
+        public async Task<ActionResult<OpeningHours>> OpeningHours([FromBody] OpeningHours[] value, Guid id)
+        {
+            try
+            {
+                return await _service.SetOpeningHours(value, id);
+            }
+            catch
+            {
+                return BadRequest();
+            }
         }
     }
 }
