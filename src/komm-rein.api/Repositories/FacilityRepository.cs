@@ -40,14 +40,14 @@ namespace komm_rein.api.Repositories
             return await _dbContext.Visits.Where(v => v.Facility.ID == facilityId && v.From >= from && v.To <= to).ToListAsync();
         }
 
-        public ValueTask<Facility> GetWithSettings(Guid facilityId)
+        public async ValueTask<Facility> GetWithSettings(Guid id)
         {
-            throw new NotImplementedException();
+            return await _dbContext.Facilities.Include(p => p.Settings).SingleAsync(x => x.ID == id);
         }
 
-        public ValueTask<Facility> GetWithOpeningHours(Guid id)
+        public async ValueTask<Facility> GetWithOpeningHours(Guid id)
         {
-            throw new NotImplementedException();
+            return await _dbContext.Facilities.Include(p => p.OpeningHours).SingleAsync(x => x.ID == id);
         }
     }
 }
