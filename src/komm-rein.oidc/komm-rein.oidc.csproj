@@ -1,10 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <UserSecretsId>aspnet-komm_rein.oidc-ABD27554-DE78-4203-9278-D4FC29AB776D</UserSecretsId>
     <RootNamespace>komm_rein.oidc</RootNamespace>
-    <Configurations>Debug;Release;UI integration</Configurations>
+    <Configurations>Debug;Release;UI integration;Backend only</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

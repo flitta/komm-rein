@@ -9,10 +9,10 @@ namespace komm_rein.api.Repositories
 {
     public interface IFacilityRepository
     {
-        public Facility GetById(Guid id);
+        public ValueTask<Facility> GetById(Guid id);
 
-        public IEnumerable<Visit> GetVisits(Guid facilityId, DateTime from, DateTime to);
+        public ValueTask<IEnumerable<Visit>> GetVisits(Guid facilityId, DateTime from, DateTime to);
 
-        public void Create(Facility item);
+        public Task Create(Facility item);
     }
 }

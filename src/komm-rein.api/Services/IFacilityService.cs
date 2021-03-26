@@ -9,18 +9,18 @@ namespace komm_rein.api.Services
 {
     public interface IFacilityService
     {
-        void Create(Facility newItem, string ownerSid);
+        Task Create(Facility newItem, string ownerSid);
 
-        IEnumerable<Slot> GetAvailableSlots(Facility facility, DateTime selectedDate, DateTime currentTime);
+        //Task<IEnumerable<Slot>> GetAvailableSlots(Facility facility, DateTime selectedDate, DateTime currentTime);
 
-        IEnumerable<Slot> GetAvailableSlots(Guid facilityId, DateTime selectedDate, DateTime currentTime);
-       
-        void ApplySlotStatus(IEnumerable<Slot> slots, Facility facility, DateTime from, DateTime to, Visit newVisit);
+        //Task<IEnumerable<Slot>> GetAvailableSlots(Guid facilityId, DateTime selectedDate, DateTime currentTime);
 
-        void ApplySlotStatus(IEnumerable<Slot> slots, Facility facility, DateTime from, DateTime to);
+        //Task ApplySlotStatus(IEnumerable<Slot> slots, Facility facility, DateTime from, DateTime to, Visit newVisit);
 
-        void ApplySlotStatus(Slot slot, Facility facility, DateTime from, DateTime to);
+        //Task ApplySlotStatus(IEnumerable<Slot> slots, Facility facility, DateTime from, DateTime to);
 
-        IEnumerable<Slot> GetSlotsForVisit(Guid facilityId, DateTime day, Visit visit, DateTime currentTime);
+        //Task ApplySlotStatus(Slot slot, Facility facility, DateTime from, DateTime to);
+
+        //Task<IEnumerable<Slot>> GetSlotsForVisit(Guid facilityId, DateTime day, Visit visit, DateTime currentTime);
     }
 }

@@ -8,9 +8,11 @@ using komm_rein.api.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace komm_rein.api.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class FacilityController : ControllerBase
@@ -18,7 +20,10 @@ namespace komm_rein.api.Controllers
         private readonly ILogger<FacilityController> _logger;
         private readonly IFacilityService _service;
         
-        public FacilityController(IFacilityService service,  ILogger<FacilityController> logger)
+        public FacilityController(
+            IFacilityService service,
+            ILogger<FacilityController> logger
+            )
         {
             _logger = logger;
             _service = service;
@@ -40,13 +45,11 @@ namespace komm_rein.api.Controllers
 
         // POST api/<ValuesController>
         [HttpPost]
-        public Facility Post([FromBody] Facility value)
+        public async ValueTask<Facility> Post([FromBody] Facility value)
         {
-            var sid = User.Claims.First(x => x.Type == ClaimTypes.Sid);
+            await _service.Create(value, User.Sid());
             
-            _service.Create(value, sid.Value);
-
-            return value;
+            return new() {ID= value.ID ,Name = value.Name };
         }
 
         // PUT api/<ValuesController>/5

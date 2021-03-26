@@ -20,8 +20,6 @@ namespace komm_rein.model
 
     public class OpeningHours : ContextItem
     {
-        public Guid ID { get; set; }
-
         public DayOfWeek DayOfWeek { get; set; }
 
         public DateTime From { get; set; }

@@ -1,16 +1,27 @@
 ﻿@page "/counter"
+@inject IHttpClientFactory ClientFactory
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using komm_rein.model
 
 <h1>Counter</h1>
 
-<p>Current count: @currentCount</p>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<button class="btn btn-primary" @onclick="RunAction">Click me</button>
 
-@code {
-    private int currentCount = 0;
-
-    private void IncrementCount()
+@code
+{
+    private async void RunAction()
     {
-        currentCount++;
+        try
+        {
+            var client = ClientFactory.CreateClient("ServerAPI");
+
+            await client.PostAsJsonAsync($"Facility", new Facility() { Name = "Aylins Blumenecke" });
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+
     }
 }

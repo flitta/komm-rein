@@ -6,7 +6,7 @@
     <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
     <UserSecretsId>aba26a9b-e773-4787-af07-d31c54f3cda5</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <Configurations>Debug;Release;UI integration</Configurations>
+    <Configurations>Debug;Release;UI integration;Backend only</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
