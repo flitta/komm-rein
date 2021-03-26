@@ -48,7 +48,7 @@ namespace komm_rein.api.Controllers
         {
             try
             {
-               return  await _service.SetSettings(value, id);
+               return  await _service.SetSettings(id, value, User.Sid());
             }
             catch
             {
@@ -62,7 +62,7 @@ namespace komm_rein.api.Controllers
         {
             try
             {
-                return await _service.GetSettings(id);
+                return await _service.GetSettings(id, User.Sid());
             }
             catch
             {
@@ -72,11 +72,11 @@ namespace komm_rein.api.Controllers
 
 
         [HttpGet("/{id}/openinghours")]
-        public async Task<ActionResult<OpeningHours>> OpeningHours(Guid id)
+        public async Task<ActionResult<OpeningHours[]>> OpeningHours(Guid id)
         {
             try
             {
-                return await _service.GetOpeningHours(id);
+                return (await _service.GetOpeningHours(id)).ToArray();
             }
             catch
             {
@@ -85,11 +85,11 @@ namespace komm_rein.api.Controllers
         }
 
         [HttpPut("/{id}/openinghours")]
-        public async Task<ActionResult<OpeningHours>> OpeningHours([FromBody] OpeningHours[] value, Guid id)
+        public async Task<ActionResult<OpeningHours[]>> OpeningHours([FromBody] OpeningHours[] value, Guid id)
         {
             try
             {
-                return await _service.SetOpeningHours(value, id);
+                return (await _service.SetOpeningHours(id, value, User.Sid())).ToArray();
             }
             catch
             {

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using System.Security;
 
 namespace komm_rein.api.test.Services
 {
@@ -32,23 +33,162 @@ namespace komm_rein.api.test.Services
 
         DateTime _fixedNowDate = new DateTime(2021, 3, 11);
 
+        [Fact]
+        public async Task TestGetOpeningHours()
+        {
+            // Arrange
+
+            var openingHours = new List<OpeningHours>
+                {
+                    new () { From = new DateTime().AddHours(7), To = new DateTime().AddHours(12), DayOfWeek = model.DayOfWeek.All },
+                    new () { From = new DateTime().AddHours(15), To = new DateTime().AddHours(20), DayOfWeek = model.DayOfWeek.All }
+                };
+
+            Facility testItem = new() { ID = Guid.NewGuid(), Name = "Hannes Blumeneck", OwnerSid = "testsid", OpeningHours = openingHours };
+            
+            _repo.Setup(x => x.GetWithOpeningHours(testItem.ID)).ReturnsAsync(testItem);
+
+            IFacilityService service = new FacilityService(_repo.Object);
+
+            // Act
+            var result = await service.GetOpeningHours(testItem.ID);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().HaveCount(openingHours.Count);
+            result.Should().ContainEquivalentOf(openingHours.First());
+            result.Should().ContainEquivalentOf(openingHours.Last());
+        }
+
+        [Fact]
+        public async Task TestSetOpeningHours()
+        {
+            // Arrange
+
+            var openingHours = new List<OpeningHours>
+                {
+                    new () { From = new DateTime().AddHours(7), To = new DateTime().AddHours(12), DayOfWeek = model.DayOfWeek.All },
+                    new () { From = new DateTime().AddHours(15), To = new DateTime().AddHours(20), DayOfWeek = model.DayOfWeek.All }
+                };
+
+            Facility testItem = new() { ID = Guid.NewGuid(), Name = "Hannes Blumeneck", OwnerSid = "testsid"};
+
+            _repo.Setup(x => x.GetWithOpeningHours(testItem.ID)).ReturnsAsync(testItem);
+            _repo.Setup(x => x.SaveItem(testItem)).ReturnsAsync(testItem);
+
+            IFacilityService service = new FacilityService(_repo.Object);
+
+            // Act
+            var result = await service.SetOpeningHours(testItem.ID, openingHours.ToArray(), testItem.OwnerSid);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().HaveCount(openingHours.Count);
+            result.Should().ContainEquivalentOf(openingHours.First());
+            result.Should().ContainEquivalentOf(openingHours.Last());
+        }
+
+        [Fact]
+        public void TestSetOpeningHoursSecurity()
+        {
+            // Arrange
+            Facility testItem = new() { ID = Guid.NewGuid(), Name = "Hannes Blumeneck", OwnerSid = "testsid" };
+            Facility testItem2 = new() { ID = Guid.NewGuid(), Name = "Salon Sahra", OwnerSid = "testsid2" };
+            
+            _repo.Setup(x => x.GetWithOpeningHours(testItem.ID)).ReturnsAsync(testItem);
+
+            IFacilityService service = new FacilityService(_repo.Object);
+
+            // Act
+            Func<Task> test = async () => await service.SetOpeningHours(testItem.ID, new OpeningHours[0], testItem2.OwnerSid);
+
+            // Assert
+            test.Should().Throw<SecurityException>();
+
+        }
 
 
         [Fact]
-        public void TestCreate()
+        public async Task TestGetSettings()
+        {
+            // Arrange
+            FacilitySettings newSettings = new() { SlotSize = TimeSpan.FromMinutes(15), MaxNumberofVisitors = 4 };
+            Facility testItem = new() { ID = Guid.NewGuid(), Name = "Hannes Blumeneck", OwnerSid = "testsid", Settings = newSettings };
+            Facility testItem2 = new() { ID = Guid.NewGuid(), Name = "Salon Sahra", OwnerSid = "testsid2" };
+           
+            _repo.Setup(x => x.GetWithSettings(testItem.ID)).ReturnsAsync(testItem);
+
+            IFacilityService service = new FacilityService(_repo.Object);
+
+            // Act
+            var result =  await service.GetSettings(testItem.ID, testItem.OwnerSid);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.SlotSize.Should().Be(newSettings.SlotSize);
+        }
+
+        [Fact]
+        public void TestSetSettingSecurity()
+        {
+            // Arrange
+            Facility testItem = new() { ID = Guid.NewGuid(), Name = "Hannes Blumeneck", OwnerSid = "testsid" };
+            Facility testItem2 = new() { ID = Guid.NewGuid(), Name = "Salon Sahra", OwnerSid = "testsid2" };
+            FacilitySettings newSettings = new() { SlotSize = TimeSpan.FromMinutes(15), MaxNumberofVisitors = 4 };
+           
+            _repo.Setup(x => x.GetWithSettings(testItem.ID)).ReturnsAsync(testItem);
+
+            IFacilityService service = new FacilityService(_repo.Object);
+
+            // Act
+            Func<Task> test = async () => await service.SetSettings(testItem.ID, newSettings, testItem2.OwnerSid);
+
+            // Assert
+            test.Should().Throw<SecurityException>();
+          
+        }
+
+        [Fact]
+        public async Task TestSetSetting()
+        {
+            // Arrange
+            Facility testItem = new() { ID = Guid.NewGuid(), Name = "Hannes Blumeneck", OwnerSid = "testsid" };
+            FacilitySettings newSettings = new() { SlotSize = TimeSpan.FromMinutes(15), MaxNumberofVisitors = 4 };
+
+            _repo.Setup(x => x.GetWithSettings(testItem.ID)).ReturnsAsync(testItem);
+            _repo.Setup(x => x.SaveItem(testItem)).ReturnsAsync(testItem);
+
+            var service = new FacilityService(_repo.Object);
+
+            // Act
+            var result = await service.SetSettings(testItem.ID, newSettings, testItem.OwnerSid);
+
+            // Assert
+
+            // should save
+            _repo.Verify(mock => mock.SaveItem(testItem), Times.Once());
+
+            testItem.Settings.Should().NotBeNull();
+            testItem.Settings.SlotSize.Should().Be(newSettings.SlotSize);
+        }
+
+
+        [Fact]
+        public async Task TestCreate()
         {
             // Arrange
             IFacilityService service = new FacilityService(_repo.Object);
-            Facility newItem = new() { Name = "Aylins Blumeneck" };
+            Facility newItem = new() { Name = "Hannes Blumeneck" };
 
             String testSid = "testsid";
 
             // Act
-            service.Create(newItem, testSid);
+            var result = await service.Create(newItem, testSid);
 
             // Assert
             _repo.Verify(mock => mock.Create(newItem), Times.Once());
             newItem.OwnerSid.Should().Be(testSid);
+            result.Should().Be(newItem);
         }
 
         [Fact]
