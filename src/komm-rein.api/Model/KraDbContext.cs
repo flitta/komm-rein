@@ -20,9 +20,11 @@ namespace komm_rein.model
         {
         }
 
-        //protected override void OnModelCreating(ModelBuilder modelBuilder)
-        //{
-        //    base.OnModelCreating(modelBuilder);
-        //}
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Facility>()
+                .HasIndex(p => new { p.Name })
+                .IsUnique();
+        }
     }
 }

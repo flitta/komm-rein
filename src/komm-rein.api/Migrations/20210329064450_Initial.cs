@@ -3,10 +3,39 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace komm_rein.api.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Address",
+                columns: table => new
+                {
+                    ID = table.Column<Guid>(type: "uuid", nullable: false),
+                    ContactName = table.Column<string>(type: "text", nullable: true),
+                    ContactEmail = table.Column<string>(type: "text", nullable: true),
+                    ContactPhone = table.Column<string>(type: "text", nullable: true),
+                    AdditionalInfo = table.Column<string>(type: "text", nullable: true),
+                    Street_1 = table.Column<string>(type: "text", nullable: true),
+                    Street_2 = table.Column<string>(type: "text", nullable: true),
+                    Street_3 = table.Column<string>(type: "text", nullable: true),
+                    ZipCode = table.Column<string>(type: "text", nullable: true),
+                    Region = table.Column<string>(type: "text", nullable: true),
+                    City = table.Column<string>(type: "text", nullable: true),
+                    Country = table.Column<string>(type: "text", nullable: true),
+                    OwnerSid = table.Column<string>(type: "text", nullable: true),
+                    CreatedBySid = table.Column<string>(type: "text", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedBySid = table.Column<string>(type: "text", nullable: true),
+                    UpdatedDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    DeletedBySid = table.Column<string>(type: "text", nullable: true),
+                    DeleteddDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Address", x => x.ID);
+                });
+
             migrationBuilder.CreateTable(
                 name: "FacilitySettings",
                 columns: table => new
@@ -35,7 +64,11 @@ namespace komm_rein.api.Migrations
                 {
                     ID = table.Column<Guid>(type: "uuid", nullable: false),
                     SettingsID = table.Column<Guid>(type: "uuid", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    IsLive = table.Column<bool>(type: "boolean", nullable: false),
+                    MainAddressID = table.Column<Guid>(type: "uuid", nullable: true),
+                    BillingAddressID = table.Column<Guid>(type: "uuid", nullable: true),
                     OwnerSid = table.Column<string>(type: "text", nullable: true),
                     CreatedBySid = table.Column<string>(type: "text", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
@@ -47,6 +80,18 @@ namespace komm_rein.api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Facilities", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Facilities_Address_BillingAddressID",
+                        column: x => x.BillingAddressID,
+                        principalTable: "Address",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Facilities_Address_MainAddressID",
+                        column: x => x.MainAddressID,
+                        principalTable: "Address",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Facilities_FacilitySettings_SettingsID",
                         column: x => x.SettingsID,
@@ -138,6 +183,22 @@ namespace komm_rein.api.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Facilities_BillingAddressID",
+                table: "Facilities",
+                column: "BillingAddressID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Facilities_MainAddressID",
+                table: "Facilities",
+                column: "MainAddressID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Facilities_Name",
+                table: "Facilities",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Facilities_SettingsID",
                 table: "Facilities",
                 column: "SettingsID");
@@ -171,6 +232,9 @@ namespace komm_rein.api.Migrations
 
             migrationBuilder.DropTable(
                 name: "Facilities");
+
+            migrationBuilder.DropTable(
+                name: "Address");
 
             migrationBuilder.DropTable(
                 name: "FacilitySettings");

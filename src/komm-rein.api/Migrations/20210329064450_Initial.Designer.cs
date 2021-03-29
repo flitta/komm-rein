@@ -10,8 +10,8 @@ using komm_rein.model;
 namespace komm_rein.api.Migrations
 {
     [DbContext(typeof(KraDbContext))]
-    [Migration("20210325084716_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20210329064450_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,10 +21,78 @@ namespace komm_rein.api.Migrations
                 .HasAnnotation("ProductVersion", "5.0.4")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+            modelBuilder.Entity("komm_rein.model.Address", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AdditionalInfo")
+                        .HasColumnType("text");
+
+                    b.Property<string>("City")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ContactEmail")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ContactName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ContactPhone")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Country")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CreatedBySid")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("DeletedBySid")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("DeleteddDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("OwnerSid")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Region")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Street_1")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Street_2")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Street_3")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UpdatedBySid")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("ZipCode")
+                        .HasColumnType("text");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Address");
+                });
+
             modelBuilder.Entity("komm_rein.model.Facility", b =>
                 {
                     b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("BillingAddressID")
                         .HasColumnType("uuid");
 
                     b.Property<string>("CreatedBySid")
@@ -39,7 +107,17 @@ namespace komm_rein.api.Migrations
                     b.Property<DateTime?>("DeleteddDate")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsLive")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("MainAddressID")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("OwnerSid")
@@ -55,6 +133,13 @@ namespace komm_rein.api.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("BillingAddressID");
+
+                    b.HasIndex("MainAddressID");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.HasIndex("SettingsID");
 
@@ -239,9 +324,21 @@ namespace komm_rein.api.Migrations
 
             modelBuilder.Entity("komm_rein.model.Facility", b =>
                 {
+                    b.HasOne("komm_rein.model.Address", "BillingAddress")
+                        .WithMany()
+                        .HasForeignKey("BillingAddressID");
+
+                    b.HasOne("komm_rein.model.Address", "MainAddress")
+                        .WithMany()
+                        .HasForeignKey("MainAddressID");
+
                     b.HasOne("komm_rein.model.FacilitySettings", "Settings")
                         .WithMany()
                         .HasForeignKey("SettingsID");
+
+                    b.Navigation("BillingAddress");
+
+                    b.Navigation("MainAddress");
 
                     b.Navigation("Settings");
                 });
