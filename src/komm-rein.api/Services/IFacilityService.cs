@@ -10,28 +10,20 @@ namespace komm_rein.api.Services
 {
     public interface IFacilityService
     {
-        ValueTask<Facility> Create(Facility newItem, string ownerSid);
+        ValueTask<Facility> Create(Facility newItem, string sid);
 
-        ValueTask<FacilitySettings> SetSettings(Guid facilityId, FacilitySettings value, string ownerSid);
+        ValueTask<Facility> Update(Facility item, string sid);
+
+        ValueTask<FacilitySettings> SetSettings(Guid facilityId, FacilitySettings value, string sid);
 
         ValueTask<FacilitySettings> GetSettings(Guid facilityId, string ownerSid);
 
         ValueTask<IList<OpeningHours>> GetOpeningHours(Guid facilityId);
 
-        ValueTask<IList<OpeningHours>> SetOpeningHours(Guid facilityId, OpeningHours[] value, string ownerSid);
+        ValueTask<IList<OpeningHours>> SetOpeningHours(Guid facilityId, OpeningHours[] value, string sid);
+
         ValueTask<Facility> GetByName(string name);
+
         ValueTask<List<Facility>> GetAll();
-
-        //Task<IEnumerable<Slot>> GetAvailableSlots(Facility facility, DateTime selectedDate, DateTime currentTime);
-
-        //Task<IEnumerable<Slot>> GetAvailableSlots(Guid facilityId, DateTime selectedDate, DateTime currentTime);
-
-        //Task ApplySlotStatus(IEnumerable<Slot> slots, Facility facility, DateTime from, DateTime to, Visit newVisit);
-
-        //Task ApplySlotStatus(IEnumerable<Slot> slots, Facility facility, DateTime from, DateTime to);
-
-        //Task ApplySlotStatus(Slot slot, Facility facility, DateTime from, DateTime to);
-
-        //Task<IEnumerable<Slot>> GetSlotsForVisit(Guid facilityId, DateTime day, Visit visit, DateTime currentTime);
     }
 }

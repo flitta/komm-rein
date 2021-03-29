@@ -164,13 +164,44 @@ namespace komm_rein.api.Services
             // create new item form input
             Facility facility = new() { 
                 Name = newItem.Name,
-                //...
-            };
 
+                // lets use the dto here
+                MainAddress = newItem.MainAddress
+            };
 
             facility.AddCreatedInfo(ownerSid);
             
             await _repository.Create(facility);
+            return facility;
+        }
+
+        public async ValueTask<Facility> Update(Facility item, string sid)
+        {
+            var facility = await _repository.GetById(item.ID);
+            if (facility.OwnerSid != sid)
+            {
+                throw new SecurityException();
+            }
+
+            // update properties and address
+            facility.IsLive = item.IsLive;
+            facility.Name = item.Name;
+            facility.MainAddress.AdditionalInfo = item.MainAddress.AdditionalInfo;
+            facility.MainAddress.City = item.MainAddress.City;
+            facility.MainAddress.ContactEmail = item.MainAddress.ContactEmail;
+            facility.MainAddress.ContactName = item.MainAddress.ContactName;
+            facility.MainAddress.ContactPhone = item.MainAddress.ContactPhone;
+            facility.MainAddress.Country = item.MainAddress.Country;
+            facility.MainAddress.Region = item.MainAddress.Region;
+            facility.MainAddress.Street_1 = item.MainAddress.Street_1;
+            facility.MainAddress.Street_2 = item.MainAddress.Street_2;
+            facility.MainAddress.Street_3 = item.MainAddress.Street_3;
+            facility.MainAddress.ZipCode = item.MainAddress.ZipCode;
+
+            facility.AddupdatedInfo(sid);
+
+            await _repository.SaveItem(facility);
+
             return facility;
         }
 
@@ -233,5 +264,7 @@ namespace komm_rein.api.Services
 
             return await _repository.GetAll();
         }
+
+       
     }
 }

@@ -16,5 +16,13 @@ namespace komm_rein.model
 
             return item;
         }
+
+        public static ContextItem AddupdatedInfo(this ContextItem item, string sid)
+        {
+            item.UpdatedDate = DateTime.Now;
+            item.UpdatedBySid = sid;
+
+            return item;
+        }
     }
 }
