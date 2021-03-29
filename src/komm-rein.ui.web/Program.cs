@@ -1,3 +1,6 @@
+using Blazorise;
+using Blazorise.AntDesign;
+using Blazorise.Icons.FontAwesome;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -17,6 +20,14 @@ namespace komm_rein.ui.web
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
+
+            builder.Services.AddBlazorise(options =>
+                 {
+                     options.ChangeTextOnKeyPress = true;
+                 })
+              .AddAntDesignProviders()
+              .AddFontAwesomeIcons();
+
             builder.RootComponents.Add<App>("#app");
 
             //builder.Services.AddHttpClient("ServerAPI",
@@ -49,7 +60,7 @@ namespace komm_rein.ui.web
         {
             ConfigureHandler(
                 authorizedUrls: new[] { "https://localhost:44309" },
-                scopes: new[] { "openid", "profile", "komm-rein.api"});
+                scopes: new[] { "openid", "profile", "komm-rein.api" });
         }
     }
 }
