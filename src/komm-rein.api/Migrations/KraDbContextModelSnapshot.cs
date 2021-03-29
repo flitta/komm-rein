@@ -301,6 +301,9 @@ namespace komm_rein.api.Migrations
                     b.Property<DateTime>("From")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<bool>("IsCanceled")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("OwnerSid")
                         .HasColumnType("text");
 
@@ -316,6 +319,9 @@ namespace komm_rein.api.Migrations
                     b.HasKey("ID");
 
                     b.HasIndex("FacilityID");
+
+                    b.HasIndex("From", "To", "IsCanceled")
+                        .IsUnique();
 
                     b.ToTable("Visits");
                 });
