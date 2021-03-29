@@ -25,6 +25,10 @@ namespace komm_rein.model
             modelBuilder.Entity<Facility>()
                 .HasIndex(p => new { p.Name })
                 .IsUnique();
+
+            modelBuilder.Entity<Visit>()
+                .HasIndex(p => new { p.From, p.To, p.IsCanceled})
+                .IsUnique();
         }
     }
 }

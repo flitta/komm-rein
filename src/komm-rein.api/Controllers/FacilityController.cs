@@ -43,7 +43,21 @@ namespace komm_rein.api.Controllers
                 return BadRequest();
             }
         }
-              
+
+        [HttpGet("{id}/slots")]
+        [AllowAnonymous]
+        public async Task<ActionResult<Slot[]>> GetSlots(Guid id, DateTime day, [FromBody] Visit visit)
+        {
+            try
+            {
+                return await _service.GetSlotsForVisit(id, day, visit);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
         [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<List<Facility>>> Get()

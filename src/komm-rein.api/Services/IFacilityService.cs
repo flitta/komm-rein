@@ -10,6 +10,8 @@ namespace komm_rein.api.Services
 {
     public interface IFacilityService
     {
+        ValueTask<Facility> GetById(Guid id);
+
         ValueTask<Facility> Create(Facility newItem, string sid);
 
         ValueTask<Facility> Update(Facility item, string sid);
@@ -25,5 +27,8 @@ namespace komm_rein.api.Services
         ValueTask<Facility> GetByName(string name);
 
         ValueTask<List<Facility>> GetAll();
+
+        ValueTask<Slot[]> GetSlotsForVisit(Guid facilityId, DateTime day, Visit visit);
+
     }
 }

@@ -104,9 +104,7 @@ namespace komm_rein.api.test.Services
 
             // Assert
             test.Should().Throw<SecurityException>();
-
         }
-
 
         [Fact]
         public async Task TestGetSettings()
