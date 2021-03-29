@@ -79,7 +79,7 @@ namespace komm_rein.api.Controllers
             {
                return  await _service.SetSettings(id, value, User.Sid());
             }
-            catch()
+            catch
             {
                 return BadRequest();
             }
