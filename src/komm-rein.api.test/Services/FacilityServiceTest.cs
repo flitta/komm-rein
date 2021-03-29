@@ -178,7 +178,13 @@ namespace komm_rein.api.test.Services
         {
             // Arrange
             IFacilityService service = new FacilityService(_repo.Object);
-            Facility newItem = new() { Name = "Hannes Blumeneck" };
+            Facility newItem = new() { Name = "Hannes Blumeneck", MainAddress = 
+                new ()
+                {
+                    Street_1 = "Test Stree1 23",
+                    ZipCode = "60316",
+                    City = "Frankfurt",
+                } };
 
             String testSid = "testsid";
 
@@ -194,8 +200,99 @@ namespace komm_rein.api.test.Services
             result.Should().NotBe(newItem);
 
             result.OwnerSid.Should().Be(testSid);
+            
             result.Name.Should().Be(newItem.Name);
+            result.MainAddress.Should().Be(newItem.MainAddress);
+
+            // created timestamp and sid should be set
+            result.CreatedBySid.Should().Be(testSid);
+            result.CreatedDate.Should().BeAfter(new DateTime());
         }
+
+        [Fact]
+        public void TestUpdateSecurity()
+        {
+            // Arrange
+            Facility testItem = new() { ID = Guid.NewGuid(), Name = "Hannes Blumeneck", OwnerSid = "testsid" };
+            Facility testItem2 = new() { ID = Guid.NewGuid(), Name = "Salon Sahra", OwnerSid = "testsid2" };
+           
+            _repo.Setup(x => x.GetById(testItem.ID)).ReturnsAsync(testItem);
+
+            IFacilityService service = new FacilityService(_repo.Object);
+
+            // Act
+            Func<Task> test = async () => await service.Update(testItem, testItem2.OwnerSid);
+
+            // Assert
+            test.Should().Throw<SecurityException>();
+        }
+
+        [Fact]
+        public async Task TestUpdate()
+        {
+            // Arrange
+            String testSid = "testsid";
+            Facility repoItem = new()
+            {
+                ID = Guid.NewGuid(),
+                OwnerSid = testSid,
+                Name = "Hannes Blumeneck",
+                MainAddress =
+               new()
+               {
+                   Street_1 = "Test Stree1 23",
+                   ZipCode = "60316",
+                   City = "Frankfurt",
+               }
+            };
+
+            Facility updateItem = new()
+            {
+                ID = repoItem.ID,
+                IsActive = true,
+                IsLive = true,
+                Name = "Test",
+                MainAddress =
+                 new()
+                 {
+                     Street_1 = "Test",
+                     ZipCode = "30459",
+                     City = "Hannover",
+                 }
+            };
+
+            _repo.Setup(x => x.GetById(repoItem.ID)).ReturnsAsync(repoItem);
+
+            IFacilityService service = new FacilityService(_repo.Object);
+           
+            //// Act
+            var result = await service.Update(updateItem, testSid);
+
+            // Assert
+            // save should never be called on input DTO
+            _repo.Verify(mock => mock.SaveItem(updateItem), Times.Never());
+            _repo.Verify(mock => mock.SaveItem(It.IsAny<Facility>()), Times.Once());
+
+            // result should not be reference-equal to input
+            result.Should().NotBe(updateItem);
+
+            result.OwnerSid.Should().Be(testSid);
+
+            result.IsLive.Should().Be(updateItem.IsLive);
+            result.Name.Should().Be(updateItem.Name);
+            result.MainAddress.Street_1.Should().Be(updateItem.MainAddress.Street_1);
+            result.MainAddress.ZipCode.Should().Be(updateItem.MainAddress.ZipCode);
+            result.MainAddress.City.Should().Be(updateItem.MainAddress.City);
+
+            //tempering with Active should be ignored
+            result.IsActive.Should().BeFalse();
+
+            // update timestamp and sid should be set
+            result.UpdatedBySid.Should().Be(testSid);
+            result.UpdatedDate.Should().BeAfter(new DateTime());
+
+        }
+
 
         [Fact]
         public void GetFacility_date_is_future()

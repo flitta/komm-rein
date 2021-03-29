@@ -14,7 +14,7 @@ namespace komm_rein.api.Repositories
         public ValueTask<IEnumerable<Visit>> GetVisits(Guid facilityId, DateTime from, DateTime to);
 
         public Task Create(Facility item);
-
+            
         ValueTask<Facility> GetWithSettings(Guid facilityId);
 
         ValueTask<Facility> SaveItem(Facility item);
