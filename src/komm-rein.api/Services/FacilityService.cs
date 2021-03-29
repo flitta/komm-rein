@@ -161,9 +161,17 @@ namespace komm_rein.api.Services
 
         public async ValueTask<Facility> Create(Facility newItem, string ownerSid)
         {
-            newItem.AddCreatedInfo(ownerSid);
-            await _repository.Create(newItem);
-            return newItem;
+            // create new item form input
+            Facility facility = new() { 
+                Name = newItem.Name,
+                //...
+            };
+
+
+            facility.AddCreatedInfo(ownerSid);
+            
+            await _repository.Create(facility);
+            return facility;
         }
 
         public async ValueTask<FacilitySettings> SetSettings(Guid facilityId, FacilitySettings value, string ownerSid)
