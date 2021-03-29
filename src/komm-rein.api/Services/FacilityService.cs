@@ -18,6 +18,11 @@ namespace komm_rein.api.Services
         {
             _repository = repository;
         }
+
+        public async ValueTask<Facility> GetById(Guid id)
+        {
+            return await _repository.GetById(id);
+        }
                
         public async ValueTask<IEnumerable<Slot>> GetAvailableSlots(Guid facilityId, DateTime selectedDate, DateTime currentTime)
         {
@@ -48,21 +53,21 @@ namespace komm_rein.api.Services
 
                 // to leave the gap at the beginning of a timespan (an already started unusable slot), the list is build up form the end
                 var slots = Enumerable.Range(1, numberOfSlots).Select((i) =>
-                {
-                    var from = (endForSlots - facility.Settings.SlotSize * i);
-                    var to = from + facility.Settings.SlotSize;
-
-                    // if we have to add a day:
-                    var deltaDays = to.Date - from.Date;
-
-                    return new Slot
                     {
-                        From = seletecedDayDate + from.TimeOfDay,
-                        To = seletecedDayDate + to.TimeOfDay + deltaDays,
-                        OpeningHours = openingHours,
-                        Facility = facility,
-                    };
-                }
+                        var from = (endForSlots - facility.Settings.SlotSize * i);
+                        var to = from + facility.Settings.SlotSize;
+
+                        // if we have to add a day:
+                        var deltaDays = to.Date - from.Date;
+
+                        return new Slot
+                        {
+                            From = seletecedDayDate + from.TimeOfDay,
+                            To = seletecedDayDate + to.TimeOfDay + deltaDays,
+                            OpeningHours = openingHours,
+                            Facility = facility,
+                        };
+                    }
                 );
 
                 // because the list was build in reverse order, it will be reversed before insert
@@ -72,13 +77,18 @@ namespace komm_rein.api.Services
             return result;
         }
 
-        public async ValueTask<IEnumerable<Slot>> GetSlotsForVisit(Guid facilityId, DateTime day, Visit visit, DateTime currentTime)
+        public async ValueTask<Slot[]> GetSlotsForVisit(Guid facilityId, DateTime day, Visit visit)
+        {
+            return await GetSlotsForVisit(facilityId, day, visit, DateTime.Now);
+        }
+
+        public async ValueTask<Slot[]> GetSlotsForVisit(Guid facilityId, DateTime day, Visit visit, DateTime currentTime)
         {
             Facility facility = await _repository.GetById(facilityId);
             var slots = await this.GetAvailableSlots(facilityId, day, currentTime);
             await ApplySlotStatus(slots, facility, day.Date, day.Date.AddDays(1), visit);
 
-            return slots;
+            return slots.ToArray();
         }
 
         public async Task ApplySlotStatus(Slot slot, Facility facility, DateTime from, DateTime to)
@@ -159,7 +169,7 @@ namespace komm_rein.api.Services
             }
         }
 
-        public async ValueTask<Facility> Create(Facility newItem, string ownerSid)
+        public async ValueTask<Facility> Create(Facility newItem, string sid)
         {
             // create new item form input
             Facility facility = new() { 
@@ -169,7 +179,7 @@ namespace komm_rein.api.Services
                 MainAddress = newItem.MainAddress
             };
 
-            facility.AddCreatedInfo(ownerSid);
+            facility.AddCreatedInfo(sid);
             
             await _repository.Create(facility);
             return facility;
@@ -205,10 +215,10 @@ namespace komm_rein.api.Services
             return facility;
         }
 
-        public async ValueTask<FacilitySettings> SetSettings(Guid facilityId, FacilitySettings value, string ownerSid)
+        public async ValueTask<FacilitySettings> SetSettings(Guid facilityId, FacilitySettings value, string sid)
         {
             var facility = await _repository.GetWithSettings(facilityId);
-            if(facility.OwnerSid != ownerSid)
+            if(facility.OwnerSid != sid)
             {
                 throw new SecurityException();
             }
@@ -239,10 +249,11 @@ namespace komm_rein.api.Services
             return facility.OpeningHours;
         }
 
-        public async ValueTask<IList<OpeningHours>> SetOpeningHours(Guid facilityId, OpeningHours[] value, string ownerSid)
+
+        public async ValueTask<IList<OpeningHours>> SetOpeningHours(Guid facilityId, OpeningHours[] value, string sid)
         {
             var facility = await _repository.GetWithOpeningHours(facilityId);
-            if (facility.OwnerSid != ownerSid)
+            if (facility.OwnerSid != sid)
             {
                 throw new SecurityException();
             }

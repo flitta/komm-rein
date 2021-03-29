@@ -8,36 +8,27 @@ using System.Threading.Tasks;
 
 namespace komm_rein.api.Repositories
 {
-    public class FacilityRepository : IFacilityRepository
+    public class FacilityRepository : ContextItemRepository<Facility>,  IFacilityRepository
     {
-        readonly KraDbContext _dbContext;
-
+      
         public FacilityRepository(KraDbContext dbContext)
+            :base(dbContext)
         {
-            _dbContext = dbContext;
-        }
-
-        public async Task Create(Facility item)
-        {
-            _dbContext.Add(item);
-            await _dbContext.SaveChangesAsync();
-        }
-
-        public async ValueTask<Facility> SaveItem(Facility item)
-        {
-            _dbContext.Update(item);
-            await _dbContext.SaveChangesAsync();
-            return item;
         }
 
         public async ValueTask<Facility> GetById(Guid id)
         {
-            return await _dbContext.Facilities.FindAsync(id);
+            return await _dbContext.Facilities.SingleAsync(x => x.ID == id);
         }
+
 
         public async ValueTask<IEnumerable<Visit>> GetVisits(Guid facilityId, DateTime from, DateTime to)
         {
-            return await _dbContext.Visits.Where(v => v.Facility.ID == facilityId && v.From >= from && v.To <= to).ToListAsync();
+            return await _dbContext.Visits.Where(v => v.Facility.ID == facilityId 
+            && !v.IsCanceled
+            && v.From >= from 
+            && v.To <= to)
+                .ToListAsync();
         }
 
         public async ValueTask<Facility> GetWithSettings(Guid id)

@@ -136,6 +136,7 @@ namespace komm_rein.api.Migrations
                     FacilityID = table.Column<Guid>(type: "uuid", nullable: true),
                     From = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     To = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    IsCanceled = table.Column<bool>(type: "boolean", nullable: false),
                     OwnerSid = table.Column<string>(type: "text", nullable: true),
                     CreatedBySid = table.Column<string>(type: "text", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
@@ -217,6 +218,12 @@ namespace komm_rein.api.Migrations
                 name: "IX_Visits_FacilityID",
                 table: "Visits",
                 column: "FacilityID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Visits_From_To_IsCanceled",
+                table: "Visits",
+                columns: new[] { "From", "To", "IsCanceled" },
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
