@@ -186,9 +186,15 @@ namespace komm_rein.api.test.Services
             var result = await service.Create(newItem, testSid);
 
             // Assert
-            _repo.Verify(mock => mock.Create(newItem), Times.Once());
-            newItem.OwnerSid.Should().Be(testSid);
-            result.Should().Be(newItem);
+            // save should never be called on input DTO
+            _repo.Verify(mock => mock.Create(newItem), Times.Never());
+            _repo.Verify(mock => mock.Create(It.IsAny<Facility>()), Times.Once());
+
+            // result should not be reference-equal to input
+            result.Should().NotBe(newItem);
+
+            result.OwnerSid.Should().Be(testSid);
+            result.Name.Should().Be(newItem.Name);
         }
 
         [Fact]
