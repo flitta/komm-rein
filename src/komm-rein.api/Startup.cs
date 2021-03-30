@@ -64,7 +64,7 @@ namespace komm_rein.api
                 // this defines a CORS policy called "default"
                 options.AddPolicy("default", policy =>
                 {
-                    policy.WithOrigins("https://localhost:44374")
+                    policy.WithOrigins("https://localhost:44374", "https://localhost:5001")
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });
