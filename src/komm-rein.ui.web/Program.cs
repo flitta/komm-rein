@@ -1,3 +1,5 @@
+using kommrein.ui.web.Config;
+using kommrein.ui.web.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -19,22 +21,29 @@ namespace komm_rein.ui.web
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
 
-            //builder.Services.AddHttpClient("ServerAPI",
-            //    client => client.BaseAddress = new Uri(builder.Configuration["api"]))
-            //    .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
-
-            //builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
-            //    .CreateClient("ServerAPI"));
-
             builder.Services.AddScoped<CustomAuthorizationMessageHandler>();
 
-            builder.Services.AddHttpClient("ServerAPI",
+            builder.Services.AddHttpClient(ApiConfig.API_NAME,
                     client => client.BaseAddress = new Uri(builder.Configuration["api"]))
                 .AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 
             builder.Services.AddOidcAuthentication(options =>
             {
                 builder.Configuration.Bind("oidc", options.ProviderOptions);
+            });
+
+            builder.Services.AddScoped<IHttpService, HttpService>();
+            builder.Services.AddScoped<IFacilityService, FacilityService>();
+
+            builder.Services.Configure<FacilityApiConfig>(options =>
+            {
+                options.Path = "Facility";
+            });
+
+           
+            builder.Services.Configure<VisitApiConfig>(options =>
+            {
+                options.Path = "Visit";
             });
 
             await builder.Build().RunAsync();
@@ -49,7 +58,7 @@ namespace komm_rein.ui.web
         {
             ConfigureHandler(
                 authorizedUrls: new[] { "https://localhost:44309" },
-                scopes: new[] { "openid", "profile", "komm-rein.api"});
+                scopes: new[] { "openid", "profile", "komm-rein.api" });
         }
     }
 }
