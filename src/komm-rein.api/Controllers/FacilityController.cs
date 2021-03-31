@@ -35,7 +35,8 @@ namespace komm_rein.api.Controllers
         {
             try
             {
-                return await _service.GetByName(name);
+                var result = await _service.GetByName(name);
+                return result.ToDto();
             }
             catch (Exception ex)
             {
@@ -43,14 +44,15 @@ namespace komm_rein.api.Controllers
                 return BadRequest();
             }
         }
-                
+
         [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<List<Facility>>> Get()
         {
             try
             {
-                return await _service.GetAll();
+                var result = await _service.GetAll();
+                return result.Select(f => f.ToDto()).ToList();
             }
             catch (Exception ex)
             {
@@ -65,7 +67,8 @@ namespace komm_rein.api.Controllers
         {
             try
             {
-                return await _service.GetSlotsForVisit(id, day, visit);
+                var result = await _service.GetSlotsForVisit(id, day, visit);
+                return result.Select(x => x.ToDto()).ToArray();
             }
             catch (Exception ex)
             {
@@ -79,10 +82,10 @@ namespace komm_rein.api.Controllers
         {
             try
             {
-                await _service.Create(value, User.Sid());
-                return new Facility() { ID = value.ID, Name = value.Name };
+                var result = await _service.Create(value, User.Sid());
+                return result.ToDto();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogInformation(ex, "Bad Request in POST Facility");
                 return BadRequest();
@@ -94,7 +97,8 @@ namespace komm_rein.api.Controllers
         {
             try
             {
-               return  await _service.SetSettings(id, value, User.Sid());
+                var result = await _service.SetSettings(id, value, User.Sid());
+                return result.ToDto();
             }
             catch (Exception ex)
             {
@@ -108,7 +112,8 @@ namespace komm_rein.api.Controllers
         {
             try
             {
-                return await _service.GetSettings(id, User.Sid());
+                var result = await _service.GetSettings(id, User.Sid());
+                return result.ToDto();
             }
             catch (Exception ex)
             {
@@ -117,14 +122,14 @@ namespace komm_rein.api.Controllers
             }
         }
 
-
         [HttpGet("{id}/openinghours")]
         [AllowAnonymous]
         public async Task<ActionResult<OpeningHours[]>> OpeningHours(Guid id)
         {
             try
             {
-                return (await _service.GetOpeningHours(id)).ToArray();
+                var result = await _service.GetOpeningHours(id);
+                return result.Select(r => r.ToDto()).ToArray();
             }
             catch (Exception ex)
             {
@@ -138,7 +143,8 @@ namespace komm_rein.api.Controllers
         {
             try
             {
-                return (await _service.SetOpeningHours(id, value, User.Sid())).ToArray();
+                var result = await _service.SetOpeningHours(id, value, User.Sid());
+                return result.Select(r => r.ToDto()).ToArray();
             }
             catch (Exception ex)
             {
