@@ -79,8 +79,7 @@ namespace komm_rein.api.Controllers
         {
             try
             {
-                await _service.Create(value, User.Sid());
-                return new Facility() { ID = value.ID, Name = value.Name };
+                return await _service.Create(value, User.Sid());
             }
             catch(Exception ex)
             {
