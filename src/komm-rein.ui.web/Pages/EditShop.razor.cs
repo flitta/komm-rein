@@ -16,36 +16,38 @@ using System.Threading.Tasks;
 namespace komm_rein.ui.web.Pages
 {
     [Authorize] 
-    public partial class CreateShop
+    public partial class EditShop
     {
-        protected EditContext editContext;
-        protected Facility model;
+        [Parameter]
+        public string ID { get; set; }
 
-        [Inject]
-        protected NavigationManager NavigationManager { get; set; }
+        protected EditContext editContext;
+        protected Facility model = new() { MainAddress = new(), Settings = new(), OpeningHours = new List<OpeningHours>()};
+
+        protected bool loaded = false;
 
         [Inject]
         protected IFacilityService _service { get; set; }
 
         protected override void OnInitialized()
         {
-            model = new() {MainAddress = new Address() };
             editContext = new EditContext(model);
             editContext.SetFieldCssClassProvider(new BsFieldCssClassProvider());
+
+            loaded = true;
+            StateHasChanged();
+        }
+
+        protected override async Task OnInitializedAsync()
+        {
+            
+            model = await _service.GetWithSetting(new Guid(ID));
+
         }
 
         protected async Task HandleValidSubmit()
         {
-            try
-            {
-                var result = await _service.Create(model);
-                NavigationManager.NavigateTo($"shop-verwalten/{result.ID}");
-            }
-            catch(Exception ex)
-            {
-                NavigationManager.NavigateTo($"shop-erstellen");
-            }
-            
+            await _service.Update(model);
         }
     }
 }

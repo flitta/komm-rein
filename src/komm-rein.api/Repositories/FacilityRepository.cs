@@ -21,6 +21,15 @@ namespace komm_rein.api.Repositories
             return await _dbContext.Facilities.SingleAsync(x => x.ID == id);
         }
 
+        public async ValueTask<Facility> GetByIdWithSettings(Guid id)
+        {
+            return await _dbContext.Facilities
+                  .Include(p => p.OpeningHours)
+                  .Include(p => p.Settings)
+                  .Include(p => p.MainAddress)
+                  .Include(p => p.BillingAddress)
+                .SingleAsync(x => x.ID == id);
+        }
 
         public async ValueTask<IEnumerable<Visit>> GetVisits(Guid facilityId, DateTime from, DateTime to)
         {
@@ -44,16 +53,12 @@ namespace komm_rein.api.Repositories
         public async ValueTask<Facility> GetByName(string name)
         {
             return await _dbContext.Facilities
-                    .Include(p => p.OpeningHours)
-                    .Include(p => p.Settings)
                 .FirstAsync(x => x.Name == name);
         }
 
         public async ValueTask<List<Facility>> GetAll()
         {
             return await _dbContext.Facilities
-                  .Include(p => p.OpeningHours)
-                  .Include(p => p.Settings)
                   .Take(100)  
               .ToListAsync();
         }

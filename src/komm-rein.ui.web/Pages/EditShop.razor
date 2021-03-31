@@ -1,0 +1,97 @@
+﻿@page "/shop-verwalten/{id}"
+
+@if (!loaded)
+{
+    <span>Loading ...</span>
+}
+else
+{
+   <EditForm OnValidSubmit="HandleValidSubmit" EditContext="@editContext">
+        <DataAnnotationsValidator />
+        <div class="container">
+            <div class="row">
+                <div class="col-sm">
+                    <h3>Shop Verwalten</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm">
+                    <h5>Name und Adresse</h5>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <InputText @bind-Value="model.Name" class="form-control  form-control-alternative" placeholder="Name des Shops" />
+                        <ValidationMessage For="@(() => model.Name)" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <InputText @bind-Value="model.MainAddress.Street_1" class="form-control  form-control-alternative" placeholder="Straße und Hausnummer" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <InputText @bind-Value="model.MainAddress.Street_2" class="form-control  form-control-alternative" placeholder="Adresszusatz" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-sm-3 col-6">
+                    <div class="form-group">
+                        <InputText @bind-Value="model.MainAddress.ZipCode" class="form-control  form-control-alternative" placeholder="PLZ" />
+                    </div>
+                </div>
+                <div class="col-md-8 col-sm-3">
+                    <div class="form-group">
+                        <InputText @bind-Value="model.MainAddress.City" class="form-control  form-control-alternative" placeholder="Ort" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm">
+                    <h5>Kontakt</h5>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <InputText @bind-Value="model.MainAddress.ContactPhone" class="form-control  form-control-alternative" placeholder="Telefon" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <InputText @bind-Value="model.MainAddress.ContactEmail" class="form-control  form-control-alternative" type="email" placeholder="Email" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm">
+                    <h5>Öffnungszeiten</h5>
+
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm">
+                    <h5>Besuchereinstellungen</h5>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary" disabled="@(!editContext.Validate())">Speichern</button>
+                </div>
+            </div>
+
+        </div>
+    </EditForm>
+}

@@ -23,7 +23,18 @@ namespace komm_rein.api.Services
         {
             return await _repository.GetById(id);
         }
-               
+
+        public async ValueTask<Facility> GetByIdWithSettings(Guid id, string sid)
+        {
+            var facility = await _repository.GetByIdWithSettings(id);
+            if (facility.OwnerSid != sid)
+            {
+                throw new SecurityException();
+            }
+
+            return facility;
+        }
+
         public async ValueTask<IEnumerable<Slot>> GetAvailableSlots(Guid facilityId, DateTime selectedDate, DateTime currentTime)
         {
             var facility = await _repository.GetById(facilityId);

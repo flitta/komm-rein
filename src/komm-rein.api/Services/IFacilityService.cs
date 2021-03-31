@@ -10,6 +10,8 @@ namespace komm_rein.api.Services
 {
     public interface IFacilityService
     {
+        ValueTask<Facility> GetByIdWithSettings(Guid id, string sid);
+
         ValueTask<Facility> GetById(Guid id);
 
         ValueTask<Facility> Create(Facility newItem, string sid);
