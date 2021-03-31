@@ -29,7 +29,6 @@ namespace komm_rein.api.Controllers
             _service = service;
         }
 
-
         [HttpGet("{name}")]
         [AllowAnonymous]
         public async Task<ActionResult<Facility>> Get(string name)
@@ -38,8 +37,24 @@ namespace komm_rein.api.Controllers
             {
                 return await _service.GetByName(name);
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogInformation(ex, $"Bad request in GET Facility: {name}");
+                return BadRequest();
+            }
+        }
+                
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<ActionResult<List<Facility>>> Get()
+        {
+            try
+            {
+                return await _service.GetAll();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex, $"Bad request in GET Facilities");
                 return BadRequest();
             }
         }
@@ -52,22 +67,9 @@ namespace komm_rein.api.Controllers
             {
                 return await _service.GetSlotsForVisit(id, day, visit);
             }
-            catch
+            catch (Exception ex)
             {
-                return BadRequest();
-            }
-        }
-
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<ActionResult<List<Facility>>> Get()
-        {
-            try
-            {
-                return await _service.GetAll();
-            }
-            catch
-            {
+                _logger.LogInformation(ex, $"Bad request in GET Facility/Slots, id: {id}");
                 return BadRequest();
             }
         }
@@ -80,8 +82,9 @@ namespace komm_rein.api.Controllers
                 await _service.Create(value, User.Sid());
                 return new Facility() { ID = value.ID, Name = value.Name };
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.LogInformation(ex, "Bad Request in POST Facility");
                 return BadRequest();
             }
         }
@@ -93,13 +96,13 @@ namespace komm_rein.api.Controllers
             {
                return  await _service.SetSettings(id, value, User.Sid());
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogInformation(ex, $"Bad request in GET Facilities");
                 return BadRequest();
             }
         }
 
-        // GET api/<ValuesController>/settings
         [HttpGet("{id}/settings")]
         public async Task<ActionResult<FacilitySettings>> Settings(Guid id)
         {
@@ -107,8 +110,9 @@ namespace komm_rein.api.Controllers
             {
                 return await _service.GetSettings(id, User.Sid());
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogInformation(ex, $"Bad request in GET Facility/Settings, id: {id}");
                 return BadRequest();
             }
         }
@@ -122,8 +126,9 @@ namespace komm_rein.api.Controllers
             {
                 return (await _service.GetOpeningHours(id)).ToArray();
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogInformation(ex, $"Bad request in GET Facility/Openinghours, id: {id}");
                 return BadRequest();
             }
         }
@@ -135,8 +140,9 @@ namespace komm_rein.api.Controllers
             {
                 return (await _service.SetOpeningHours(id, value, User.Sid())).ToArray();
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogInformation(ex, $"Bad request in PUT Facility/Openinghours, id: {id}");
                 return BadRequest();
             }
         }

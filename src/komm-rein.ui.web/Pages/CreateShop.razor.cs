@@ -31,7 +31,7 @@ namespace komm_rein.ui.web.Pages
             editContext.SetFieldCssClassProvider(new BsFieldCssClassProvider());
         }
 
-        protected async void HandleValidSubmit()
+        protected async Task HandleValidSubmit()
         {
             await _service.Create(model);
         }
