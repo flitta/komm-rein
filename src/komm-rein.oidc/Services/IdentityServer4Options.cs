@@ -10,6 +10,6 @@ namespace komm_rein.oidc.Services
     {
         public const string SECTION = "IdentityServer4";
 
-        public string ClientUrl { get; set; }
+        public string[] ClientUrls { get; set; }
     }
 }

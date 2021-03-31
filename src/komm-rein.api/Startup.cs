@@ -21,6 +21,9 @@ namespace komm_rein.api
 {
     public class Startup
     {
+        public const string API_NAME = "komm-rein.api";
+        public const string API_VERSION = "v1";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -47,7 +50,7 @@ namespace komm_rein.api
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "komm_rein.api", Version = "v1" });
+                c.SwaggerDoc(API_VERSION, new OpenApiInfo { Title = API_NAME, Version = API_VERSION });
             });
 
             services.AddAuthorization(options =>
@@ -55,7 +58,7 @@ namespace komm_rein.api
                 options.AddPolicy("ApiScope", policy =>
                 {
                     policy.RequireAuthenticatedUser();
-                    policy.RequireClaim("scope", "komm_rein.api");
+                    policy.RequireClaim("scope", API_NAME);
                 });
             });
 
@@ -64,7 +67,8 @@ namespace komm_rein.api
                 // this defines a CORS policy called "default"
                 options.AddPolicy("default", policy =>
                 {
-                    policy.WithOrigins("https://localhost:44374", "https://localhost:5001")
+                    var origins = Configuration.GetSection("Cors:Origins").Get<string[]>();
+                    policy.WithOrigins(origins)
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });
@@ -81,7 +85,7 @@ namespace komm_rein.api
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "komm_rein.api v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint($"/swagger/{API_VERSION}/swagger.json", $"{API_NAME} {API_VERSION}"));
             }
 
             app.UseHttpsRedirection();
@@ -97,6 +101,7 @@ namespace komm_rein.api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers()
+                    // TODO: needs role claims
                     //.RequireAuthorization("ApiScope")
                     ;
             });
