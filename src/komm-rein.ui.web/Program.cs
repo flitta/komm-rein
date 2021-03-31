@@ -52,12 +52,14 @@ namespace komm_rein.ui.web
 
     public class CustomAuthorizationMessageHandler : AuthorizationMessageHandler
     {
-        public CustomAuthorizationMessageHandler(IAccessTokenProvider provider,
+        public CustomAuthorizationMessageHandler(
+            IConfiguration configuration,
+            IAccessTokenProvider provider,
             NavigationManager navigationManager)
             : base(provider, navigationManager)
         {
             ConfigureHandler(
-                authorizedUrls: new[] { "https://localhost:44309" },
+                authorizedUrls: new[] { configuration.GetSection("api").Value},
                 scopes: new[] { "openid", "profile", "komm-rein.api" });
         }
     }
