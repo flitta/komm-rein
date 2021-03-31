@@ -140,7 +140,7 @@ namespace komm_rein.oidc.Areas.Identity.Pages.Account
                             //TODO: add config
                             ExpiresUtc = DateTimeOffset.UtcNow.Add(TimeSpan.FromDays(30))
                         };
-                    };
+                    }
 
                     // issue authentication cookie with subject ID and username
                     var isuser = new IdentityServerUser(user.Id)

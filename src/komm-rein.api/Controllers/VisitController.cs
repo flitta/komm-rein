@@ -35,8 +35,9 @@ namespace komm_rein.api.Controllers
             {
                 return await _service.GetAll(User.Sid());
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogInformation(ex, $"Bad request in GET Visits");
                 return BadRequest();
             }
         }
@@ -48,13 +49,14 @@ namespace komm_rein.api.Controllers
             {
                 return await _service.GetById(id, User.Sid());
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogInformation(ex, $"Bad request in GET Visits, id: {id}");
                 return BadRequest();
             }
         }
 
-        [HttpPost("cancel/{id}")]
+        [HttpPut("cancel/{id}")]
         public async Task<ActionResult<Visit>> Cancel(Guid id)
         {
             try
@@ -63,8 +65,9 @@ namespace komm_rein.api.Controllers
 
                 return Ok();
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogInformation(ex, $"Bad request in PUT Visits/Cancel, id: {id}");
                 return BadRequest();
             }
         }
@@ -76,8 +79,9 @@ namespace komm_rein.api.Controllers
             {
                 return await _service.BookVisit(visit, User.Sid());
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogInformation(ex, $"Bad request in POST Visit");
                 return BadRequest();
             }
         }
