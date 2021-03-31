@@ -61,6 +61,21 @@ namespace komm_rein.api.Controllers
             }
         }
 
+        [HttpGet("withsettings/{id}")]
+        public async Task<ActionResult<Facility>> GetWithSettings(Guid id)
+        {
+            try
+            {
+                var result = await _service.GetByIdWithSettings(id, User.Sid());
+                return result.ToDto(withMainAddress: true, withOpeningHours: true, withSettings:true) ;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex, $"Bad request in GET Facility: {id}");
+                return BadRequest();
+            }
+        }
+        
         [HttpGet("{id}/slots")]
         [AllowAnonymous]
         public async Task<ActionResult<Slot[]>> GetSlots(Guid id, DateTime day, [FromBody] Visit visit)
@@ -83,7 +98,7 @@ namespace komm_rein.api.Controllers
             try
             {
                 var result = await _service.Create(value, User.Sid());
-                return result.ToDto();
+                return result.ToDto(withMainAddress:true, withSettings:true, withOpeningHours:true);
             }
             catch (Exception ex)
             {

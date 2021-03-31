@@ -9,5 +9,7 @@ namespace kommrein.ui.web.Services
 {
     public interface IFacilityService : IContextItemClientService<Facility>
     {
+        ValueTask<Facility> GetWithSetting(Guid id);
+
     }
 }
