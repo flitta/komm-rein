@@ -1,6 +1,8 @@
-﻿using komm_rein.model;
+﻿using komm_rein.api.Services;
+using komm_rein.model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +17,18 @@ namespace komm_rein.api.Controllers
     [ApiController]
     public class SearchController : ControllerBase
     {
+        private readonly ILogger<SearchController> _logger;
+        private readonly ISearchService<Facility> _service;
+
+        public SearchController(
+            ISearchService<Facility> service,
+            ILogger<SearchController> logger
+            )
+        {
+            _logger = logger;
+            _service = service;
+        }
+
         [HttpGet]
         public IEnumerable<string> Get()
         {
@@ -22,9 +36,9 @@ namespace komm_rein.api.Controllers
         }
 
         [HttpGet("{searchstring}")]
-        public ActionResult<List<Facility>> Get(string searchstring)
+        public async Task<ActionResult<List<Facility>>> Get(string searchstring)
         {
-            return new List<Facility> { new Facility() {Name = "Test 1" }, new Facility() { Name = "Test 2" }, new Facility() { Name = "Test 3" } };
+            return await _service.Search(searchstring);
         }
 
     }
