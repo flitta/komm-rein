@@ -15,21 +15,24 @@ namespace komm_rein.api.test.Services
 {
     public class FacilityServiceTest
     {
-        readonly Facility _facility = new () { ID = Guid.NewGuid(), 
+        readonly Facility _facility = new()
+        {
+            ID = Guid.NewGuid(),
+            Name = "Test Facility",
             Settings = new()
             {
-                SlotSize = TimeSpan.FromMinutes(15), 
+                SlotSize = TimeSpan.FromMinutes(15),
                 SlotStatusThreshold = .5,
                 MaxNumberofVisitors = 4,
                 CountingMode = CountingMode.EverySinglePerson,
-            }, 
+            },
             OpeningHours = new List<OpeningHours>
-            { 
+            {
                 new() { From = new DateTime().AddHours(0), To = new DateTime().AddHours(24), DayOfWeek = model.DayOfWeek.All }
-            } 
+            }
         };
 
-        readonly Mock<IFacilityRepository> _repo = new ();
+        readonly Mock<IFacilityRepository> _repo = new();
 
         DateTime _fixedNowDate = new DateTime(2021, 3, 11);
 
@@ -45,7 +48,7 @@ namespace komm_rein.api.test.Services
                 };
 
             Facility testItem = new() { ID = Guid.NewGuid(), Name = "Hannes Blumeneck", OwnerSid = "testsid", OpeningHours = openingHours };
-            
+
             _repo.Setup(x => x.GetWithOpeningHours(testItem.ID)).ReturnsAsync(testItem);
 
             IFacilityService service = new FacilityService(_repo.Object);
@@ -71,7 +74,44 @@ namespace komm_rein.api.test.Services
                     new () { From = new DateTime().AddHours(15), To = new DateTime().AddHours(20), DayOfWeek = model.DayOfWeek.All }
                 };
 
-            Facility testItem = new() { ID = Guid.NewGuid(), Name = "Hannes Blumeneck", OwnerSid = "testsid"};
+            Facility testItem = new() { ID = Guid.NewGuid(), Name = "Hannes Blumeneck", OwnerSid = "testsid" };
+
+            _repo.Setup(x => x.GetWithOpeningHours(testItem.ID)).ReturnsAsync(testItem);
+            _repo.Setup(x => x.SaveItem(testItem)).ReturnsAsync(testItem);
+
+            IFacilityService service = new FacilityService(_repo.Object);
+
+            // Act
+            var result = await service.SetOpeningHours(testItem.ID, openingHours.ToArray(), testItem.OwnerSid);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().HaveCount(openingHours.Count);
+            result.Should().ContainEquivalentOf(openingHours.First());
+            result.Should().ContainEquivalentOf(openingHours.Last());
+        }
+
+        [Fact]
+        public async Task TestUpdateOpeningHours()
+        {
+            // Arrange
+
+            var openingHours = new List<OpeningHours>
+                {
+                    new () { From = new DateTime().AddHours(7), To = new DateTime().AddHours(12), DayOfWeek = model.DayOfWeek.All },
+                    new () { From = new DateTime().AddHours(15), To = new DateTime().AddHours(20), DayOfWeek = model.DayOfWeek.All }
+                };
+
+            Facility testItem = new()
+            {
+                ID = Guid.NewGuid(),
+                Name = "Hannes Blumeneck",
+                OwnerSid = "testsid",
+                OpeningHours = new List<OpeningHours>
+                {
+                    new () { ID =Guid.NewGuid(), From = new DateTime().AddHours(7), To = new DateTime().AddHours(12), DayOfWeek = model.DayOfWeek.All },
+                }
+            };
 
             _repo.Setup(x => x.GetWithOpeningHours(testItem.ID)).ReturnsAsync(testItem);
             _repo.Setup(x => x.SaveItem(testItem)).ReturnsAsync(testItem);
@@ -94,7 +134,7 @@ namespace komm_rein.api.test.Services
             // Arrange
             Facility testItem = new() { ID = Guid.NewGuid(), Name = "Hannes Blumeneck", OwnerSid = "testsid" };
             Facility testItem2 = new() { ID = Guid.NewGuid(), Name = "Salon Sahra", OwnerSid = "testsid2" };
-            
+
             _repo.Setup(x => x.GetWithOpeningHours(testItem.ID)).ReturnsAsync(testItem);
 
             IFacilityService service = new FacilityService(_repo.Object);
@@ -113,13 +153,13 @@ namespace komm_rein.api.test.Services
             FacilitySettings newSettings = new() { SlotSize = TimeSpan.FromMinutes(15), MaxNumberofVisitors = 4 };
             Facility testItem = new() { ID = Guid.NewGuid(), Name = "Hannes Blumeneck", OwnerSid = "testsid", Settings = newSettings };
             Facility testItem2 = new() { ID = Guid.NewGuid(), Name = "Salon Sahra", OwnerSid = "testsid2" };
-           
+
             _repo.Setup(x => x.GetWithSettings(testItem.ID)).ReturnsAsync(testItem);
 
             IFacilityService service = new FacilityService(_repo.Object);
 
             // Act
-            var result =  await service.GetSettings(testItem.ID, testItem.OwnerSid);
+            var result = await service.GetSettings(testItem.ID, testItem.OwnerSid);
 
             // Assert
             result.Should().NotBeNull();
@@ -133,7 +173,7 @@ namespace komm_rein.api.test.Services
             Facility testItem = new() { ID = Guid.NewGuid(), Name = "Hannes Blumeneck", OwnerSid = "testsid" };
             Facility testItem2 = new() { ID = Guid.NewGuid(), Name = "Salon Sahra", OwnerSid = "testsid2" };
             FacilitySettings newSettings = new() { SlotSize = TimeSpan.FromMinutes(15), MaxNumberofVisitors = 4 };
-           
+
             _repo.Setup(x => x.GetWithSettings(testItem.ID)).ReturnsAsync(testItem);
 
             IFacilityService service = new FacilityService(_repo.Object);
@@ -143,7 +183,7 @@ namespace komm_rein.api.test.Services
 
             // Assert
             test.Should().Throw<SecurityException>();
-          
+
         }
 
         [Fact]
@@ -170,19 +210,44 @@ namespace komm_rein.api.test.Services
             testItem.Settings.SlotSize.Should().Be(newSettings.SlotSize);
         }
 
+        [Fact]
+        public async Task TestGetByIdWithSetting()
+        {
+            // Arrange
+            Facility testItem = new() { ID = Guid.NewGuid(), Name = "Hannes Blumeneck", OwnerSid = "testsid" };
+            FacilitySettings newSettings = new() { SlotSize = TimeSpan.FromMinutes(15), MaxNumberofVisitors = 4 };
+
+            _repo.Setup(x => x.GetByIdWithAssociations(testItem.ID)).ReturnsAsync(testItem);
+            _repo.Setup(x => x.SaveItem(testItem)).ReturnsAsync(testItem);
+
+            var service = new FacilityService(_repo.Object);
+
+            // Act
+            var result = await service.GetByIdWithSettings(testItem.ID, testItem.OwnerSid);
+
+            // Assert
+
+            // should save
+            _repo.Verify(mock => mock.GetByIdWithAssociations(testItem.ID), Times.Once());
+        }
+
 
         [Fact]
         public async Task TestCreate()
         {
             // Arrange
             IFacilityService service = new FacilityService(_repo.Object);
-            Facility newItem = new() { Name = "Hannes Blumeneck", MainAddress = 
-                new ()
+            Facility newItem = new()
+            {
+                Name = "Hannes Blumeneck",
+                MainAddress =
+                new()
                 {
                     Street_1 = "Test Stree1 23",
                     ZipCode = "60316",
                     City = "Frankfurt",
-                } };
+                }
+            };
 
             String testSid = "testsid";
 
@@ -198,7 +263,7 @@ namespace komm_rein.api.test.Services
             result.Should().NotBe(newItem);
 
             result.OwnerSid.Should().Be(testSid);
-            
+
             result.Name.Should().Be(newItem.Name);
             result.MainAddress.Should().Be(newItem.MainAddress);
 
@@ -213,7 +278,7 @@ namespace komm_rein.api.test.Services
             // Arrange
             Facility testItem = new() { ID = Guid.NewGuid(), Name = "Hannes Blumeneck", OwnerSid = "testsid" };
             Facility testItem2 = new() { ID = Guid.NewGuid(), Name = "Salon Sahra", OwnerSid = "testsid2" };
-           
+
             _repo.Setup(x => x.GetById(testItem.ID)).ReturnsAsync(testItem);
 
             IFacilityService service = new FacilityService(_repo.Object);
@@ -262,7 +327,7 @@ namespace komm_rein.api.test.Services
             _repo.Setup(x => x.GetById(repoItem.ID)).ReturnsAsync(repoItem);
 
             IFacilityService service = new FacilityService(_repo.Object);
-           
+
             //// Act
             var result = await service.Update(updateItem, testSid);
 
@@ -368,7 +433,7 @@ namespace komm_rein.api.test.Services
             // Arrange
             // today 12:10
             _fixedNowDate = DateTime.Now.Date + TimeSpan.FromHours(12) + TimeSpan.FromMinutes(20);
-            
+
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
             var service = new FacilityService(_repo.Object);
 
@@ -433,7 +498,7 @@ namespace komm_rein.api.test.Services
             await service.ApplySlotStatus(targetSlot, _facility, slot.From.Date, slot.From.Date.AddHours(24));
 
             // Assert
-           
+
             targetSlot.Status.Should().Be(SlotStatus.Invalid);
         }
 
@@ -456,12 +521,12 @@ namespace komm_rein.api.test.Services
 
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetVisits(_facility.ID, slot.From.Date, slot.From.Date.AddHours(24))).ReturnsAsync(new List<Visit> { visit });
-            
+
             var service = new FacilityService(_repo.Object);
             var slots = await service.GetAvailableSlots(_facility.ID, _fixedNowDate, _fixedNowDate);
 
             // Act
-            await service .ApplySlotStatus(slots, _facility, slot.From.Date, slot.From.Date.AddHours(24));
+            await service.ApplySlotStatus(slots, _facility, slot.From.Date, slot.From.Date.AddHours(24));
 
             // Assert
             // 3 slot should be set
@@ -504,20 +569,20 @@ namespace komm_rein.api.test.Services
         public async Task TestApplySlotStatusBatch()
         {
             // Arrange
-            
+
             // one household with 2 person
-            Visit visit = new() 
+            Visit visit = new()
             {
                 Facility = _facility,
                 From = _fixedNowDate.AddHours(10),
                 To = _fixedNowDate.AddHours(10).AddMinutes(15),
-                Households = new List<Household> { new() { NumberOfPersons = 2 } } 
+                Households = new List<Household> { new() { NumberOfPersons = 2 } }
             };
 
-            Slot slot = new () { Facility = visit.Facility,From = visit.From, To = visit.To };
-           
+            Slot slot = new() { Facility = visit.Facility, From = visit.From, To = visit.To };
+
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
-            _repo.Setup(x => x.GetVisits(_facility.ID, slot.From.Date, slot.From.Date.AddHours(24))).ReturnsAsync(new List<Visit> {visit });
+            _repo.Setup(x => x.GetVisits(_facility.ID, slot.From.Date, slot.From.Date.AddHours(24))).ReturnsAsync(new List<Visit> { visit });
 
             var service = new FacilityService(_repo.Object);
             var slots = await service.GetAvailableSlots(_facility.ID, _fixedNowDate, _fixedNowDate);
@@ -596,7 +661,7 @@ namespace komm_rein.api.test.Services
                 Facility = _facility,
                 From = _fixedNowDate.AddHours(10),
                 To = _fixedNowDate.AddHours(10).AddMinutes(15),
-                Households = new List<Household> { new() { NumberOfPersons = 1 , NumberOfChildren = 2} }
+                Households = new List<Household> { new() { NumberOfPersons = 1, NumberOfChildren = 2 } }
             };
 
             Slot slot = new() { Facility = visit.Facility, From = visit.From, To = visit.To };
@@ -649,7 +714,7 @@ namespace komm_rein.api.test.Services
             var slots = await service.GetAvailableSlots(_facility.ID, _fixedNowDate, _fixedNowDate);
 
             // Act
-            await service .ApplySlotStatus(slots, _facility, slot.From.Date, slot.From.Date.AddHours(24));
+            await service.ApplySlotStatus(slots, _facility, slot.From.Date, slot.From.Date.AddHours(24));
 
             // Assert
             var targetSlot = slots.First(s => s.From == visit.From);
@@ -682,7 +747,7 @@ namespace komm_rein.api.test.Services
             Slot slot = new() { Facility = visit.Facility, From = visit.From, To = visit.To };
 
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
-            _repo.Setup(x => x.GetVisits(_facility.ID, slot.From.Date, slot.From.Date.AddHours(24))).ReturnsAsync(new List<Visit> { visit});
+            _repo.Setup(x => x.GetVisits(_facility.ID, slot.From.Date, slot.From.Date.AddHours(24))).ReturnsAsync(new List<Visit> { visit });
 
             var service = new FacilityService(_repo.Object);
             var slots = await service.GetAvailableSlots(_facility.ID, _fixedNowDate, _fixedNowDate);
@@ -731,6 +796,43 @@ namespace komm_rein.api.test.Services
             var targetSlot = result.First(s => s.From == visit_new.From);
             targetSlot.Status.Should().Be(SlotStatus.Crowded);
         }
+
+
+        [Fact]
+        public async Task TestGetSlotsForVisitByName()
+        {
+            // Arrange
+            // one household with 2 person
+            Visit visit = new()
+            {
+                Facility = _facility,
+                From = _fixedNowDate.AddHours(10),
+                To = _fixedNowDate.AddHours(10).AddMinutes(15),
+                Households = new List<Household> { new() { NumberOfPersons = 1, NumberOfChildren = 1 } }
+            };
+
+            // another household with 2 person
+            Visit visit_new = new()
+            {
+                Facility = _facility,
+                From = _fixedNowDate.AddHours(10),
+                To = _fixedNowDate.AddHours(10).AddMinutes(15),
+                Households = new List<Household> { new() { NumberOfPersons = 1, NumberOfChildren = 1 } }
+            };
+
+            _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
+            _repo.Setup(x => x.GetByName(_facility.Name)).ReturnsAsync(_facility);
+            _repo.Setup(x => x.GetVisits(_facility.ID, _fixedNowDate.Date, _fixedNowDate.Date.AddDays(1))).ReturnsAsync(new List<Visit> { visit });
+            var service = new FacilityService(_repo.Object);
+
+            // Act
+            var result = await service.GetSlotsForVisit(_facility.Name, _fixedNowDate, visit, _fixedNowDate);
+
+            // Assert
+            var targetSlot = result.First(s => s.From == visit_new.From);
+            targetSlot.Status.Should().Be(SlotStatus.Crowded);
+        }
+
 
         [Fact]
         public async Task TestGetSlotsForVisitFull()

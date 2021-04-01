@@ -1,0 +1,16 @@
+﻿@page "/{name}/termin-finden/"
+
+@if (!loaded)
+{
+    <span>Loading ...</span>
+}
+else
+{
+<ul>
+    @foreach (var slot in slots)
+    {
+        <li><span>from: @slot.From</span><span>from: @slot.To</span></li>
+    }
+
+</ul>
+}
