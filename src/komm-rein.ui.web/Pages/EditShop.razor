@@ -6,7 +6,7 @@
 }
 else
 {
-   <EditForm OnValidSubmit="HandleValidSubmit" EditContext="@editContext">
+    <EditForm OnValidSubmit="HandleValidSubmit" EditContext="@editContext">
         <DataAnnotationsValidator />
         <div class="container">
             <div class="row">
@@ -77,18 +77,123 @@ else
             <div class="row">
                 <div class="col-sm">
                     <h5>Öffnungszeiten</h5>
-
                 </div>
             </div>
+
+
+            <div class="row">
+
+                <div class="col-2">
+                    <div class="custom-control custom-checkbox ">
+                        <InputCheckbox @bind-Value="newOpeningHours.Monday" class="custom-control-input" id="checkMonday" />
+                        <label class="custom-control-label" for="checkMonday">Montag</label>
+                    </div>
+                </div>
+
+                <div class="col-2">
+                    <div class="custom-control custom-checkbox ">
+                        <InputCheckbox @bind-Value="newOpeningHours.Tuesday" class="custom-control-input" id="checkTuesday" />
+                        <label class="custom-control-label" for="checkTuesday">Dienstag</label>
+                    </div>
+                </div>
+
+                <div class="col-2">
+                    <div class="custom-control custom-checkbox ">
+                        <InputCheckbox @bind-Value="newOpeningHours.Wednesday" class="custom-control-input" id="checkWednesday" />
+                        <label class="custom-control-label" for="checkWednesday">Mittwoch</label>
+                    </div>
+                </div>
+
+                <div class="col-2">
+                    <div class="custom-control custom-checkbox ">
+                        <InputCheckbox @bind-Value="newOpeningHours.Thursday" class="custom-control-input" id="checkThursday" />
+                        <label class="custom-control-label" for="checkThursday">Donnerstag</label>
+                    </div>
+                </div>
+
+                <div class="col-2">
+                    <div class="custom-control custom-checkbox ">
+                        <InputCheckbox @bind-Value="newOpeningHours.Friday" class="custom-control-input" id="checkFriday" />
+                        <label class="custom-control-label" for="checkFriday">Freitag</label>
+                    </div>
+                </div>
+                <div class="col-2">
+
+                </div>
+
+                <div class="col-2">
+                    <div class="custom-control custom-checkbox ">
+                        <InputCheckbox @bind-Value="newOpeningHours.Saturday" class="custom-control-input" id="checkSaturday" />
+                        <label class="custom-control-label" for="checkSaturday">Samstag</label>
+                    </div>
+                </div>
+
+                <div class="col-2">
+                    <div class="custom-control custom-checkbox ">
+                        <InputCheckbox @bind-Value="newOpeningHours.Sunday" class="custom-control-input" id="checkSunday" />
+                        <label class="custom-control-label" for="checkSunday">Sonntag</label>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-2">
+                    <InputText @bind-Value="newOpeningHours.From" class="form-control  form-control-alternative" placeholder="Von" />
+                </div>
+                <div class="col-2">
+                    <InputText @bind-Value="newOpeningHours.To" class="form-control  form-control-alternative" placeholder="Bis" />
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-sm">
+                    <button class="btn btn-primary btn-fab btn-icon btn-round btn-sm" @onclick="AddOpeningHours">
+                        <i class="ni ni-fat-add"></i>
+                    </button>
+                </div>
+            </div>
+
+            @foreach (var openingHourItem in model.OpeningHours)
+            {
+                <div class="row">
+                    <div class="col-2">
+                        <span>@openingHourItem.From</span>
+                    </div>
+                    <div class="col-2">
+                        <span>@openingHourItem.To</span>
+                    </div>
+                    <div class="col-2">
+                        <span>@openingHourItem.DayOfWeek.ToString()</span>
+                    </div>
+                </div>
+
+            }
+
 
             <div class="row">
                 <div class="col-sm">
                     <h5>Besuchereinstellungen</h5>
                 </div>
             </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <InputNumber @bind-Value="model.Settings.MaxNumberofVisitors" class="form-control  form-control-alternative" placeholder="Max. Anzahl" />
+                    <ValidationMessage For="@(() => model.Name)" />
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <InputNumber @bind-Value="model.Settings.SlotStatusThreshold" class="form-control  form-control-alternative" placeholder="Gelb %" />
+                    <ValidationMessage For="@(() => model.Name)" />
+                </div>
+            </div>
+
+
             <div class="row">
                 <div class="col-12">
-                    <button type="submit" class="btn btn-primary" disabled="@(!editContext.Validate())">Speichern</button>
+                    <button type="submit" class="btn btn-primary" @onclick="HandleValidSubmit">Speichern</button>
                 </div>
             </div>
 
