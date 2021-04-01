@@ -14,7 +14,7 @@ namespace kommrein.ui.web.Theme
         {
             var isValid = !editContext.GetValidationMessages(fieldIdentifier).Any();
 
-            return isValid ? "is-valid" : "is-invalid";
+            return isValid ? string.Empty : "is-invalid";
         }
     }
 }

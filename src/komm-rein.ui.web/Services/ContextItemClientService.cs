@@ -21,20 +21,20 @@ namespace kommrein.ui.web.Services
             _httpService = httpService;
             _options = options;
         }
-
-        public async ValueTask<T> Create(T item)
+        
+        public virtual async ValueTask<T> Create(T item)
         {
             return await _httpService.Post(_options.Path, item);
         }
 
-        public async ValueTask<T> Get(Guid id)
+        public virtual async ValueTask<T> Get(Guid id)
         {
             return await _httpService.Get<T>($"{_options.Path}/{id}");
         }
 
-        public async ValueTask<T> Update(T item)
+        public virtual async ValueTask<T> Update(T item)
         {
-            return await _httpService.Put(_options.Path, item);
+            return await _httpService.Put($"{_options.Path}/{item.ID}", item);
         }
     }
 }

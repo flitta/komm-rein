@@ -37,7 +37,14 @@ namespace kommrein.ui.web.Services
             T result = await response.Content.ReadFromJsonAsync<T>();
             return result;
         }
-               
+
+        public async Task<TR> Post<TR>(string path, object value)
+        {
+            var response = await _httpClient.PostAsJsonAsync(path, value);
+            TR result = await response.Content.ReadFromJsonAsync<TR>();
+            return result;
+        }
+
         public async Task<T> Put<T>(string path, T value)
         {
             var response = await _httpClient.PutAsJsonAsync(path, value);

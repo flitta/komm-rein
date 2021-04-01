@@ -92,6 +92,23 @@ namespace komm_rein.api.Controllers
             }
         }
 
+        [HttpPost("{name}/slots/{day}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<Slot[]>> GetSlots(string name, DateTime day, [FromBody] Visit visit)
+        {
+            try
+            {
+                var result = await _service.GetSlotsForVisit(name, day, visit);
+                return result.Select(x => x.ToDto()).ToArray();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex, $"Bad request in GET Facility/Slots, name: {name}");
+                return BadRequest();
+            }
+        }
+
+
         [HttpPost]
         public async Task<ActionResult<Facility>> Post([FromBody] Facility value)
         {
