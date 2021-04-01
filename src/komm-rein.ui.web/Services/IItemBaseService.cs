@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace kommrein.ui.web.Services
 {
-    public interface IContextItemBaseService<T>
-        where T : ContextItem
+    public interface IItemBaseService<T>
+        where T : new()
     {
         ValueTask<T> Get(Guid id);
     }

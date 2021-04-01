@@ -19,21 +19,21 @@ namespace komm_rein.ui.web.Pages
     public partial class FindSlot
     {
         [Parameter]
-        public string Name { get; set; }
+        public string ID { get; set; }
 
-        protected Slot[] slots { get; set; }
+        protected List<Slot> slots { get; set; }
 
         protected bool loaded = false;
 
         [Inject]
-        protected IFacilityService _service { get; set; }
+        protected IBookingService _service { get; set; }
 
      
         protected override async Task OnInitializedAsync()
         {
             var visit = new Visit() { Households = new List<Household> { new Household() { NumberOfPersons = 4 } } };
 
-            slots = await _service.GetSlots(Name, DateTime.Today, visit);
+            slots = await _service.FindSlots(new Guid(ID), DateTime.Today, visit);
            
             loaded = true;
             StateHasChanged();

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace kommrein.ui.web.Services
 {
-    public class FacilitySearchService : ContextItemBaseService<Facility>, IFacilitySearchService
+    public class FacilitySearchService : ItemBaseService<Facility>, IFacilitySearchService
     {
         public FacilitySearchService(IHttpService httpService, IOptions<SearchApiConfig> options)
             : base(httpService, options.Value)

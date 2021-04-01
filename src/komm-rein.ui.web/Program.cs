@@ -27,7 +27,7 @@ namespace komm_rein.ui.web
                     client => client.BaseAddress = new Uri(builder.Configuration["api"]))
                 .AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 
-            builder.Services.AddHttpClient(ApiConfig.SEARCH_API_NAME,
+            builder.Services.AddHttpClient(ApiConfig.PUBLIC_API_NAME,
                     client => client.BaseAddress = new Uri(builder.Configuration["api"]));
 
             builder.Services.AddOidcAuthentication(options =>
@@ -38,6 +38,7 @@ namespace komm_rein.ui.web
             builder.Services.AddScoped<IHttpService, HttpService>();
             builder.Services.AddScoped<IFacilityService, FacilityService>();
             builder.Services.AddScoped<IFacilitySearchService, FacilitySearchService>();
+            builder.Services.AddScoped<IBookingService, BookingService>();
 
             builder.Services.Configure<FacilityApiConfig>(options =>
             {
@@ -54,7 +55,13 @@ namespace komm_rein.ui.web
             builder.Services.Configure<SearchApiConfig>(options =>
             {
                 options.Path = "Search";
-                options.ApiName = ApiConfig.SEARCH_API_NAME;
+                options.ApiName = ApiConfig.PUBLIC_API_NAME;
+            });
+
+            builder.Services.Configure<BookingApiConfig>(options =>
+            {
+                options.Path = "Booking";
+                options.ApiName = ApiConfig.PUBLIC_API_NAME;
             });
 
             await builder.Build().RunAsync();

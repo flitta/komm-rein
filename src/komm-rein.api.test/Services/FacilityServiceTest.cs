@@ -376,6 +376,7 @@ namespace komm_rein.api.test.Services
         public async Task GetAllSlotsBySize()
         {
             // Arrange
+            _repo.Setup(x => x.GetByIdWithAssociations(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
             var service = new FacilityService(_repo.Object);
 
@@ -396,6 +397,7 @@ namespace komm_rein.api.test.Services
                 new () {From = new DateTime().AddHours(8), To = new DateTime().AddHours(20), DayOfWeek = model.DayOfWeek.All},
             };
 
+            _repo.Setup(x => x.GetByIdWithAssociations(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
             var service = new FacilityService(_repo.Object);
 
@@ -416,7 +418,10 @@ namespace komm_rein.api.test.Services
             _fixedNowDate += TimeSpan.FromHours(12);
 
             _facility.Settings.SlotSize = TimeSpan.FromMinutes(15);
+
+            _repo.Setup(x => x.GetByIdWithAssociations(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
+
             var service = new FacilityService(_repo.Object);
 
             // Act
@@ -434,6 +439,7 @@ namespace komm_rein.api.test.Services
             // today 12:10
             _fixedNowDate = DateTime.Now.Date + TimeSpan.FromHours(12) + TimeSpan.FromMinutes(20);
 
+            _repo.Setup(x => x.GetByIdWithAssociations(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
             var service = new FacilityService(_repo.Object);
 
@@ -459,6 +465,7 @@ namespace komm_rein.api.test.Services
             // today 12:10
             _fixedNowDate = DateTime.Now.Date + TimeSpan.FromHours(12) + TimeSpan.FromMinutes(20);
 
+            _repo.Setup(x => x.GetByIdWithAssociations(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
             var service = new FacilityService(_repo.Object);
 
@@ -487,6 +494,7 @@ namespace komm_rein.api.test.Services
 
             Slot slot = new() { Facility = visit.Facility, From = visit.From, To = visit.To };
 
+            _repo.Setup(x => x.GetByIdWithAssociations(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetVisits(_facility.ID, slot.From.Date, slot.From.Date.AddHours(24))).ReturnsAsync(new List<Visit> { visit });
 
@@ -520,6 +528,7 @@ namespace komm_rein.api.test.Services
             Slot slot = new() { Facility = visit.Facility, From = visit.From, To = visit.To };
 
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
+            _repo.Setup(x => x.GetByIdWithAssociations(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetVisits(_facility.ID, slot.From.Date, slot.From.Date.AddHours(24))).ReturnsAsync(new List<Visit> { visit });
 
             var service = new FacilityService(_repo.Object);
@@ -550,6 +559,7 @@ namespace komm_rein.api.test.Services
 
             Slot slot = new() { Facility = visit.Facility, From = visit.From, To = visit.To };
 
+            _repo.Setup(x => x.GetByIdWithAssociations(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetVisits(_facility.ID, slot.From.Date, slot.From.Date.AddHours(24))).ReturnsAsync(new List<Visit> { visit });
 
@@ -582,6 +592,7 @@ namespace komm_rein.api.test.Services
             Slot slot = new() { Facility = visit.Facility, From = visit.From, To = visit.To };
 
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
+            _repo.Setup(x => x.GetByIdWithAssociations(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetVisits(_facility.ID, slot.From.Date, slot.From.Date.AddHours(24))).ReturnsAsync(new List<Visit> { visit });
 
             var service = new FacilityService(_repo.Object);
@@ -626,6 +637,7 @@ namespace komm_rein.api.test.Services
             Slot slot = new() { Facility = visit.Facility, From = visit.From, To = visit.To };
 
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
+            _repo.Setup(x => x.GetByIdWithAssociations(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetVisits(_facility.ID, slot.From.Date, slot.From.Date.AddHours(24))).ReturnsAsync(new List<Visit> { visit, visit_2 });
 
             var service = new FacilityService(_repo.Object);
@@ -667,6 +679,7 @@ namespace komm_rein.api.test.Services
             Slot slot = new() { Facility = visit.Facility, From = visit.From, To = visit.To };
 
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
+            _repo.Setup(x => x.GetByIdWithAssociations(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetVisits(_facility.ID, slot.From.Date, slot.From.Date.AddHours(24))).ReturnsAsync(new List<Visit> { visit, visit_2 });
 
             var service = new FacilityService(_repo.Object);
@@ -708,6 +721,7 @@ namespace komm_rein.api.test.Services
             Slot slot = new() { Facility = visit.Facility, From = visit.From, To = visit.To };
 
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
+            _repo.Setup(x => x.GetByIdWithAssociations(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetVisits(_facility.ID, slot.From.Date, slot.From.Date.AddHours(24))).ReturnsAsync(new List<Visit> { visit, visit_2 });
 
             var service = new FacilityService(_repo.Object);
@@ -746,6 +760,7 @@ namespace komm_rein.api.test.Services
 
             Slot slot = new() { Facility = visit.Facility, From = visit.From, To = visit.To };
 
+            _repo.Setup(x => x.GetByIdWithAssociations(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetVisits(_facility.ID, slot.From.Date, slot.From.Date.AddHours(24))).ReturnsAsync(new List<Visit> { visit });
 
@@ -786,6 +801,7 @@ namespace komm_rein.api.test.Services
             };
 
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
+            _repo.Setup(x => x.GetByIdWithAssociations(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetVisits(_facility.ID, _fixedNowDate.Date, _fixedNowDate.Date.AddDays(1))).ReturnsAsync(new List<Visit> { visit });
             var service = new FacilityService(_repo.Object);
 
@@ -821,6 +837,7 @@ namespace komm_rein.api.test.Services
             };
 
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
+            _repo.Setup(x => x.GetByIdWithAssociations(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetByName(_facility.Name)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetVisits(_facility.ID, _fixedNowDate.Date, _fixedNowDate.Date.AddDays(1))).ReturnsAsync(new List<Visit> { visit });
             var service = new FacilityService(_repo.Object);
@@ -857,6 +874,7 @@ namespace komm_rein.api.test.Services
             };
 
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
+            _repo.Setup(x => x.GetByIdWithAssociations(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetVisits(_facility.ID, _fixedNowDate.Date, _fixedNowDate.Date.AddDays(1))).ReturnsAsync(new List<Visit> { visit });
             var service = new FacilityService(_repo.Object);
 
