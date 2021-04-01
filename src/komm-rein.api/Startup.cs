@@ -22,6 +22,11 @@ namespace komm_rein.api
     public class Startup
     {
         public const string API_NAME = "komm-rein.api";
+        
+        public const string API_NAME_PUB = "public.komm-rein.api";
+
+        public const string AUTH_POLICY = "api-auth";
+
         public const string API_VERSION = "v1";
 
         public Startup(IConfiguration configuration)
@@ -55,7 +60,7 @@ namespace komm_rein.api
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("ApiScope", policy =>
+                options.AddPolicy(AUTH_POLICY, policy =>
                 {
                     policy.RequireAuthenticatedUser();
                     policy.RequireClaim("scope", API_NAME);
@@ -102,7 +107,7 @@ namespace komm_rein.api
             {
                 endpoints.MapControllers()
                     // TODO: needs role claims
-                    //.RequireAuthorization("ApiScope")
+                    //.RequireAuthorization(AUTH_POLICY)
                     ;
             });
         }

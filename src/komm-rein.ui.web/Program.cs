@@ -27,6 +27,9 @@ namespace komm_rein.ui.web
                     client => client.BaseAddress = new Uri(builder.Configuration["api"]))
                 .AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 
+            builder.Services.AddHttpClient(ApiConfig.SEARCH_API_NAME,
+                    client => client.BaseAddress = new Uri(builder.Configuration["api"]));
+
             builder.Services.AddOidcAuthentication(options =>
             {
                 builder.Configuration.Bind("oidc", options.ProviderOptions);
@@ -34,16 +37,24 @@ namespace komm_rein.ui.web
 
             builder.Services.AddScoped<IHttpService, HttpService>();
             builder.Services.AddScoped<IFacilityService, FacilityService>();
+            builder.Services.AddScoped<IFacilitySearchService, FacilitySearchService>();
 
             builder.Services.Configure<FacilityApiConfig>(options =>
             {
                 options.Path = "Facility";
+                options.ApiName = ApiConfig.API_NAME;
             });
 
-           
             builder.Services.Configure<VisitApiConfig>(options =>
             {
                 options.Path = "Visit";
+                options.ApiName = ApiConfig.API_NAME;
+            });
+
+            builder.Services.Configure<SearchApiConfig>(options =>
+            {
+                options.Path = "Search";
+                options.ApiName = ApiConfig.SEARCH_API_NAME;
             });
 
             await builder.Build().RunAsync();
@@ -59,7 +70,12 @@ namespace komm_rein.ui.web
             : base(provider, navigationManager)
         {
             ConfigureHandler(
-                authorizedUrls: new[] { configuration.GetSection("api").Value},
+                authorizedUrls: new[] 
+                {
+                    // Facility, Visit APIs require auth, Search is public
+                    $"{configuration.GetSection("api").Value}/Facility",
+                    $"{configuration.GetSection("api").Value}/Visit",
+                },
                 scopes: new[] { "openid", "profile", "komm-rein.api" });
         }
     }

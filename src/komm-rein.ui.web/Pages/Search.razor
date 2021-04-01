@@ -1,0 +1,8 @@
+﻿@page "/suche/{search}"
+
+<ul>
+    @foreach(var item in facilities)
+            {
+                <li><span>@item.Name</span></li>
+            }
+</ul>
