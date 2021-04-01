@@ -21,7 +21,7 @@ namespace komm_rein.api.Repositories
             return await _dbContext.Facilities.SingleAsync(x => x.ID == id);
         }
 
-        public async ValueTask<Facility> GetByIdWithSettings(Guid id)
+        public async ValueTask<Facility> GetByIdWithAssociations(Guid id)
         {
             return await _dbContext.Facilities
                   .Include(p => p.OpeningHours)
