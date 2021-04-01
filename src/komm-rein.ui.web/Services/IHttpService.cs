@@ -9,7 +9,10 @@ namespace kommrein.ui.web.Services
 {
     public interface IHttpService
     {
+        void Init(string apiName);
+
         Task<T> Get<T>(string path);
+        
         Task<T> Post<T>(string path, T value);
 
         Task<TR> Post<TR>(string path, object value);

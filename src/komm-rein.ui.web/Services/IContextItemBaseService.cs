@@ -7,11 +7,9 @@ using System.Threading.Tasks;
 
 namespace kommrein.ui.web.Services
 {
-    public interface IContextItemClientService<T> : IContextItemBaseService<T>
+    public interface IContextItemBaseService<T>
         where T : ContextItem
     {
-        ValueTask<T> Create(T item);
-
-        ValueTask<T> Update(T item);
+        ValueTask<T> Get(Guid id);
     }
 }
