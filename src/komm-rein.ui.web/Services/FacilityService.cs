@@ -20,5 +20,20 @@ namespace kommrein.ui.web.Services
         {
             return await _httpService.Get<Facility>($"{_options.Path}/withsettings/{id}");
         }
+
+        public async ValueTask<FacilitySettings> UpdateSettings(Facility item)
+        {
+            return await _httpService.Put($"{_options.Path}/{item.ID}/settings", item.Settings);
+        }
+
+        public async ValueTask<OpeningHours[]> UpdateOpeningHours(Facility item)
+        {
+            return await _httpService.Put($"{_options.Path}/{item.ID}/openinghours", item.OpeningHours.ToArray());
+        }
+
+        public async ValueTask<Slot[]> GetSlots(string name, DateTime day, Visit visit)
+        {
+            return await _httpService.Post<Slot[]>($"{_options.Path}/{name}/slots/{day}", visit);
+        }
     }
 }

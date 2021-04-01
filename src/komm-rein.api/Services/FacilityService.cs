@@ -26,7 +26,7 @@ namespace komm_rein.api.Services
 
         public async ValueTask<Facility> GetByIdWithSettings(Guid id, string sid)
         {
-            var facility = await _repository.GetByIdWithSettings(id);
+            var facility = await _repository.GetByIdWithAssociations(id);
             if (facility.OwnerSid != sid)
             {
                 throw new SecurityException();
@@ -86,6 +86,20 @@ namespace komm_rein.api.Services
             }
 
             return result;
+        }
+
+        public async ValueTask<Slot[]> GetSlotsForVisit(string name, DateTime day, Visit visit)
+        {
+            return await GetSlotsForVisit(name, day, visit, DateTime.Now);
+        }
+
+        public async ValueTask<Slot[]> GetSlotsForVisit(string name, DateTime day, Visit visit, DateTime currentTime)
+        {
+            Facility facility = await _repository.GetByName(name);
+            var slots = await this.GetAvailableSlots(facility.ID, day, currentTime);
+            await ApplySlotStatus(slots, facility, day.Date, day.Date.AddDays(1), visit);
+
+            return slots.ToArray();
         }
 
         public async ValueTask<Slot[]> GetSlotsForVisit(Guid facilityId, DateTime day, Visit visit)
@@ -269,7 +283,22 @@ namespace komm_rein.api.Services
                 throw new SecurityException();
             }
 
-            facility.OpeningHours = value;
+            // openinghours instance should be immutable
+
+            if(facility.OpeningHours == null)
+            {
+                facility.OpeningHours = new List<OpeningHours>();
+            }
+                        
+            foreach(OpeningHours item in value.Where(x => x.ID == Guid.Empty))
+            {
+                facility.OpeningHours.Add(item);
+            }
+
+            foreach (OpeningHours item in facility.OpeningHours.Where(x => !value.Any(y => y.ID == x.ID)).Reverse())
+            {
+                facility.OpeningHours.Remove(item);
+            }
 
             var result = await _repository.SaveItem(facility);
 
