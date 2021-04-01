@@ -69,6 +69,7 @@ namespace komm_rein.ui.web.Pages
             {
                 model.Settings = new() { SlotStatusThreshold = .5};
             }
+            model.Settings.SlotSize = TimeSpan.FromMinutes(15);
 
             loaded = true;
             StateHasChanged();
@@ -89,7 +90,7 @@ namespace komm_rein.ui.web.Pages
             
             DateTime from, to;
             valid &= DateTime.TryParse(newOpeningHours.From, out from);
-            valid &= DateTime.TryParse(newOpeningHours.From, out to);
+            valid &= DateTime.TryParse(newOpeningHours.To, out to);
 
             if (valid)
             {
