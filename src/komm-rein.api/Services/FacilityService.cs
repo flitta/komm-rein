@@ -37,7 +37,7 @@ namespace komm_rein.api.Services
 
         public async ValueTask<IEnumerable<Slot>> GetAvailableSlots(Guid facilityId, DateTime selectedDate, DateTime currentTime)
         {
-            var facility = await _repository.GetById(facilityId);
+            var facility = await _repository.GetByIdWithAssociations(facilityId);
             return GetAvailableSlots(facility, selectedDate, currentTime);
         }
 
