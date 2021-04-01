@@ -26,7 +26,7 @@ namespace komm_rein.api.Services
 
         public async ValueTask<Facility> GetByIdWithSettings(Guid id, string sid)
         {
-            var facility = await _repository.GetByIdWithSettings(id);
+            var facility = await _repository.GetByIdWithAssociations(id);
             if (facility.OwnerSid != sid)
             {
                 throw new SecurityException();

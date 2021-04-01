@@ -9,7 +9,7 @@ namespace komm_rein.api.Repositories
 {
     public interface IFacilityRepository : IContextItemRepository<Facility>
     {
-        ValueTask<Facility> GetByIdWithSettings(Guid id);
+        ValueTask<Facility> GetByIdWithAssociations(Guid id);
 
         public ValueTask<IEnumerable<Visit>> GetVisits(Guid facilityId, DateTime from, DateTime to);
 
