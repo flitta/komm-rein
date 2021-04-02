@@ -39,6 +39,7 @@ namespace komm_rein.ui.web
             builder.Services.AddScoped<IFacilityService, FacilityService>();
             builder.Services.AddScoped<IFacilitySearchService, FacilitySearchService>();
             builder.Services.AddScoped<IBookingService, BookingService>();
+            builder.Services.AddScoped<IVisitService, VisitService>();
 
             builder.Services.Configure<FacilityApiConfig>(options =>
             {

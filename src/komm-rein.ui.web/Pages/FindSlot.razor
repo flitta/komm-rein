@@ -1,4 +1,4 @@
-﻿@page "/termin-suchen/{id}"
+﻿@page "/termin-suchen/{name}"
 
 @if (!loaded)
 {
@@ -9,7 +9,13 @@ else
 <ul>
     @foreach (var slot in slots)
     {
-        <li><span>from: @slot.From - to: @slot.To -> status @slot.Status</span></li>
+        <li><span>from: @slot.Payload.From - to: @slot.Payload.To -> status @slot.Payload.Status</span>
+        @if(slot.Payload.Status != SlotStatus.Full || slot.Payload.Status != SlotStatus.Invalid)
+                    {
+                        <button @onclick="@(e => BookSlot(slot))">Buchen</button>
+                    }
+
+        </li>
     }
 
 </ul>

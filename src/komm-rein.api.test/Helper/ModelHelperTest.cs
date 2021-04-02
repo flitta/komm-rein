@@ -155,31 +155,6 @@ namespace komm_rein.api.test.Helper
             dto.Street_3.Should().Be(item.Street_3);
             dto.ZipCode.Should().Be(item.ZipCode);
         }
-
-        [Fact]
-        public void TestSlotDto()
-        {
-            // prepare
-            var item = new Slot() { Facility = _facility, From = DateTime.Now.Date.AddHours(9), To = DateTime.Now.Date.AddHours(9).AddMinutes(15), Status = SlotStatus.Crowded };
-
-            // Act
-            var dto = item.ToDto();
-
-            // Assert
-            dto.Should().NotBeNull();
-            dto.Should().NotBe(item);
-
-
-            dto.Facility.Should().NotBeNull();
-            dto.Facility.ModificationStampsShouldNotBeSet();
-            dto.Facility.ID.Should().Be(_facility.ID);
-            dto.Facility.Name.Should().Be(_facility.Name);
-
-            dto.From.Should().Be(item.From);
-            dto.To.Should().Be(item.To);
-            dto.Status.Should().Be(item.Status);
-        }
-
     }
 }
 

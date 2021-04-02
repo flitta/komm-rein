@@ -79,6 +79,8 @@ namespace komm_rein.api
                 });
             });
 
+            services.AddScoped<IProtectionService, ProtectionService>();
+
             services.AddScoped<IFacilityRepository, FacilityRepository>();
             services.AddScoped<IFacilityService, FacilityService>();
             services.AddScoped<ISearchService<Facility>, BasicFacilitySearch>();

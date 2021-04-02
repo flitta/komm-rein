@@ -492,7 +492,7 @@ namespace komm_rein.api.test.Services
                 Households = new List<Household> { new() { NumberOfPersons = 6 } }
             };
 
-            Slot slot = new() { Facility = visit.Facility, From = visit.From, To = visit.To };
+            Slot slot = new() { FacilityId = visit.Facility.ID, From = visit.From, To = visit.To };
 
             _repo.Setup(x => x.GetByIdWithAssociations(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
@@ -525,7 +525,7 @@ namespace komm_rein.api.test.Services
                 Households = new List<Household> { new() { NumberOfPersons = 2 } }
             };
 
-            Slot slot = new() { Facility = visit.Facility, From = visit.From, To = visit.To };
+            Slot slot = new() { FacilityId = visit.Facility.ID, From = visit.From, To = visit.To };
 
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetByIdWithAssociations(_facility.ID)).ReturnsAsync(_facility);
@@ -557,7 +557,7 @@ namespace komm_rein.api.test.Services
                 Households = new List<Household> { new() { NumberOfPersons = 2 } }
             };
 
-            Slot slot = new() { Facility = visit.Facility, From = visit.From, To = visit.To };
+            Slot slot = new() { FacilityId = visit.Facility.ID, From = visit.From, To = visit.To };
 
             _repo.Setup(x => x.GetByIdWithAssociations(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
@@ -589,7 +589,7 @@ namespace komm_rein.api.test.Services
                 Households = new List<Household> { new() { NumberOfPersons = 2 } }
             };
 
-            Slot slot = new() { Facility = visit.Facility, From = visit.From, To = visit.To };
+            Slot slot = new() { FacilityId = visit.Facility.ID, From = visit.From, To = visit.To };
 
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetByIdWithAssociations(_facility.ID)).ReturnsAsync(_facility);
@@ -634,7 +634,7 @@ namespace komm_rein.api.test.Services
                 Households = new List<Household> { new() { NumberOfPersons = 2 } }
             };
 
-            Slot slot = new() { Facility = visit.Facility, From = visit.From, To = visit.To };
+            Slot slot = new() { FacilityId = visit.Facility.ID, From = visit.From, To = visit.To };
 
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetByIdWithAssociations(_facility.ID)).ReturnsAsync(_facility);
@@ -676,7 +676,7 @@ namespace komm_rein.api.test.Services
                 Households = new List<Household> { new() { NumberOfPersons = 1, NumberOfChildren = 2 } }
             };
 
-            Slot slot = new() { Facility = visit.Facility, From = visit.From, To = visit.To };
+            Slot slot = new() { FacilityId = visit.Facility.ID, From = visit.From, To = visit.To };
 
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetByIdWithAssociations(_facility.ID)).ReturnsAsync(_facility);
@@ -718,7 +718,7 @@ namespace komm_rein.api.test.Services
                 Households = new List<Household> { new() { NumberOfPersons = 1, NumberOfChildren = 1 } }
             };
 
-            Slot slot = new() { Facility = visit.Facility, From = visit.From, To = visit.To };
+            Slot slot = new() { FacilityId = visit.Facility.ID, From = visit.From, To = visit.To };
 
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetByIdWithAssociations(_facility.ID)).ReturnsAsync(_facility);
@@ -758,7 +758,7 @@ namespace komm_rein.api.test.Services
                 Households = new List<Household> { new() { NumberOfPersons = 1, NumberOfChildren = 1 } }
             };
 
-            Slot slot = new() { Facility = visit.Facility, From = visit.From, To = visit.To };
+            Slot slot = new() { FacilityId = visit.Facility.ID, From = visit.From, To = visit.To };
 
             _repo.Setup(x => x.GetByIdWithAssociations(_facility.ID)).ReturnsAsync(_facility);
             _repo.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);

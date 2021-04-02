@@ -28,12 +28,12 @@ namespace komm_rein.api.Controllers
             _service = service;
         }
 
-        [HttpPost("{facilityId}/{day}")]
-        public async Task<ActionResult<Slot[]>> Get(Guid facilityId, DateTime day,[FromBody] Visit visitRequest)
+        [HttpGet("{name}/{day}/{pax}/{kids}")]
+        public async Task<ActionResult<Signed<Slot>[]>> Get(string name, DateTime day, int pax, int? kids)
         {
             try
             {
-                return await _service.GetSlotsForVisit(facilityId, day, visitRequest);
+                return await _service.GetSlots(name, day, pax, kids);
             }
             catch (Exception ex)
             {

@@ -32,20 +32,7 @@ namespace komm_rein.model
         {
             throw new NotImplementedException();
         }
-
-        public static Slot ToDto(this Slot input)
-        {
-            var result = new Slot
-            {
-                Facility = input.Facility?.ToDto(),
-                From = input.From,
-                To = input.To,
-                Status = input.Status,
-            };
-
-            return result;
-        }
-
+             
         public static Address ToDto(this Address input)
         {
             var result = new Address

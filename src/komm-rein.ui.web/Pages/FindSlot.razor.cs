@@ -19,25 +19,32 @@ namespace komm_rein.ui.web.Pages
     public partial class FindSlot
     {
         [Parameter]
-        public string ID { get; set; }
+        public string name { get; set; }
 
-        protected List<Slot> slots { get; set; }
+        protected List<Signed<Slot>> slots { get; set; }
 
         protected bool loaded = false;
 
         [Inject]
         protected IBookingService _service { get; set; }
 
-     
+        [Inject]
+        protected IVisitService _visitService { get; set; }
+
+        
         protected override async Task OnInitializedAsync()
         {
-            var visit = new Visit() { Households = new List<Household> { new Household() { NumberOfPersons = 4 } } };
-
-            slots = await _service.FindSlots(new Guid(ID), DateTime.Today, visit);
+        
+            slots = await _service.FindSlots(name, DateTime.Today, 2, null);
            
             loaded = true;
             StateHasChanged();
         }
-     
+
+        protected async Task BookSlot(Signed<Slot> slot)
+        {
+            await _visitService.BookForSlot(name, slot);
+        }
+             
     }
 }
