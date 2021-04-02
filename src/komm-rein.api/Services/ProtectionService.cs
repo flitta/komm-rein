@@ -15,7 +15,6 @@ namespace komm_rein.api.Services
         readonly ITimeLimitedDataProtector _protector;
         readonly SHA512Managed _sha512;
 
-        // the 'provider' parameter is provided by DI
         public ProtectionService(IDataProtectionProvider dataprotectionProvider)
         {
             _protector = dataprotectionProvider.CreateProtector("komm-rein.api")
@@ -23,59 +22,71 @@ namespace komm_rein.api.Services
             _sha512 = new SHA512Managed();
         }
 
-        public string Encrypt<T>(T input, TimeSpan expiration)
+        public string Encrypt<T>(T input)
+        {
+            return Encrypt(input, null);
+        }
+
+        public string Encrypt<T>(T input, TimeSpan? expiration)
         {
             string jsonString = JsonSerializer.Serialize(input);
-            string protectedPayload = _protector.Protect(jsonString, expiration);
+         
+            string protectedPayload = expiration.HasValue
+                ? _protector.Protect(jsonString, expiration.Value)
+                : _protector.Protect(jsonString);
 
             return protectedPayload;
         }
-
-        public T Decrypt<T>(string input)
+                public T Decrypt<T>(string input)
         {
             string decryptedJson = _protector.Unprotect(input);
             T result = JsonSerializer.Deserialize<T>(decryptedJson);
 
             return result;
         }
-        public string Sign<T>(T input, TimeSpan expiration)
+
+        public string Sign<T>(T input)
+        {
+            return Sign(input, null);
+        }
+        
+        public string Sign<T>(T input, TimeSpan? expiration)
         {
             string jsonString = JsonSerializer.Serialize(input);
             byte[] jsonBytes = Encoding.Default.GetBytes(jsonString);
 
-            byte[] hash = _sha512.ComputeHash(jsonBytes);
+            byte[] jsonHash = _sha512.ComputeHash(jsonBytes);
 
-            byte[] protectedPayload = _protector.Protect(hash, expiration);
+            byte[] jsonHashEncrypted = expiration.HasValue
+                ? _protector.Protect(jsonHash, expiration.Value)
+                : _protector.Protect(jsonHash);
 
-            return Convert.ToBase64String(protectedPayload);
+            return Convert.ToBase64String(jsonHashEncrypted);
         }
-
+           
         public bool Verify<T>(string signature, T item)
         {
-            byte[] decryptedBytes = Convert.FromBase64String(signature);
-            byte[] hashFromSignature = _protector.Unprotect(decryptedBytes);
-            
-          
+            byte[] inputBytesEncrypted = Convert.FromBase64String(signature);
+            byte[] inputBytes = _protector.Unprotect(inputBytesEncrypted);
+                      
             string jsonString = JsonSerializer.Serialize(item);
             byte[] jsonBytes = Encoding.Default.GetBytes(jsonString);
-            byte[] hashFromInput = _sha512.ComputeHash(jsonBytes);
+            byte[] jsonHashBytes = _sha512.ComputeHash(jsonBytes);
 
-            bool result = Equality(hashFromSignature, hashFromInput);
+            bool result = CompareByteArrays(inputBytes, jsonHashBytes);
             return result;
         }
 
-
-        private bool Equality(byte[] a1, byte[] b1)
+        private bool CompareByteArrays(byte[] arr_1, byte[] arr_2)
         {
-            int i;
-            if (a1.Length == b1.Length)
+            if (arr_1.Length == arr_2.Length)
             {
-                i = 0;
-                while (i < a1.Length && (a1[i] == b1[i])) //Earlier it was a1[i]!=b1[i]
+                int index = 0;
+                while (index < arr_1.Length && (arr_1[index] == arr_2[index]))
                 {
-                    i++;
+                    index++;
                 }
-                if (i == a1.Length)
+                if (index == arr_1.Length)
                 {
                     return true;
                 }

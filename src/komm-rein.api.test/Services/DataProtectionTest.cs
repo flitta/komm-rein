@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using Xunit;
 using System.Security;
 using Microsoft.AspNetCore.DataProtection;
+using System.Threading;
+using System.Security.Cryptography;
 
 namespace komm_rein.api.test.Services
 {
@@ -18,12 +20,30 @@ namespace komm_rein.api.test.Services
     {
         readonly IDataProtectionProvider _dataprotectionProvider = DataProtectionProvider.Create("komm_rein.test");
 
-
         [Fact]
         public void TestEncryptSlot()
         {
             // prepare 
             Slot slot = new() {From= DateTime.Today.AddHours(9), To = DateTime.Today.AddHours(9).AddMinutes(15),Facility = new Facility {ID = Guid.NewGuid() } };
+
+            var protector = new ProtectionService(_dataprotectionProvider);
+
+            // act
+            string encrypted = protector.Encrypt(slot);
+            Slot decrypted = protector.Decrypt<Slot>(encrypted);
+
+            // assert
+            decrypted.Facility.ID.Should().Be(slot.Facility.ID);
+            decrypted.From.Should().Be(slot.From);
+            decrypted.To.Should().Be(slot.To);
+
+        }
+
+        [Fact]
+        public void TestEncryptSlotWithExpiration()
+        {
+            // prepare 
+            Slot slot = new() { From = DateTime.Today.AddHours(9), To = DateTime.Today.AddHours(9).AddMinutes(15), Facility = new Facility { ID = Guid.NewGuid() } };
 
             var protector = new ProtectionService(_dataprotectionProvider);
 
@@ -39,7 +59,41 @@ namespace komm_rein.api.test.Services
         }
 
         [Fact]
+        public void TestEncryptExpriration()
+        {
+            // prepare 
+            Slot slot = new() { From = DateTime.Today.AddHours(9), To = DateTime.Today.AddHours(9).AddMinutes(15), Facility = new Facility { ID = Guid.NewGuid() } };
+
+            var protector = new ProtectionService(_dataprotectionProvider);
+
+            // act
+            string encrypted = protector.Encrypt(slot, TimeSpan.FromMilliseconds(10));
+            Thread.Sleep(10);
+
+            Action test = () => protector.Decrypt<Slot>(encrypted);
+
+            // Assert
+            test.Should().Throw<CryptographicException>();
+        }
+
+        [Fact]
         public void TestSign()
+        {
+            // prepare 
+            Slot slot = new() { From = DateTime.Today.AddHours(9), To = DateTime.Today.AddHours(9).AddMinutes(15), Facility = new Facility { ID = Guid.NewGuid() } };
+
+            IProtectionService protector = new ProtectionService(_dataprotectionProvider);
+
+            // act
+            string signature = protector.Sign(slot);
+            bool result = protector.Verify<Slot>(signature, slot);
+
+            // assert
+            result.Should().BeTrue();
+        }
+
+        [Fact]
+        public void TestSignWithExpiration()
         {
             // prepare 
             Slot slot = new() { From = DateTime.Today.AddHours(9), To = DateTime.Today.AddHours(9).AddMinutes(15), Facility = new Facility { ID = Guid.NewGuid() } };
@@ -52,6 +106,24 @@ namespace komm_rein.api.test.Services
 
             // assert
             result.Should().BeTrue();
+        }
+
+        [Fact]
+        public void TestSignExpiration()
+        {
+            // prepare 
+            Slot slot = new() { From = DateTime.Today.AddHours(9), To = DateTime.Today.AddHours(9).AddMinutes(15), Facility = new Facility { ID = Guid.NewGuid() } };
+
+            IProtectionService protector = new ProtectionService(_dataprotectionProvider);
+
+            // act
+            string signature = protector.Sign(slot, TimeSpan.FromMilliseconds(10));
+            Thread.Sleep(10);
+
+            Action test = () => protector.Verify<Slot>(signature, slot);
+
+            // Assert
+            test.Should().Throw<CryptographicException>();
         }
 
         [Fact]
