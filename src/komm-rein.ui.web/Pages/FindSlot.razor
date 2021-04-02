@@ -1,13 +1,27 @@
 ﻿@page "/termin-suchen/{name}"
 
-@if (!loaded)
-{
-    <span>Loading ...</span>
-}
-else
-{
+
+<EditForm Model="viewModel">
+    <div class="container">
+        <div class="row">
+            <div class="col-2">
+                <div class="form-group">
+                    <InputNumber @bind-Value="viewModel.PaxCount" class="form-control form-control-alternative" placeholder="Personen" />
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="form-group">
+                    <InputDate @bind-Value="viewModel.Day" class="form-control form-control-alternative" placeholder="Personen" />
+                </div>
+            </div>
+            <div class="col-2">
+                <button @onclick="ExecuteSearch" class="btn btn-primary" >Termine Anzeigen</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
 <ul>
-    @foreach (var slot in slots)
+    @foreach (var slot in viewModel.Slots)
     {
         <li><span>from: @slot.Payload.From - to: @slot.Payload.To -> status @slot.Payload.Status</span>
         @if(slot.Payload.Status != SlotStatus.Full || slot.Payload.Status != SlotStatus.Invalid)
@@ -19,4 +33,4 @@ else
     }
 
 </ul>
-}
+

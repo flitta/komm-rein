@@ -13,7 +13,7 @@ namespace komm_rein.model
         {
             Func<bool, IList<OpeningHours>, IList<OpeningHours>> openingHours = (wo, inp) => wo ? (inp?.Select(x => x.ToDto()).ToList()) : null;
 
-            var result = new Facility 
+            var result = new Facility
             {
                 ID = input.ID,
                 Name = input.Name,
@@ -30,9 +30,22 @@ namespace komm_rein.model
 
         public static Visit ToDto(this Visit input)
         {
-            throw new NotImplementedException();
+            var result = new Visit
+            {
+                ID = input.ID,
+                Facility = new() { ID = input.Facility.ID },
+                From = input.From,
+                To = input.To,
+                Households = input.Households.Select(h => new Household
+                {
+                    NumberOfChildren = h.NumberOfChildren,
+                    NumberOfPersons = h.NumberOfPersons
+                }).ToList()
+            };
+
+            return result;
         }
-             
+
         public static Address ToDto(this Address input)
         {
             var result = new Address
@@ -76,10 +89,22 @@ namespace komm_rein.model
                 From = input.From,
                 To = input.To,
                 DayOfWeek = input.DayOfWeek,
-              
+
             };
 
             return result;
+        }
+
+        public static Visit CreateVisit(this FacilitySettings settings, int pax, int? kids)
+        {
+            Visit visit = new()
+            {
+                Households = settings.CountingMode == CountingMode.EverySinglePerson
+                    ? new List<Household>() { new Household() { NumberOfPersons = pax, NumberOfChildren = kids.GetValueOrDefault() } }
+                    : Enumerable.Range(1, pax).Select(p => new Household { NumberOfPersons = 1 }).ToList(),
+            };
+
+            return visit;
         }
     }
 }

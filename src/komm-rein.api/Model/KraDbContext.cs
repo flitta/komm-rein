@@ -27,8 +27,7 @@ namespace komm_rein.model
                 .IsUnique();
 
             modelBuilder.Entity<Visit>()
-                .HasIndex(p => new { p.From, p.To, p.IsCanceled})
-                .IsUnique();
+                .HasIndex(p => new { p.From, p.To, p.IsCanceled});
         }
     }
 }
