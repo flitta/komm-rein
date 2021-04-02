@@ -16,9 +16,9 @@ namespace kommrein.ui.web.Services
         {
         }
 
-        public async ValueTask<List<Slot>> FindSlots(Guid facilityId, DateTime day, Visit requestedVisit)
+        public async ValueTask<List<Signed<Slot>>> FindSlots(string facilityName, DateTime day, int pax, int? kids)
         {
-            return await _httpService.Post<List<Slot>>($"{_options.Path}/{facilityId}/{day.ToString("yyyy-MM-dd")}", requestedVisit);
+            return await _httpService.Get<List<Signed<Slot>>>($"{_options.Path}/{facilityName}/{day.ToString("yyyy-MM-dd")}/{pax}/{kids.GetValueOrDefault()}");
         }
 
     }

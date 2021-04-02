@@ -9,6 +9,6 @@ namespace kommrein.ui.web.Services
 {
     public interface IBookingService
     {
-        ValueTask<List<Slot>> FindSlots(Guid facilityId, DateTime day, Visit requestedVisit);
+        ValueTask<List<Signed<Slot>>> FindSlots(string facilityName, DateTime day, int pax, int? kids);
     }
 }

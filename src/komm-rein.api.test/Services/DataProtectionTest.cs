@@ -24,7 +24,7 @@ namespace komm_rein.api.test.Services
         public void TestEncryptSlot()
         {
             // prepare 
-            Slot slot = new() {From= DateTime.Today.AddHours(9), To = DateTime.Today.AddHours(9).AddMinutes(15),Facility = new Facility {ID = Guid.NewGuid() } };
+            Slot slot = new() {From= DateTime.Today.AddHours(9), To = DateTime.Today.AddHours(9).AddMinutes(15), FacilityId = Guid.NewGuid() };
 
             var protector = new ProtectionService(_dataprotectionProvider);
 
@@ -33,7 +33,7 @@ namespace komm_rein.api.test.Services
             Slot decrypted = protector.Decrypt<Slot>(encrypted);
 
             // assert
-            decrypted.Facility.ID.Should().Be(slot.Facility.ID);
+            decrypted.FacilityId.Should().Be(slot.FacilityId);
             decrypted.From.Should().Be(slot.From);
             decrypted.To.Should().Be(slot.To);
 
@@ -43,7 +43,7 @@ namespace komm_rein.api.test.Services
         public void TestEncryptSlotWithExpiration()
         {
             // prepare 
-            Slot slot = new() { From = DateTime.Today.AddHours(9), To = DateTime.Today.AddHours(9).AddMinutes(15), Facility = new Facility { ID = Guid.NewGuid() } };
+            Slot slot = new() { From = DateTime.Today.AddHours(9), To = DateTime.Today.AddHours(9).AddMinutes(15), FacilityId = Guid.NewGuid() };
 
             var protector = new ProtectionService(_dataprotectionProvider);
 
@@ -52,7 +52,7 @@ namespace komm_rein.api.test.Services
             Slot decrypted = protector.Decrypt<Slot>(encrypted);
 
             // assert
-            decrypted.Facility.ID.Should().Be(slot.Facility.ID);
+            decrypted.FacilityId.Should().Be(slot.FacilityId);
             decrypted.From.Should().Be(slot.From);
             decrypted.To.Should().Be(slot.To);
 
@@ -62,7 +62,7 @@ namespace komm_rein.api.test.Services
         public void TestEncryptExpriration()
         {
             // prepare 
-            Slot slot = new() { From = DateTime.Today.AddHours(9), To = DateTime.Today.AddHours(9).AddMinutes(15), Facility = new Facility { ID = Guid.NewGuid() } };
+            Slot slot = new() { From = DateTime.Today.AddHours(9), To = DateTime.Today.AddHours(9).AddMinutes(15), FacilityId = Guid.NewGuid() };
 
             var protector = new ProtectionService(_dataprotectionProvider);
 
@@ -80,7 +80,7 @@ namespace komm_rein.api.test.Services
         public void TestSign()
         {
             // prepare 
-            Slot slot = new() { From = DateTime.Today.AddHours(9), To = DateTime.Today.AddHours(9).AddMinutes(15), Facility = new Facility { ID = Guid.NewGuid() } };
+            Slot slot = new() { From = DateTime.Today.AddHours(9), To = DateTime.Today.AddHours(9).AddMinutes(15), FacilityId = Guid.NewGuid() };
 
             IProtectionService protector = new ProtectionService(_dataprotectionProvider);
 
@@ -96,7 +96,7 @@ namespace komm_rein.api.test.Services
         public void TestSignWithExpiration()
         {
             // prepare 
-            Slot slot = new() { From = DateTime.Today.AddHours(9), To = DateTime.Today.AddHours(9).AddMinutes(15), Facility = new Facility { ID = Guid.NewGuid() } };
+            Slot slot = new() { From = DateTime.Today.AddHours(9), To = DateTime.Today.AddHours(9).AddMinutes(15), FacilityId = Guid.NewGuid() };
 
             IProtectionService protector = new ProtectionService(_dataprotectionProvider);
 
@@ -112,7 +112,7 @@ namespace komm_rein.api.test.Services
         public void TestSignExpiration()
         {
             // prepare 
-            Slot slot = new() { From = DateTime.Today.AddHours(9), To = DateTime.Today.AddHours(9).AddMinutes(15), Facility = new Facility { ID = Guid.NewGuid() } };
+            Slot slot = new() { From = DateTime.Today.AddHours(9), To = DateTime.Today.AddHours(9).AddMinutes(15), FacilityId = Guid.NewGuid() };
 
             IProtectionService protector = new ProtectionService(_dataprotectionProvider);
 
@@ -130,7 +130,7 @@ namespace komm_rein.api.test.Services
         public void TestSignValueChanged()
         {
             // prepare 
-            Slot slot = new() { From = DateTime.Today.AddHours(9), To = DateTime.Today.AddHours(9).AddMinutes(15), Facility = new Facility { ID = Guid.NewGuid() } };
+            Slot slot = new() { From = DateTime.Today.AddHours(9), To = DateTime.Today.AddHours(9).AddMinutes(15), FacilityId = Guid.NewGuid() };
 
             IProtectionService protector = new ProtectionService(_dataprotectionProvider);
 

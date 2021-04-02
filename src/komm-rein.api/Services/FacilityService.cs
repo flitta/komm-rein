@@ -13,10 +13,39 @@ namespace komm_rein.api.Services
     public class FacilityService : IFacilityService
     {
         readonly IFacilityRepository _repository;
+        readonly IProtectionService _protectionService;
 
         public FacilityService(IFacilityRepository repository)
         {
             _repository = repository;
+        }
+
+
+        public FacilityService(IFacilityRepository repository, IProtectionService protectionService)
+        {
+            _repository = repository;
+            _protectionService = protectionService;
+        }
+
+        public async ValueTask<Signed<Slot>[]> GetSlots(string name, DateTime day, int pax, int? kids)
+        {
+            Facility facility = await _repository.GetByNameWithAssociations(name);
+            Visit visit = new()
+            {
+                Households = facility.Settings.CountingMode == CountingMode.EverySinglePerson
+                    ? new List<Household>() { new Household() { NumberOfPersons = pax, NumberOfChildren = kids.GetValueOrDefault() } }
+                    : Enumerable.Range(1, pax).Select(p => new Household { NumberOfPersons = 1 }).ToList(),
+            };
+
+            var slots = await GetSlotsForVisit(facility.ID, day, visit, DateTime.Now);
+
+            List<Signed<Slot>> result = new List<Signed<Slot>>();
+            foreach (var slot in slots)
+            {
+                result.Add(new(slot, _protectionService.Sign(slot)));
+            }
+
+            return result.ToArray();
         }
 
         public async ValueTask<Facility> GetById(Guid id)
@@ -76,7 +105,7 @@ namespace komm_rein.api.Services
                             From = seletecedDayDate + from.TimeOfDay,
                             To = seletecedDayDate + to.TimeOfDay + deltaDays,
                             OpeningHours = openingHours,
-                            Facility = facility,
+                            FacilityId = facility.ID,
                         };
                     }
                 );
@@ -87,12 +116,7 @@ namespace komm_rein.api.Services
 
             return result;
         }
-
-        public async ValueTask<Slot[]> GetSlotsForVisit(string name, DateTime day, Visit visit)
-        {
-            return await GetSlotsForVisit(name, day, visit, DateTime.Now);
-        }
-
+               
         public async ValueTask<Slot[]> GetSlotsForVisit(string name, DateTime day, Visit visit, DateTime currentTime)
         {
             Facility facility = await _repository.GetByName(name);
@@ -101,6 +125,14 @@ namespace komm_rein.api.Services
 
             return slots.ToArray();
         }
+
+        public async ValueTask<Slot[]> GetSlotsForVisit(string name, DateTime day, Visit visit)
+        {
+            return await GetSlotsForVisit(name, day, visit, DateTime.Now);
+        }
+
+
+       
 
         public async ValueTask<Slot[]> GetSlotsForVisit(Guid facilityId, DateTime day, Visit visit)
         {

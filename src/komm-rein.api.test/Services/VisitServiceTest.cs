@@ -52,8 +52,8 @@ namespace komm_rein.api.test.Services
 
             Slot[] slots = new[] 
             { 
-                new Slot {From = visit.From, To = visit.To, Facility = visit.Facility, Status = SlotStatus.Free},
-                new Slot {From = visit.To, To = visit.To.AddMinutes(15), Facility = visit.Facility, Status = SlotStatus.Full}
+                new Slot {From = visit.From, To = visit.To, FacilityId = visit.Facility.ID, Status = SlotStatus.Free},
+                new Slot {From = visit.To, To = visit.To.AddMinutes(15), FacilityId = visit.Facility.ID, Status = SlotStatus.Full}
             };
 
             _facilityService.Setup(x => x.GetSlotsForVisit(_facility.ID, visit.From.Date, visit)).ReturnsAsync(slots);
