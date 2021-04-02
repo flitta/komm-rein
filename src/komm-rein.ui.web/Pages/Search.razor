@@ -1,8 +1,13 @@
 ﻿@page "/suche/{search}"
 
 <ul>
-    @foreach(var item in facilities)
-            {
-                <li><span>@item.Name</span></li>
-            }
+    @foreach (var item in facilities)
+    {
+        <li>
+            <a href="/termin-suchen/@item.Name.ToString()">
+                <span>@item.Name</span>
+            </a>
+
+        </li>
+    }
 </ul>

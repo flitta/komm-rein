@@ -31,9 +31,19 @@ namespace komm_rein.api.Repositories
                 .SingleAsync(x => x.ID == id);
         }
 
+        public async ValueTask<Facility> GetByNameWithAssociations(string name)
+        {
+            return await _dbContext.Facilities
+                  .Include(p => p.OpeningHours)
+                  .Include(p => p.Settings)
+                  .Include(p => p.MainAddress)
+                  .Include(p => p.BillingAddress)
+                .SingleAsync(x => x.Name.ToLower() == name.ToLower());
+        }
+
         public async ValueTask<IEnumerable<Visit>> GetVisits(Guid facilityId, DateTime from, DateTime to)
         {
-            return await _dbContext.Visits.Where(v => v.Facility.ID == facilityId 
+            return await _dbContext.Visits.Include(v => v.Households).Where(v => v.Facility.ID == facilityId 
             && !v.IsCanceled
             && v.From >= from 
             && v.To <= to)

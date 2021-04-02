@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace kommrein.ui.web.Services
 {
-    public interface IVisitService : IContextItemClientService<Visit>
+    public interface IBookingService
     {
-        ValueTask<Visit> BookForSlot(Signed<Slot> slot, int pax, int? kids);
+        ValueTask<List<Signed<Slot>>> FindSlots(string facilityName, DateTime day, int pax, int? kids);
     }
 }

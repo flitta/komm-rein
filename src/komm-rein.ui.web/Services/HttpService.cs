@@ -31,7 +31,7 @@ namespace kommrein.ui.web.Services
         {
             _httpClient = _clientFactory.CreateClient(apiName);
         }
-             
+        
         public async Task<T> Get<T>(string path)
         {
             T result = default(T);

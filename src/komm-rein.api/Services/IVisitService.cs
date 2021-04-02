@@ -12,7 +12,7 @@ namespace komm_rein.api.Services
     {
         ValueTask<List<Visit>> GetAll(string sid);
 
-        ValueTask<Visit> BookVisit(Visit visit, string sid);
+        ValueTask<Signed<Visit>> BookVisit(Signed<Slot> signedSlot, int pax, int kids, string sid);
 
         ValueTask<Visit> GetById(Guid id, string sid);
 

@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 
 namespace kommrein.ui.web.Services
 {
-    public class ContextItemClientService<T> : ContextItemBaseService<T>, IContextItemClientService<T>
-        where T : ContextItem
+    public class ContextItemClientService<T> : ItemBaseService<T>, IContextItemClientService<T>
+        where T : ContextItem, new()
     {
         public ContextItemClientService(IHttpService httpService, ApiConfig options)
             :base(httpService, options)

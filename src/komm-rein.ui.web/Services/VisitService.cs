@@ -15,5 +15,11 @@ namespace kommrein.ui.web.Services
             : base(httpService, options.Value)
         {
         }
+
+        public async ValueTask<Visit> BookForSlot(Signed<Slot> slot, int pax, int? kids)
+        {
+            return await _httpService.Post<Visit>($"{_options.Path}/{pax}/{kids.GetValueOrDefault()}", slot);
+        }
+
     }
 }

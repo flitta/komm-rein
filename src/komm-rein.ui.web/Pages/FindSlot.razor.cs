@@ -19,25 +19,42 @@ namespace komm_rein.ui.web.Pages
     public partial class FindSlot
     {
         [Parameter]
-        public string Name { get; set; }
+        public string name { get; set; }
 
-        protected Slot[] slots { get; set; }
+        protected FindSlotsViewModel viewModel ;
 
         protected bool loaded = false;
 
         [Inject]
-        protected IFacilityService _service { get; set; }
+        protected IBookingService _service { get; set; }
 
-     
-        protected override async Task OnInitializedAsync()
+        [Inject]
+        protected IVisitService _visitService { get; set; }
+
+
+        protected override void OnInitialized()
         {
-            var visit = new Visit() { Households = new List<Household> { new Household() { NumberOfPersons = 4 } } };
+            base.OnInitialized();
 
-            slots = await _service.GetSlots(Name, DateTime.Today, visit);
-           
-            loaded = true;
-            StateHasChanged();
+            viewModel = new() { Name = name, Day = DateTime.Today };
         }
-     
+        
+        protected async Task BookSlot(Signed<Slot> slot)
+        {
+            await _visitService.BookForSlot(slot, viewModel.PaxCount, viewModel.ChildrenCount);
+        }
+
+        protected async Task ExecuteSearch()
+        {
+            viewModel = new()
+            {
+                Day = viewModel.Day,
+                Name = viewModel.Name,
+                PaxCount = viewModel.PaxCount,
+                ChildrenCount = viewModel.ChildrenCount,
+                Slots = await _service.FindSlots(viewModel.Name, viewModel.Day, viewModel.PaxCount, viewModel.ChildrenCount)
+            };
+        }
+             
     }
 }
