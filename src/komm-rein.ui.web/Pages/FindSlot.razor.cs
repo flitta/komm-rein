@@ -6,6 +6,7 @@ using kommrein.ui.web.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -28,9 +29,11 @@ namespace komm_rein.ui.web.Pages
         [Inject]
         protected IBookingService _service { get; set; }
 
-        [Inject]
+      
         protected IVisitService _visitService { get; set; }
 
+        [Inject]
+        protected IServiceProvider _serviceProvider { get; set; }
 
         protected override void OnInitialized()
         {
@@ -41,6 +44,11 @@ namespace komm_rein.ui.web.Pages
         
         protected async Task BookSlot(Signed<Slot> slot)
         {
+            if (_visitService == null)
+            {
+                _visitService = _serviceProvider.GetService<IVisitService>();
+            }
+
             await _visitService.BookForSlot(slot, viewModel.PaxCount, viewModel.ChildrenCount);
         }
 
