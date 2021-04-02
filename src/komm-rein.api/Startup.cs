@@ -80,10 +80,11 @@ namespace komm_rein.api
             });
 
             services.AddScoped<IProtectionService, ProtectionService>();
-
+            services.AddScoped<IVisitRepository, VisitRepository>();
             services.AddScoped<IFacilityRepository, FacilityRepository>();
             services.AddScoped<IFacilityService, FacilityService>();
             services.AddScoped<ISearchService<Facility>, BasicFacilitySearch>();
+            services.AddScoped<IVisitService, VisitService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

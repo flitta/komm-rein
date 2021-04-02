@@ -43,7 +43,7 @@ namespace komm_rein.api.Repositories
 
         public async ValueTask<IEnumerable<Visit>> GetVisits(Guid facilityId, DateTime from, DateTime to)
         {
-            return await _dbContext.Visits.Where(v => v.Facility.ID == facilityId 
+            return await _dbContext.Visits.Include(v => v.Households).Where(v => v.Facility.ID == facilityId 
             && !v.IsCanceled
             && v.From >= from 
             && v.To <= to)

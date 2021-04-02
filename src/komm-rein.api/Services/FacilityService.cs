@@ -30,12 +30,7 @@ namespace komm_rein.api.Services
         public async ValueTask<Signed<Slot>[]> GetSlots(string name, DateTime day, int pax, int? kids)
         {
             Facility facility = await _repository.GetByNameWithAssociations(name);
-            Visit visit = new()
-            {
-                Households = facility.Settings.CountingMode == CountingMode.EverySinglePerson
-                    ? new List<Household>() { new Household() { NumberOfPersons = pax, NumberOfChildren = kids.GetValueOrDefault() } }
-                    : Enumerable.Range(1, pax).Select(p => new Household { NumberOfPersons = 1 }).ToList(),
-            };
+            Visit visit = facility.Settings.CreateVisit(pax, kids);
 
             var slots = await GetSlotsForVisit(facility.ID, day, visit, DateTime.Now);
 
@@ -104,7 +99,6 @@ namespace komm_rein.api.Services
                         {
                             From = seletecedDayDate + from.TimeOfDay,
                             To = seletecedDayDate + to.TimeOfDay + deltaDays,
-                            OpeningHours = openingHours,
                             FacilityId = facility.ID,
                         };
                     }
@@ -161,22 +155,29 @@ namespace komm_rein.api.Services
         public async Task ApplySlotStatus(IEnumerable<Slot> slots, Facility facility, DateTime from, DateTime to, Visit newVisit)
         {
             // different status when counting new (transient) visit
-            bool crowdedIfFull = newVisit != null;
+            bool countWithPlannedVisit = newVisit != null;
 
             // load existing visits
             var visits = await _repository.GetVisits(facility.ID, from, to);
+                        
+            double crowdedAt = facility.Settings.CrowdedAt;
 
-            // add newVisit (transient) for evaluation
+            int numberOfNewVistors = 0;
             if(newVisit != null)
             {
-                visits = visits.Concat(new[] { newVisit });
+                numberOfNewVistors = facility.Settings.CountingMode switch
+                {
+                    CountingMode.EverySinglePerson => newVisit.Households.Sum(h => h.NumberOfPersons + h.NumberOfChildren),
+                    CountingMode.SinglePersonWithoutChildren => newVisit.Households.Sum(h => h.NumberOfPersons),
+                    CountingMode.HouseHolds => newVisit.Households.Count,
+                    _ => throw new NotImplementedException(),
+                };
             }
 
-            double crowdedAt = facility.Settings.CrowdedAt;
 
             foreach (var slot in slots)
             {
-                var visitsInSlot = visits.Where(visit =>
+                List<Visit> visitsInSlot = visits.Where(visit =>
                 (slot.From == visit.From && slot.To == visit.To)
                 ||
                 (slot.From > visit.From && slot.To < visit.To)
@@ -186,7 +187,7 @@ namespace komm_rein.api.Services
                 (slot.From < visit.To && slot.To >= visit.To)
                 )
                     .ToList();
-
+                               
                 int paxCount = facility.Settings.CountingMode switch
                 {
                     CountingMode.EverySinglePerson => visitsInSlot.SelectMany(v => v.Households).Sum(h => h.NumberOfPersons + h.NumberOfChildren),
@@ -195,21 +196,14 @@ namespace komm_rein.api.Services
                     _ => throw new NotImplementedException(),
                 };
 
-
-
-                if (crowdedIfFull && paxCount > facility.Settings.MaxNumberofVisitors)
+                if (countWithPlannedVisit && (paxCount + numberOfNewVistors) > facility.Settings.MaxNumberofVisitors)
                 {
+                    // full instead invalid, beacuase we count planned visit
                     slot.Status = SlotStatus.Full;
                 }
                 else if (paxCount > facility.Settings.MaxNumberofVisitors)
                 {
                     slot.Status = SlotStatus.Invalid;
-                }
-                else if (crowdedIfFull && paxCount == facility.Settings.MaxNumberofVisitors)
-                {
-                    // the new (planned and transient visit) matches exactly the allowd visitors
-                    // we show crowded, as we are only full after the visit would be booked
-                    slot.Status = SlotStatus.Crowded;
                 }
                 else if (paxCount == facility.Settings.MaxNumberofVisitors)
                 {

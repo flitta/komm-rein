@@ -21,7 +21,7 @@ namespace komm_rein.ui.web.Pages
         [Parameter]
         public string name { get; set; }
 
-        protected List<Signed<Slot>> slots { get; set; }
+        protected FindSlotsViewModel viewModel ;
 
         protected bool loaded = false;
 
@@ -31,19 +31,29 @@ namespace komm_rein.ui.web.Pages
         [Inject]
         protected IVisitService _visitService { get; set; }
 
-        
-        protected override async Task OnInitializedAsync()
-        {
-        
-            slots = await _service.FindSlots(name, DateTime.Today, 2, null);
-           
-            loaded = true;
-            StateHasChanged();
-        }
 
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            viewModel = new() { Name = name, Day = DateTime.Today };
+        }
+        
         protected async Task BookSlot(Signed<Slot> slot)
         {
-            await _visitService.BookForSlot(name, slot);
+            await _visitService.BookForSlot(slot, viewModel.PaxCount, viewModel.ChildrenCount);
+        }
+
+        protected async Task ExecuteSearch()
+        {
+            viewModel = new()
+            {
+                Day = viewModel.Day,
+                Name = viewModel.Name,
+                PaxCount = viewModel.PaxCount,
+                ChildrenCount = viewModel.ChildrenCount,
+                Slots = await _service.FindSlots(viewModel.Name, viewModel.Day, viewModel.PaxCount, viewModel.ChildrenCount)
+            };
         }
              
     }
