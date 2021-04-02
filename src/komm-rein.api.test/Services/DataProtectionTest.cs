@@ -18,6 +18,7 @@ namespace komm_rein.api.test.Services
     {
         readonly IDataProtectionProvider _dataprotectionProvider = DataProtectionProvider.Create("komm_rein.test");
 
+
         [Fact]
         public void TestEncryptSlot()
         {
