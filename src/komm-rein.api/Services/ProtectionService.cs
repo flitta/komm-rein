@@ -20,7 +20,7 @@ namespace komm_rein.api.Services
         {
             _protector = dataprotectionProvider.CreateProtector("komm-rein.api")
                 .ToTimeLimitedDataProtector();
-           _sha512 = new SHA512Managed();
+            _sha512 = new SHA512Managed();
         }
 
         public string Encrypt<T>(T input, TimeSpan expiration)
