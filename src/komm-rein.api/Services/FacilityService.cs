@@ -27,20 +27,14 @@ namespace komm_rein.api.Services
             _protectionService = protectionService;
         }
 
-        public async ValueTask<Signed<Slot>[]> GetSlots(string name, DateTime day, int pax, int? kids)
+        public async ValueTask<Slot[]> GetSlots(string name, DateTime day, int pax, int? kids)
         {
             Facility facility = await _repository.GetByNameWithAssociations(name);
             Visit visit = facility.Settings.CreateVisit(pax, kids);
 
             var slots = await GetSlotsForVisit(facility.ID, day, visit, DateTime.Now);
 
-            List<Signed<Slot>> result = new List<Signed<Slot>>();
-            foreach (var slot in slots)
-            {
-                result.Add(new(slot, _protectionService.Sign(slot)));
-            }
-
-            return result.ToArray();
+            return slots;
         }
 
         public async ValueTask<Facility> GetById(Guid id)

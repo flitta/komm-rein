@@ -6,6 +6,7 @@ using kommrein.ui.web.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -22,18 +23,15 @@ namespace komm_rein.ui.web.Pages
         [Parameter]
         public string name { get; set; }
 
+        [Inject]
+        protected NavigationManager NavigationManager { get; set; }
+
         protected FindSlotsViewModel viewModel ;
 
         protected bool loaded = false;
 
         [Inject]
         protected IBookingService _service { get; set; }
-
-      
-        protected IVisitService _visitService { get; set; }
-
-        [Inject]
-        protected IServiceProvider _serviceProvider { get; set; }
 
         protected override void OnInitialized()
         {
@@ -42,14 +40,16 @@ namespace komm_rein.ui.web.Pages
             viewModel = new() { Name = name, Day = DateTime.Today };
         }
         
-        protected async Task BookSlot(Signed<Slot> slot)
+        protected void BookSlot(Slot slot)
         {
-            if (_visitService == null)
-            {
-                _visitService = _serviceProvider.GetService<IVisitService>();
-            }
+            string uri = $"termin-buchen/{viewModel.Name}";
 
-            await _visitService.BookForSlot(slot, viewModel.PaxCount, viewModel.ChildrenCount);
+            uri = QueryHelpers.AddQueryString(uri, "from", slot.From.ToString("yyyy-MM-ddTHH:mm:ssZ"));
+            uri = QueryHelpers.AddQueryString(uri, "to", slot.To.ToString("yyyy-MM-ddTHH:mm:ssZ"));
+            uri = QueryHelpers.AddQueryString(uri, "pax", viewModel.PaxCount.ToString());
+            uri = QueryHelpers.AddQueryString(uri, "kids", viewModel.ChildrenCount.GetValueOrDefault().ToString());
+
+            NavigationManager.NavigateTo(uri);
         }
 
         protected async Task ExecuteSearch()
@@ -62,6 +62,8 @@ namespace komm_rein.ui.web.Pages
                 ChildrenCount = viewModel.ChildrenCount,
                 Slots = await _service.FindSlots(viewModel.Name, viewModel.Day, viewModel.PaxCount, viewModel.ChildrenCount)
             };
+
+
         }
              
     }

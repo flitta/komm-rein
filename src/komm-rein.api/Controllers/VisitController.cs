@@ -72,12 +72,12 @@ namespace komm_rein.api.Controllers
             }
         }
 
-        [HttpPost("{pax}/{kids}")]
-        public async Task<ActionResult<Signed<Visit>>> Post([FromBody] Signed<Slot> slot, int pax, int kids)
+        [HttpPost("{name}/{from}/{to}/{pax}/{kids}")]
+        public async Task<ActionResult<Signed<Visit>>> Post(string name, DateTime from, DateTime to, int pax, int kids)
         {
             try
             {
-                return await _service.BookVisit(slot, pax, kids, User.Sid());
+                return await _service.BookVisit(name, from, to, pax, kids, User.Sid());
             }
             catch (Exception ex)
             {
