@@ -30,25 +30,13 @@ namespace komm_rein.api.Services
             _facilityRepository = facilityRepository;
         }
 
-        public async ValueTask<Signed<Visit>> BookVisit(Signed<Slot> signedSlot, int pax, int kids, string sid)
+        public async ValueTask<Signed<Visit>> BookVisit(string name, DateTime from, DateTime to, int pax, int kids, string sid)
         {
-            // check if valid
-            Slot slot;
-            
-            if (_protectionService.Verify(signedSlot.Signature, signedSlot.Payload))
-            {
-                slot = signedSlot.Payload;
-            }
-            else
-            {
-                throw new ArgumentException("Wrong signature for slot");
-            }
-
-            var facility = await _facilityRepository.GetWithSettings(slot.FacilityId);
+            var facility = await _facilityRepository.GetByNameWithAssociations(name);
 
             Visit visit = facility.Settings.CreateVisit(pax, kids);
-            visit.From = slot.From;
-            visit.To = slot.To;
+            visit.From = from;
+            visit.To = to;
             visit.Facility = facility;
 
             var availableSlots = await _facilityService.GetSlotsForVisit(visit.Facility.ID, visit.From.Date, visit);
@@ -74,7 +62,7 @@ namespace komm_rein.api.Services
             await _repository.Create(visit);
 
             var dto = visit.ToDto();
-            var result = new Signed<Visit>(dto, _protectionService.Sign(dto)); ;
+            var result = new Signed<Visit>(dto, _protectionService.Sign(dto));
             
             return result;
         }

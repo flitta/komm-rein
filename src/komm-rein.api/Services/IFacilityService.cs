@@ -34,7 +34,7 @@ namespace komm_rein.api.Services
 
         ValueTask<Slot[]> GetSlotsForVisit(string facilitNname, DateTime day, Visit visit);
 
-        ValueTask<Signed<Slot>[]> GetSlots(string name, DateTime day, int pax, int? kids);
+        ValueTask<Slot[]> GetSlots(string name, DateTime day, int pax, int? kids);
 
     }
 }

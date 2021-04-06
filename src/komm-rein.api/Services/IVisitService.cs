@@ -11,8 +11,8 @@ namespace komm_rein.api.Services
     public interface IVisitService
     {
         ValueTask<List<Visit>> GetAll(string sid);
-
-        ValueTask<Signed<Visit>> BookVisit(Signed<Slot> signedSlot, int pax, int kids, string sid);
+        
+        ValueTask<Signed<Visit>> BookVisit(string name, DateTime from, DateTime to, int pax, int kids, string sid);
 
         ValueTask<Visit> GetById(Guid id, string sid);
 

@@ -7,17 +7,21 @@ using System.Threading.Tasks;
 
 namespace kommrein.ui.web.ViewModel
 {
-    public class FindSlotsViewModel : BookSlotViewModel
+    public class BookSlotViewModel
     {
         public string Name { get; set; }
 
-        public DateTime Day { get; set; }
+        public DateTime From { get; set; }
+
+        public DateTime To { get; set; }
 
         public int PaxCount { get; set; }
 
         public int? ChildrenCount { get; set; }
 
         public List<Slot> Slots { get; set; } = new List<Slot>();
+
+        public Visit BookedVisit { get; set; }
 
     }
 }

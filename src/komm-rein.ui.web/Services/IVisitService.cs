@@ -9,6 +9,6 @@ namespace kommrein.ui.web.Services
 {
     public interface IVisitService : IContextItemClientService<Visit>
     {
-        ValueTask<Visit> BookForSlot(Signed<Slot> slot, int pax, int? kids);
+        ValueTask<Visit> BookForSlot(string name, DateTime from, DateTime to, int pax, int? kids);
     }
 }

@@ -29,7 +29,7 @@ namespace komm_rein.api.Controllers
         }
 
         [HttpGet("{name}/{day}/{pax}/{kids}")]
-        public async Task<ActionResult<Signed<Slot>[]>> Get(string name, DateTime day, int pax, int? kids)
+        public async Task<ActionResult<Slot[]>> Get(string name, DateTime day, int pax, int? kids)
         {
             try
             {
