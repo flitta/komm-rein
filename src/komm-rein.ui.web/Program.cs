@@ -33,6 +33,7 @@ namespace komm_rein.ui.web
             builder.Services.AddOidcAuthentication(options =>
             {
                 builder.Configuration.Bind("oidc", options.ProviderOptions);
+                var a = options;
             });
 
             builder.Services.AddScoped<IHttpService, HttpService>();

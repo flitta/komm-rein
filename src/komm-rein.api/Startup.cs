@@ -64,6 +64,7 @@ namespace komm_rein.api
                 {
                     policy.RequireAuthenticatedUser();
                     policy.RequireClaim("scope", API_NAME);
+                    policy.RequireClaim("scope", "email");
                 });
             });
 

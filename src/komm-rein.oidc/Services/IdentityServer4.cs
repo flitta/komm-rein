@@ -9,6 +9,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Collections.Generic;
+using IdentityServer4.Services;
+using System.Threading.Tasks;
+using System.Security;
+using static IdentityServer4.Models.IdentityResources;
 
 namespace komm_rein.oidc.Services
 {
@@ -28,6 +32,7 @@ namespace komm_rein.oidc.Services
             {
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
+                new IdentityResources.Email(),
             })
               .AddDeveloperSigningCredential()        //TODO: This is for dev only scenarios when you don’t have a certificate to use.
               .AddInMemoryApiScopes(new ApiScope[]
@@ -51,13 +56,16 @@ namespace komm_rein.oidc.Services
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.Email,
                         API_SCOPE_KOMM_REIN
                     },
-                    
+                  
+
                 }
             })
-            .AddAspNetIdentity<IdentityUser>();
-
+            .AddAspNetIdentity<IdentityUser>()
+            .AddProfileService<ProfileService>();
+            
             services.AddAuthentication()
              .AddGoogle("Google", options =>
              {
