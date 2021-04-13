@@ -144,7 +144,7 @@ namespace komm_rein.api.test.Services
                 Households = new List<Household> { new() { NumberOfPersons = 1, NumberOfChildren = 1 } }
             };
 
-            _repo.Setup(x => x.GetById(visit.ID)).ReturnsAsync(visit);
+            _repo.Setup(x => x.GetByIdForOwner(visit.ID, sid)).ReturnsAsync(visit);
 
             var service = new VisitService(_repo.Object, _facilityService.Object, null, null);
 
@@ -226,6 +226,7 @@ namespace komm_rein.api.test.Services
 
             Visit visit = new()
             {
+                OwnerSid = sid,
                 ID = Guid.NewGuid(),
                 Facility = _facility,
                 From = _fixedNowDate.AddHours(10),
@@ -233,12 +234,12 @@ namespace komm_rein.api.test.Services
                 Households = new List<Household> { new() { NumberOfPersons = 1, NumberOfChildren = 1 } }
             };
 
-            _repo.Setup(x => x.GetById(visit.ID)).ReturnsAsync(visit);
+            _repo.Setup(x => x.GetByIdForOwner(visit.ID, sid)).ReturnsAsync(visit);
 
             var service = new VisitService(_repo.Object, _facilityService.Object, null, null);
 
             // Act
-            var result = await service.GetByIdForOwner(visit.ID, visit.CreatedBySid);
+            var result = await service.GetByIdForOwner(visit.ID, visit.OwnerSid);
 
             // Assert
             result.Should().NotBeNull();

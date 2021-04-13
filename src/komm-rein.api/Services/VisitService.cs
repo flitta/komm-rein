@@ -86,7 +86,7 @@ namespace komm_rein.api.Services
         {
             var item = await _repository.GetByIdForOwner(id, sid);
 
-            if (item.OwnerSid != sid)
+            if (item == null || item.OwnerSid != sid)
             {
                 throw new SecurityException();
             }
