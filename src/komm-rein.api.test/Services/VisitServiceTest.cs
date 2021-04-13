@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using System.Security;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace komm_rein.api.test.Services
 {
@@ -17,72 +18,113 @@ namespace komm_rein.api.test.Services
     {
         readonly Mock<IFacilityService> _facilityService = new();
         readonly Mock<IVisitRepository> _repo = new();
+        readonly Mock<IFacilityRepository> _facilityRepo = new();
+        readonly IDataProtectionProvider _dataprotectionProvider = DataProtectionProvider.Create("komm_rein.test");
 
-        readonly Facility _facility = new () { ID = Guid.NewGuid(), 
+
+        readonly Facility _facility = new()
+        {
+            ID = Guid.NewGuid(),
+            Name = "Test Facility",
             Settings = new()
             {
-                SlotSize = TimeSpan.FromMinutes(15), 
+                SlotSize = TimeSpan.FromMinutes(15),
                 SlotStatusThreshold = .5,
                 MaxNumberofVisitors = 4,
                 CountingMode = CountingMode.EverySinglePerson,
-            }, 
+            },
             OpeningHours = new List<OpeningHours>
-            { 
+            {
                 new() { From = new DateTime().AddHours(0), To = new DateTime().AddHours(24), DayOfWeek = model.DayOfWeek.All }
-            } 
+            }
         };
 
         DateTime _fixedNowDate = new DateTime(2021, 3, 11);
 
-        //[Fact]
-        //public async Task TestBookVisit()
-        //{
-        //    // Visit must be in an available solot
+        [Fact]
+        public async Task TestBookVisit()
+        {
+            // Visit must be in an available solot
 
-        //    // Arrange
-        //    string sid = "test123";
+            // Arrange
+            var protector = new ProtectionService(_dataprotectionProvider);
 
-        //    Visit visit = new()
-        //    {
-        //        Facility = _facility,
-        //        From = _fixedNowDate.AddHours(10),
-        //        To = _fixedNowDate.AddHours(10).AddMinutes(15),
-        //        Households = new List<Household> { new() { NumberOfPersons = 1, NumberOfChildren = 1 } }
-        //    };
+            string sid = "test123";
 
-        //    Slot[] slots = new[] 
-        //    { 
-        //        new Slot {From = visit.From, To = visit.To, FacilityId = visit.Facility.ID, Status = SlotStatus.Free},
-        //        new Slot {From = visit.To, To = visit.To.AddMinutes(15), FacilityId = visit.Facility.ID, Status = SlotStatus.Full}
-        //    };
+            Visit visit = new()
+            {
+                Facility = _facility,
+                From = _fixedNowDate.AddHours(10),
+                To = _fixedNowDate.AddHours(10).AddMinutes(15),
+                Households = new List<Household> { new() { NumberOfPersons = 1, NumberOfChildren = 1 } }
+            };
 
-        //    _facilityService.Setup(x => x.GetSlotsForVisit(_facility.ID, visit.From.Date, visit)).ReturnsAsync(slots);
-        //    _facilityService.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
+            Slot[] slots = new[]
+            {
+                new Slot {From = visit.From, To = visit.To, FacilityId = visit.Facility.ID, Status = SlotStatus.Free},
+                new Slot {From = visit.To, To = visit.To.AddMinutes(15), FacilityId = visit.Facility.ID, Status = SlotStatus.Full}
+            };
 
-        //    var service = new VisitService(_repo.Object, _facilityService.Object);
-            
-        //    // Act
-        //    var result = await service.BookVisit(visit, sid);
+            _facilityService.Setup(x => x.GetSlotsForVisit(_facility.ID, visit.From.Date, It.IsAny<Visit>())).ReturnsAsync(slots);
+            _facilityService.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
+            _facilityRepo.Setup(x => x.GetByNameWithAssociations(_facility.Name)).ReturnsAsync(_facility);
 
+            var service = new VisitService(_repo.Object, _facilityService.Object, _facilityRepo.Object, protector);
 
-        //    // Assert
-        //    _repo.Verify(mock => mock.Create(It.IsAny<Visit>()), Times.Once());
+            // Act
+            var result = await service.BookVisit(visit.Facility.Name, visit.From, visit.To, 1, 1, sid);
 
-        //    result.Should().NotBeNull();
-        //    result.Facility.ID.Should().Be(visit.Facility.ID);
-        //    result.OwnerSid.Should().Be(sid);
+            // Assert
+            _repo.Verify(mock => mock.Create(It.IsAny<Visit>()), Times.Once());
 
-        //    result.CreatedBySid.Should().Be(sid);
-        //    result.CreatedDate.Should().BeAfter(new DateTime());
+            result.Should().NotBeNull();
+            result.Payload.Facility.ID.Should().Be(visit.Facility.ID);
 
-        //    result.Should().NotBe(visit);
-        //    result.From.Should().Be(visit.From);
-        //    result.To.Should().Be(visit.To);
-        //    result.Households.Should().HaveSameCount(visit.Households);
+            result.Should().NotBe(visit);
+            result.Payload.From.Should().Be(visit.From);
+            result.Payload.To.Should().Be(visit.To);
+            result.Payload.Households.Should().HaveSameCount(visit.Households);
 
-        //    result.Households.Sum(h => h.NumberOfPersons).Should().Be(visit.Households.Sum(vh => vh.NumberOfPersons));
-        //    result.Households.Sum(h => h.NumberOfChildren).Should().Be(visit.Households.Sum(vh => vh.NumberOfChildren));
-        //}
+            result.Payload.Households.Sum(h => h.NumberOfPersons).Should().Be(visit.Households.Sum(vh => vh.NumberOfPersons));
+            result.Payload.Households.Sum(h => h.NumberOfChildren).Should().Be(visit.Households.Sum(vh => vh.NumberOfChildren));
+        }
+
+        [Fact]
+        public void TestBookWrongSlot()
+        {
+            // Visit must be in an available solot
+
+            // Arrange
+            var protector = new ProtectionService(_dataprotectionProvider);
+
+            string sid = "test123";
+
+            Visit visit = new()
+            {
+                Facility = _facility,
+                From = _fixedNowDate.AddHours(10),
+                To = _fixedNowDate.AddHours(10).AddMinutes(15),
+                Households = new List<Household> { new() { NumberOfPersons = 1, NumberOfChildren = 1 } }
+            };
+
+            Slot[] slots = new[]
+            {
+                new Slot {From = visit.From, To = visit.To, FacilityId = visit.Facility.ID, Status = SlotStatus.Free},
+                new Slot {From = visit.To, To = visit.To.AddMinutes(15), FacilityId = visit.Facility.ID, Status = SlotStatus.Full}
+            };
+
+            _facilityService.Setup(x => x.GetSlotsForVisit(_facility.ID, visit.From.Date, It.IsAny<Visit>())).ReturnsAsync(slots);
+            _facilityService.Setup(x => x.GetById(_facility.ID)).ReturnsAsync(_facility);
+            _facilityRepo.Setup(x => x.GetByNameWithAssociations(_facility.Name)).ReturnsAsync(_facility);
+
+            var service = new VisitService(_repo.Object, _facilityService.Object, _facilityRepo.Object, protector);
+
+            // Act
+            Func<Task> test = async () => await service.BookVisit(visit.Facility.Name, visit.From.AddHours(1), visit.To.AddHours(1), 1, 1, sid);
+
+            test.Should().Throw<ArgumentException>();
+        }
+
 
         [Fact]
         public async Task TestCancelVisit()
@@ -107,7 +149,7 @@ namespace komm_rein.api.test.Services
             var service = new VisitService(_repo.Object, _facilityService.Object, null, null);
 
             // Act
-            var result = await service.Cancel(visit.ID , sid);
+            var result = await service.Cancel(visit.ID, sid);
 
             // Assert
             _repo.Verify(mock => mock.SaveItem(It.IsAny<Visit>()), Times.Once());
@@ -146,7 +188,7 @@ namespace komm_rein.api.test.Services
         }
 
         [Fact]
-        public async Task TestGetbyIdSecurity()
+        public void TestGetbyIdSecurity()
         {
             // Visit must be in an available solot
 
@@ -196,11 +238,49 @@ namespace komm_rein.api.test.Services
             var service = new VisitService(_repo.Object, _facilityService.Object, null, null);
 
             // Act
-            var result =  await service.GetById(visit.ID, visit.CreatedBySid);
+            var result = await service.GetById(visit.ID, visit.CreatedBySid);
 
             // Assert
             result.Should().NotBeNull();
             result.ID.Should().Be(visit.ID);
+        }
+
+        [Fact]
+        public async Task TestGetAllForUser()
+        {
+            // Visit must be in an available solot
+
+            // Arrange
+            string sid = "test123";
+
+            List<Visit> visits = new List<Visit>()
+            {
+                new (){
+                    ID = Guid.NewGuid(),
+                    Facility = _facility,
+                    From = _fixedNowDate.AddHours(10),
+                    To = _fixedNowDate.AddHours(10).AddMinutes(15),
+                    Households = new List<Household> { new() { NumberOfPersons = 1, NumberOfChildren = 1 } }
+                },
+
+               new () {
+                    ID = Guid.NewGuid(),
+                    Facility = _facility,
+                    From = _fixedNowDate.AddDays(1).AddHours(10),
+                    To = _fixedNowDate.AddDays(1).AddHours(10).AddMinutes(15),
+                    Households = new List<Household> { new() { NumberOfPersons = 1, NumberOfChildren = 1 } }
+               }
+               };
+
+            _repo.Setup(x => x.GetAllForSid(sid)).ReturnsAsync(visits);
+
+            var service = new VisitService(_repo.Object, _facilityService.Object, null, null);
+
+            // Act
+            var result = await service.GetAll(sid);
+
+            // Assert
+            result.Should().HaveSameCount(visits);
         }
 
     }

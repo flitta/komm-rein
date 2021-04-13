@@ -33,7 +33,7 @@ namespace komm_rein.api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Visit>>> Get()
+        public async Task<ActionResult<IList<Visit>>> Get()
         {
             try
             {

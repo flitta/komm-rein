@@ -17,11 +17,7 @@ namespace komm_rein.api.Services
         readonly IFacilityService _facilityService;
         readonly IProtectionService _protectionService;
 
-        //public VisitService(IVisitRepository repository, IFacilityService facilityService)
-        //{
-        //    _repository = repository;
-        //    _facilityService = facilityService;
-        //}
+   
         public VisitService(IVisitRepository repository, IFacilityService facilityService, IFacilityRepository facilityRepository , IProtectionService protectionService)
         {
             _protectionService = protectionService;
@@ -80,9 +76,10 @@ namespace komm_rein.api.Services
             return item;
         }
 
-        public async ValueTask<List<Visit>> GetAll(string sid)
+        public async ValueTask<Visit[]> GetAll(string sid)
         {
-            throw new NotImplementedException();
+            var list = await _repository.GetAllForSid(sid);
+            return list.ToArray();
         }
 
         public async ValueTask<Visit> GetById(Guid id, string sid)

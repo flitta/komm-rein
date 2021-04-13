@@ -10,7 +10,7 @@ namespace komm_rein.api.Services
 {
     public interface IVisitService
     {
-        ValueTask<List<Visit>> GetAll(string sid);
+        ValueTask<Visit[]> GetAll(string sid);
         
         ValueTask<Signed<Visit>> BookVisit(string name, DateTime from, DateTime to, int pax, int kids, string sid);
 

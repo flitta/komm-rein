@@ -9,6 +9,6 @@ namespace komm_rein.api.Repositories
 {
     public interface IVisitRepository : IContextItemRepository<Visit>
     {
-
+        ValueTask<IList<Visit>> GetAllForSid(string sid);
     }
 }
