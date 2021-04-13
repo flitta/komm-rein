@@ -33,7 +33,7 @@ namespace komm_rein.model
             var result = new Visit
             {
                 ID = input.ID,
-                Facility = new() { ID = input.Facility.ID },
+                Facility = new() { ID = input.Facility.ID, Name = input.Facility.Name },
                 From = input.From,
                 To = input.To,
                 Households = input.Households.Select(h => new Household

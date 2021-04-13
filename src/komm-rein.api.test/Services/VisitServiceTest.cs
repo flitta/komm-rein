@@ -209,7 +209,7 @@ namespace komm_rein.api.test.Services
             var service = new VisitService(_repo.Object, _facilityService.Object, null, null);
 
             // Act
-            Func<Task> test = async () => await service.GetById(visit.ID, "wrong");
+            Func<Task> test = async () => await service.GetByIdForOwner(visit.ID, "wrong");
 
             // Assert
             test.Should().Throw<SecurityException>();
@@ -238,7 +238,7 @@ namespace komm_rein.api.test.Services
             var service = new VisitService(_repo.Object, _facilityService.Object, null, null);
 
             // Act
-            var result = await service.GetById(visit.ID, visit.CreatedBySid);
+            var result = await service.GetByIdForOwner(visit.ID, visit.CreatedBySid);
 
             // Assert
             result.Should().NotBeNull();

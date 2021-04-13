@@ -51,7 +51,7 @@ namespace komm_rein.api.Controllers
         {
             try
             {
-                return await _service.GetById(id, User.Sid());
+                return await _service.GetByIdForOwner(id, User.Sid());
             }
             catch (Exception ex)
             {

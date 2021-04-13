@@ -65,7 +65,7 @@ namespace komm_rein.api.Services
 
         public async ValueTask<Visit> Cancel(Guid id, string sid)
         {
-            var item = await GetById(id, sid);
+            var item = await GetByIdForOwner(id, sid);
 
             item.IsCanceled = true;
 
@@ -82,16 +82,16 @@ namespace komm_rein.api.Services
             return list.ToArray();
         }
 
-        public async ValueTask<Visit> GetById(Guid id, string sid)
+        public async ValueTask<Visit> GetByIdForOwner(Guid id, string sid)
         {
-            var item = await _repository.GetById(id);
+            var item = await _repository.GetByIdForOwner(id, sid);
 
             if (item.OwnerSid != sid)
             {
                 throw new SecurityException();
             }
 
-            return item;
+            return item.ToDto();
         }
     }
 }

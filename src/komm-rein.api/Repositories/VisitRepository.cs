@@ -26,5 +26,14 @@ namespace komm_rein.api.Repositories
             return await _dbContext.Visits.FindAsync(id);
         }
 
+        public async ValueTask<Visit> GetByIdForOwner(Guid id, string sid)
+        {
+            return await _dbContext.Visits
+                .Include(v => v.Facility)
+                .Include(v => v.Households)
+                .Where(x => x.ID == id && x.OwnerSid == sid )
+                .SingleAsync();
+        }
+
     }
 }
