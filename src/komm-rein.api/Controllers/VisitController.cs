@@ -19,14 +19,17 @@ namespace komm_rein.api.Controllers
     {
         private readonly ILogger<VisitController> _logger;
         private readonly IVisitService _service;
+        private readonly IEmailSenderService _emailSenderService;
 
         public VisitController(
             IVisitService service,
+            IEmailSenderService emailSenderService,
             ILogger<VisitController> logger
             )
         {
             _logger = logger;
             _service = service;
+            _emailSenderService = emailSenderService;
         }
 
         [HttpGet]
@@ -78,7 +81,12 @@ namespace komm_rein.api.Controllers
         {
             try
             {
-                return await _service.BookVisit(name, from, to, pax, kids, User.Sid());
+                var visit =  await _service.BookVisit(name, from, to, pax, kids, User.Sid());
+
+                await _emailSenderService.SendVisit(visit.Payload, User.Email());
+                
+                return visit;
+
             }
             catch (Exception ex)
             {

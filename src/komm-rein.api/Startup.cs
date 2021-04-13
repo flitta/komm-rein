@@ -1,3 +1,4 @@
+using komm_rein.api.Config;
 using komm_rein.api.Repositories;
 using komm_rein.api.Services;
 using komm_rein.model;
@@ -79,6 +80,10 @@ namespace komm_rein.api
                         .AllowAnyMethod();
                 });
             });
+
+            //esendgrid email sender
+            services.AddTransient<IEmailSenderService, SendgridEmailSenderService>();
+            services.Configure<SendGridOptions>(options => Configuration.GetSection("SendGrid").Bind(options));
 
             services.AddScoped<IProtectionService, ProtectionService>();
             services.AddScoped<IVisitRepository, VisitRepository>();
