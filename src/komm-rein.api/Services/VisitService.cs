@@ -65,7 +65,12 @@ namespace komm_rein.api.Services
 
         public async ValueTask<Visit> Cancel(Guid id, string sid)
         {
-            var item = await GetByIdForOwner(id, sid);
+            var item = await _repository.GetByIdForOwner(id, sid);
+
+            if (item == null || item.OwnerSid != sid)
+            {
+                throw new SecurityException();
+            }
 
             item.IsCanceled = true;
 

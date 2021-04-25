@@ -67,6 +67,7 @@ namespace komm_rein.ui.web.Pages
         protected async Task Execute()
         {
             viewModel.BookedVisit = await _service.BookForSlot(viewModel.Name, viewModel.From, viewModel.To, viewModel.PaxCount, viewModel.ChildrenCount);
+            NavigationManager.NavigateTo($"/termin/{viewModel.BookedVisit.Payload.ID}");
         }
 
     }

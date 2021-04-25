@@ -60,23 +60,22 @@ namespace komm_rein.api.Controllers
             }
         }
 
-        [HttpPut("cancel/{id}")]
-        public async Task<ActionResult<Visit>> Cancel(Guid id)
+        [HttpPut("cancel")]
+        public async Task<ActionResult<Visit>> Cancel([FromBody]Visit visit)
         {
             try
             {
-                await _service.Cancel(id, User.Sid());
-
-                return Ok();
+                await _service.Cancel(visit.ID, User.Sid());
+                return new Visit();
             }
             catch (Exception ex)
             {
-                _logger.LogInformation(ex, $"Bad request in PUT Visits/Cancel, id: {id}");
+                _logger.LogInformation(ex, $"Bad request in PUT Visits/Cancel, id: {visit.ID}");
                 return BadRequest();
             }
         }
 
-        [HttpPost("{name}/{from}/{to}/{pax}/{kids}")]
+        [HttpPost("book/{name}/{from}/{to}/{pax}/{kids}")]
         public async Task<ActionResult<Signed<Visit>>> Post(string name, DateTime from, DateTime to, int pax, int kids)
         {
             try

@@ -20,11 +20,9 @@ using System.Threading.Tasks;
 namespace komm_rein.ui.web.Pages
 {
     [Authorize]
-    public partial class MyVisit
+    public partial class ViewVisit
     {
-        //protected BookSlotViewModel viewModel = new();
-
-        protected bool loaded = false;
+            protected bool loaded = false;
 
         [Inject]
         protected NavigationManager NavigationManager { get; set; }
@@ -35,19 +33,22 @@ namespace komm_rein.ui.web.Pages
         [Parameter]
         public string ID { get; set; }
 
-        protected Visit model = new Visit();
+        protected VisitViewModel model = new VisitViewModel();
 
 
         protected override async Task OnInitializedAsync()
         {
-            model = await _service.Get(new Guid(ID));
+            var visit = await _service.Get(new Guid(ID));
+
+            model = new() {ID = visit.ID,  Name = visit.Facility.Name, From = visit.From, To = visit.To, PaxCount = visit.Households.Sum(h => h.NumberOfPersons + h.NumberOfChildren) };
             loaded = true;
             StateHasChanged();
         }
 
         protected async Task Cancel()
         {
-            //viewModel.BookedVisit = await _service.BookForSlot(viewModel.Name, viewModel.From, viewModel.To, viewModel.PaxCount, viewModel.ChildrenCount);
+            await _service.Cancel(new komm_rein.model.Visit() { ID = model.ID});
+            NavigationManager.NavigateTo("/meine-termine");
         }
 
     }

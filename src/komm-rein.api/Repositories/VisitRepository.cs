@@ -18,7 +18,10 @@ namespace komm_rein.api.Repositories
 
         public async ValueTask<IList<Visit>> GetAllForSid(string sid)
         {
-            return await _dbContext.Visits.Where(x => x.OwnerSid == sid && x.From.Date >= DateTime.Today).ToListAsync();
+            return await _dbContext.Visits
+                .Include(v => v.Facility)
+                .Where(x => x.OwnerSid == sid && x.From.Date >= DateTime.Today && !x.IsCanceled)
+                .ToListAsync();
         }
 
         public async ValueTask<Visit> GetById(Guid id)

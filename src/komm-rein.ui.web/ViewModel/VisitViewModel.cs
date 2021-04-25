@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace kommrein.ui.web.ViewModel
 {
-    public class BookSlotViewModel
+    public class VisitViewModel
     {
         public string Name { get; set; }
 
@@ -18,10 +18,7 @@ namespace kommrein.ui.web.ViewModel
         public int PaxCount { get; set; }
 
         public int? ChildrenCount { get; set; }
-
-        public List<Slot> Slots { get; set; } = new List<Slot>();
-
-        public Signed<Visit> BookedVisit { get; set; }
-
+        
+        public Guid ID { get;  set; }
     }
 }

@@ -16,10 +16,19 @@ namespace kommrein.ui.web.Services
         {
         }
 
-        public async ValueTask<Visit> BookForSlot(string name, DateTime from, DateTime to, int pax, int? kids)
+        public async ValueTask<Signed<Visit>> BookForSlot(string name, DateTime from, DateTime to, int pax, int? kids)
         {
-            return await _httpService.Post<Visit>($"{_options.Path}/{name}/{from.ToInvariantString()}/{to.ToInvariantString()}/{pax}/{kids.GetValueOrDefault()}", new object());
+            return await _httpService.Post<Signed<Visit>>($"{_options.Path}/book/{name}/{from.ToInvariantString()}/{to.ToInvariantString()}/{pax}/{kids.GetValueOrDefault()}", new object());
         }
 
+        public async Task Cancel(Visit visit)
+        {
+            await _httpService.Put<Visit>($"{_options.Path}/cancel", visit);
+        }
+
+        public async ValueTask<Visit[]> GetMyVisits()
+        {
+            return await _httpService.Get<Visit[]>(_options.Path);
+        }
     }
 }

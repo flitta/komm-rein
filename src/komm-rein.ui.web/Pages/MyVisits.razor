@@ -1,0 +1,13 @@
+﻿@page "/meine-termine"
+
+
+<div class="container">
+    <ul>
+        @foreach (var item in visits)
+        {
+            <li><button class="btn btn-primary" @onclick="@(e => GoTo(item))">@item.Facility.Name</button></li>
+
+        }
+    </ul>
+</div>
+
