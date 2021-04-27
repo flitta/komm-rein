@@ -30,7 +30,7 @@ namespace komm_rein.ui.web.Pages
         [Inject]
         protected IVisitService _service { get; set; }
 
-        [Parameter]
+        [Parameter] 
         public string ID { get; set; }
 
         protected VisitViewModel model = new VisitViewModel();
