@@ -105,7 +105,7 @@ namespace komm_rein.api.test.Helper
             dto.CountingMode.Should().Be(_facility.Settings.CountingMode);
             dto.CrowdedAt.Should().Be(_facility.Settings.CrowdedAt);
             dto.MaxNumberofVisitors.Should().Be(_facility.Settings.MaxNumberofVisitors);
-            dto.SlotSize.Should().Be(_facility.Settings.SlotSize);
+            dto.SlotSizeMinutes.Should().Be((int)_facility.Settings.SlotSize.TotalMinutes);
             dto.SlotStatusThreshold.Should().Be(_facility.Settings.SlotStatusThreshold);
         }
 

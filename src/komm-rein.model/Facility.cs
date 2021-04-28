@@ -10,10 +10,8 @@ namespace komm_rein.model
 {
     public class Facility : ContextItem
     {
-        [JsonIgnore]
         public FacilitySettings Settings { get; set; }
 
-        [JsonIgnore]
         public IList<OpeningHours> OpeningHours { get; set; }
 
         [Required]

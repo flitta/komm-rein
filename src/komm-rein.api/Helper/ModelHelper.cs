@@ -74,7 +74,7 @@ namespace komm_rein.model
                 ID = input.ID,
                 CountingMode = input.CountingMode,
                 MaxNumberofVisitors = input.MaxNumberofVisitors,
-                SlotSize = input.SlotSize,
+                SlotSizeMinutes = (int)input.SlotSize.TotalMinutes,
                 SlotStatusThreshold = input.SlotStatusThreshold,
             };
 

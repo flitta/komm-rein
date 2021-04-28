@@ -91,6 +91,21 @@ namespace komm_rein.api.Controllers
             }
         }
 
+        [HttpPut]
+        public async Task<ActionResult<Facility>> Put([FromBody] Facility value)
+        {
+            try
+            {
+                var result = await _service.Update(value, User.Sid());
+                return result.ToDto(withMainAddress: true, withSettings: true, withOpeningHours: true);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex, "Bad Request in PUT Facility");
+                return BadRequest();
+            }
+        }
+
         [HttpPut("{id}/settings")]
         public async Task<ActionResult<FacilitySettings>> Settings(Guid id, [FromBody] FacilitySettings value)
         {

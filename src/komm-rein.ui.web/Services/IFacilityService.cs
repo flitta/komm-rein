@@ -11,6 +11,7 @@ namespace kommrein.ui.web.Services
     {
         ValueTask<Facility> GetWithSetting(Guid id);
 
+        ValueTask<Facility[]> GetMyFacilities();
 
         ValueTask<Slot[]> GetSlots(string name, DateTime day, Visit visit);
 

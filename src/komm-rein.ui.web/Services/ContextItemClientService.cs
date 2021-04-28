@@ -25,7 +25,7 @@ namespace kommrein.ui.web.Services
 
         public virtual async ValueTask<T> Update(T item)
         {
-            return await _httpService.Put($"{_options.Path}/{item.ID}", item);
+            return await _httpService.Put($"{_options.Path}", item);
         }
     }
 }

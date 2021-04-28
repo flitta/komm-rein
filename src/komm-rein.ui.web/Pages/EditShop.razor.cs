@@ -12,7 +12,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-
+using kommrein.ui.web.Helper;
 
 namespace komm_rein.ui.web.Pages
 {
@@ -23,9 +23,7 @@ namespace komm_rein.ui.web.Pages
         public string ID { get; set; }
 
         protected EditContext editContext;
-        protected Facility model = new() { MainAddress = new(), Settings = new(), OpeningHours = new List<OpeningHours>()};
-
-        protected OpeningHoursViewModel newOpeningHours;
+        protected EditFacilityViewModel model = new() { OpeningHours = new List<OpeningHours>()};
 
         protected bool loaded = false;
 
@@ -34,52 +32,25 @@ namespace komm_rein.ui.web.Pages
 
         protected override void OnInitialized()
         {
-            newOpeningHours = InitNewOpeningHours();
             editContext = new EditContext(model);
             editContext.SetFieldCssClassProvider(new BsFieldCssClassProvider());
-
-         
-        }
-
-        private OpeningHoursViewModel InitNewOpeningHours()
-        {
-            return new()
-            {
-                From = "",
-                To = "",
-                Sunday = false,
-                Monday = true,
-                Tuesday = true,
-                Wednesday = true,
-                Thursday = true,
-                Friday = true,
-                Saturday = true,
-            };
         }
 
         protected override async Task OnInitializedAsync()
         {
-            model = await _service.GetWithSetting(new Guid(ID));
-            if(model.OpeningHours == null)
-            {
-                model.OpeningHours = new List<OpeningHours>();
-            }
+            var item = await _service.GetWithSetting(new Guid(ID));
 
-            if (model.Settings == null)
-            {
-                model.Settings = new() { SlotStatusThreshold = .5};
-            }
-            model.Settings.SlotSize = TimeSpan.FromMinutes(15);
-
+            model = item.ToEditViewModel();
             loaded = true;
             StateHasChanged();
         }
 
         protected async Task HandleValidSubmit()
         {
-            //await _service.Update(model);
-            await _service.UpdateOpeningHours(model);
-            await _service.UpdateSettings(model);
+            var item = model.ToModel();
+            await _service.Update(item);
+            await _service.UpdateOpeningHours(item);
+            await _service.UpdateSettings(item);
         }
 
         protected void AddOpeningHours()
@@ -89,25 +60,26 @@ namespace komm_rein.ui.web.Pages
             bool valid = true;
             
             DateTime from, to;
-            valid &= DateTime.TryParse(newOpeningHours.From, out from);
-            valid &= DateTime.TryParse(newOpeningHours.To, out to);
+
+            valid &= DateTime.TryParse(model.NewOpeningHours.From, out from);
+            valid &= DateTime.TryParse(model.NewOpeningHours.To, out to);
 
             if (valid)
             {
                 newItem.From = from;
                 newItem.To = to;
 
-                newItem.DayOfWeek |= newOpeningHours.Monday ? komm_rein.model.DayOfWeek.Monday : newItem.DayOfWeek;
-                newItem.DayOfWeek |= newOpeningHours.Tuesday ? komm_rein.model.DayOfWeek.Tuesday : newItem.DayOfWeek;
-                newItem.DayOfWeek |= newOpeningHours.Wednesday ? komm_rein.model.DayOfWeek.Wednesday : newItem.DayOfWeek;
-                newItem.DayOfWeek |= newOpeningHours.Thursday ? komm_rein.model.DayOfWeek.Thursday : newItem.DayOfWeek;
-                newItem.DayOfWeek |= newOpeningHours.Friday ? komm_rein.model.DayOfWeek.Friday : newItem.DayOfWeek;
-                newItem.DayOfWeek |= newOpeningHours.Saturday ? komm_rein.model.DayOfWeek.Saturday : newItem.DayOfWeek;
-                newItem.DayOfWeek |= newOpeningHours.Sunday ? komm_rein.model.DayOfWeek.Sunday : newItem.DayOfWeek;
+                newItem.DayOfWeek |= model.NewOpeningHours.Monday ? komm_rein.model.DayOfWeek.Monday : newItem.DayOfWeek;
+                newItem.DayOfWeek |= model.NewOpeningHours.Tuesday ? komm_rein.model.DayOfWeek.Tuesday : newItem.DayOfWeek;
+                newItem.DayOfWeek |= model.NewOpeningHours.Wednesday ? komm_rein.model.DayOfWeek.Wednesday : newItem.DayOfWeek;
+                newItem.DayOfWeek |= model.NewOpeningHours.Thursday ? komm_rein.model.DayOfWeek.Thursday : newItem.DayOfWeek;
+                newItem.DayOfWeek |= model.NewOpeningHours.Friday ? komm_rein.model.DayOfWeek.Friday : newItem.DayOfWeek;
+                newItem.DayOfWeek |= model.NewOpeningHours.Saturday ? komm_rein.model.DayOfWeek.Saturday : newItem.DayOfWeek;
+                newItem.DayOfWeek |= model.NewOpeningHours.Sunday ? komm_rein.model.DayOfWeek.Sunday : newItem.DayOfWeek;
             }
 
             model.OpeningHours.Add(newItem);
-            newOpeningHours = InitNewOpeningHours();
+            model.NewOpeningHours = OpeningHoursViewModel.Create();
 
             StateHasChanged();
         }

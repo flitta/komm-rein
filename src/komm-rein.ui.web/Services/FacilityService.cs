@@ -16,6 +16,11 @@ namespace kommrein.ui.web.Services
         {
         }
 
+        public async ValueTask<Facility[]> GetMyFacilities()
+        {
+            return await _httpService.Get<Facility[]>(_options.Path);
+        }
+
         public async ValueTask<Facility> GetWithSetting(Guid id)
         {
             return await _httpService.Get<Facility>($"{_options.Path}/withsettings/{id}");
