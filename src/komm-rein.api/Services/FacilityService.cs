@@ -232,7 +232,7 @@ namespace komm_rein.api.Services
 
         public async ValueTask<Facility> Update(Facility item, string sid)
         {
-            var facility = await _repository.GetById(item.ID);
+            var facility = await _repository.GetByIdWithAssociations(item.ID);
             if (facility.OwnerSid != sid)
             {
                 throw new SecurityException();
@@ -269,7 +269,8 @@ namespace komm_rein.api.Services
             }
 
             facility.Settings = value;
-            
+            facility.Settings.SlotSize = TimeSpan.FromMinutes(value.SlotSizeMinutes);
+
             var result = await _repository.SaveItem(facility);
 
             return result.Settings;

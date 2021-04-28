@@ -8,6 +8,22 @@ namespace kommrein.ui.web.ViewModel
 {
     public class OpeningHoursViewModel
     {
+        public static  OpeningHoursViewModel Create()
+        {
+            return new()
+            {
+                From = "",
+                To = "",
+                Sunday = false,
+                Monday = true,
+                Tuesday = true,
+                Wednesday = true,
+                Thursday = true,
+                Friday = true,
+                Saturday = true,
+            };
+        }
+
         public string From { get; set; }
         
         public string To { get; set; }

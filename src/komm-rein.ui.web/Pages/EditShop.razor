@@ -31,26 +31,30 @@ else
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <InputText @bind-Value="model.MainAddress.Street_1" class="form-control  form-control-alternative" placeholder="Straße und Hausnummer" />
+                        <InputText @bind-Value="model.Street" class="form-control  form-control-alternative" placeholder="Straße und Hausnummer" />
+                        <ValidationMessage For="@(() => model.Street)" />
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <InputText @bind-Value="model.MainAddress.Street_2" class="form-control  form-control-alternative" placeholder="Adresszusatz" />
+                        <InputText @bind-Value="model.Street_2" class="form-control  form-control-alternative" placeholder="Adresszusatz" />
+                        <ValidationMessage For="@(() => model.Street_2)" />
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-4 col-sm-3 col-6">
                     <div class="form-group">
-                        <InputText @bind-Value="model.MainAddress.ZipCode" class="form-control  form-control-alternative" placeholder="PLZ" />
+                        <InputText @bind-Value="model.ZipCode" class="form-control  form-control-alternative" placeholder="PLZ" />
+                        <ValidationMessage For="@(() => model.ZipCode)" />
                     </div>
                 </div>
                 <div class="col-md-8 col-sm-3">
                     <div class="form-group">
-                        <InputText @bind-Value="model.MainAddress.City" class="form-control  form-control-alternative" placeholder="Ort" />
+                        <InputText @bind-Value="model.City" class="form-control  form-control-alternative" placeholder="Ort" />
+                        <ValidationMessage For="@(() => model.City)" />
                     </div>
                 </div>
             </div>
@@ -60,77 +64,68 @@ else
                     <h5>Kontakt</h5>
                 </div>
             </div>
-
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <InputText @bind-Value="model.MainAddress.ContactPhone" class="form-control  form-control-alternative" placeholder="Telefon" />
+                        <InputText @bind-Value="model.Phone" class="form-control  form-control-alternative" placeholder="Telefon" />
+                        <ValidationMessage For="@(() => model.Name)" />
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <InputText @bind-Value="model.MainAddress.ContactEmail" class="form-control  form-control-alternative" type="email" placeholder="Email" />
+                        <InputText @bind-Value="model.Email" class="form-control  form-control-alternative" type="email" placeholder="Email" />
+                        <ValidationMessage For="@(() => model.Name)" />
                     </div>
                 </div>
             </div>
-
             <div class="row">
                 <div class="col-sm">
                     <h5>Öffnungszeiten</h5>
                 </div>
             </div>
-
-
             <div class="row">
-
                 <div class="col-2">
                     <div class="custom-control custom-checkbox ">
-                        <InputCheckbox @bind-Value="newOpeningHours.Monday" class="custom-control-input" id="checkMonday" />
+                        <InputCheckbox @bind-Value="model.NewOpeningHours.Monday" class="custom-control-input" id="checkMonday" />
                         <label class="custom-control-label" for="checkMonday">Montag</label>
                     </div>
                 </div>
-
                 <div class="col-2">
                     <div class="custom-control custom-checkbox ">
-                        <InputCheckbox @bind-Value="newOpeningHours.Tuesday" class="custom-control-input" id="checkTuesday" />
+                        <InputCheckbox @bind-Value="model.NewOpeningHours.Tuesday" class="custom-control-input" id="checkTuesday" />
                         <label class="custom-control-label" for="checkTuesday">Dienstag</label>
                     </div>
                 </div>
-
                 <div class="col-2">
                     <div class="custom-control custom-checkbox ">
-                        <InputCheckbox @bind-Value="newOpeningHours.Wednesday" class="custom-control-input" id="checkWednesday" />
+                        <InputCheckbox @bind-Value="model.NewOpeningHours.Wednesday" class="custom-control-input" id="checkWednesday" />
                         <label class="custom-control-label" for="checkWednesday">Mittwoch</label>
                     </div>
                 </div>
-
                 <div class="col-2">
                     <div class="custom-control custom-checkbox ">
-                        <InputCheckbox @bind-Value="newOpeningHours.Thursday" class="custom-control-input" id="checkThursday" />
+                        <InputCheckbox @bind-Value="model.NewOpeningHours.Thursday" class="custom-control-input" id="checkThursday" />
                         <label class="custom-control-label" for="checkThursday">Donnerstag</label>
                     </div>
                 </div>
-
                 <div class="col-2">
                     <div class="custom-control custom-checkbox ">
-                        <InputCheckbox @bind-Value="newOpeningHours.Friday" class="custom-control-input" id="checkFriday" />
+                        <InputCheckbox @bind-Value="model.NewOpeningHours.Friday" class="custom-control-input" id="checkFriday" />
                         <label class="custom-control-label" for="checkFriday">Freitag</label>
                     </div>
                 </div>
                 <div class="col-2">
-
                 </div>
 
                 <div class="col-2">
                     <div class="custom-control custom-checkbox ">
-                        <InputCheckbox @bind-Value="newOpeningHours.Saturday" class="custom-control-input" id="checkSaturday" />
+                        <InputCheckbox @bind-Value="model.NewOpeningHours.Saturday" class="custom-control-input" id="checkSaturday" />
                         <label class="custom-control-label" for="checkSaturday">Samstag</label>
                     </div>
                 </div>
-
                 <div class="col-2">
                     <div class="custom-control custom-checkbox ">
-                        <InputCheckbox @bind-Value="newOpeningHours.Sunday" class="custom-control-input" id="checkSunday" />
+                        <InputCheckbox @bind-Value="model.NewOpeningHours.Sunday" class="custom-control-input" id="checkSunday" />
                         <label class="custom-control-label" for="checkSunday">Sonntag</label>
                     </div>
                 </div>
@@ -138,10 +133,10 @@ else
             <br />
             <div class="row">
                 <div class="col-2">
-                    <InputText @bind-Value="newOpeningHours.From" class="form-control  form-control-alternative" placeholder="Von" />
+                    <InputText @bind-Value="model.NewOpeningHours.From" class="form-control  form-control-alternative" placeholder="Von" />
                 </div>
                 <div class="col-2">
-                    <InputText @bind-Value="newOpeningHours.To" class="form-control  form-control-alternative" placeholder="Bis" />
+                    <InputText @bind-Value="model.NewOpeningHours.To" class="form-control  form-control-alternative" placeholder="Bis" />
                 </div>
 
             </div>
@@ -152,7 +147,6 @@ else
                     </button>
                 </div>
             </div>
-
             @foreach (var openingHourItem in model.OpeningHours)
             {
                 <div class="row">
@@ -169,42 +163,34 @@ else
 
             }
 
-
             <div class="row">
                 <div class="col-sm">
                     <h5>Besuchereinstellungen</h5>
                 </div>
             </div>
-
-            @*<div class="col-md-6">
-                <div class="form-group">
-                    <InputNumber @bind-Value="model.Settings.SlotSize" class="form-control  form-control-alternative" placeholder="Dauer in Minuten" />
-                    <ValidationMessage For="@(() => model.Name)" />
-                </div>
-            </div>*@
-
-
             <div class="col-md-6">
                 <div class="form-group">
-                    <InputNumber @bind-Value="model.Settings.MaxNumberofVisitors" class="form-control  form-control-alternative" placeholder="Max. Anzahl" />
+                    <InputNumber @bind-Value="model.SlotMinutes" class="form-control  form-control-alternative" placeholder="Dauer in Minuten" />
                     <ValidationMessage For="@(() => model.Name)" />
                 </div>
             </div>
-
             <div class="col-md-6">
                 <div class="form-group">
-                    <InputNumber @bind-Value="model.Settings.SlotStatusThreshold" class="form-control  form-control-alternative" placeholder="Gelb %" />
+                    <InputNumber @bind-Value="model.MaxNumberofVisitors" class="form-control  form-control-alternative" placeholder="Max. Anzahl" />
                     <ValidationMessage For="@(() => model.Name)" />
                 </div>
             </div>
-
-
+            <div class="col-md-6">
+                <div class="form-group">
+                    <InputNumber @bind-Value="model.SlotStatusThreshold" class="form-control  form-control-alternative" placeholder="Gelb %" />
+                    <ValidationMessage For="@(() => model.Name)" />
+                </div>
+            </div>
             <div class="row">
                 <div class="col-12">
                     <button type="submit" class="btn btn-primary" @onclick="HandleValidSubmit">Speichern</button>
                 </div>
             </div>
-
         </div>
     </EditForm>
 }

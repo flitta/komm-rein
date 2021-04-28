@@ -191,7 +191,7 @@ namespace komm_rein.api.test.Services
         {
             // Arrange
             Facility testItem = new() { ID = Guid.NewGuid(), Name = "Hannes Blumeneck", OwnerSid = "testsid" };
-            FacilitySettings newSettings = new() { SlotSize = TimeSpan.FromMinutes(15), MaxNumberofVisitors = 4 };
+            FacilitySettings newSettings = new() { SlotSizeMinutes = 15, MaxNumberofVisitors = 4 };
 
             _repo.Setup(x => x.GetWithSettings(testItem.ID)).ReturnsAsync(testItem);
             _repo.Setup(x => x.SaveItem(testItem)).ReturnsAsync(testItem);
@@ -207,7 +207,7 @@ namespace komm_rein.api.test.Services
             _repo.Verify(mock => mock.SaveItem(testItem), Times.Once());
 
             testItem.Settings.Should().NotBeNull();
-            testItem.Settings.SlotSize.Should().Be(newSettings.SlotSize);
+            testItem.Settings.SlotSize.TotalMinutes.Should().Be(newSettings.SlotSizeMinutes);
         }
 
         [Fact]
@@ -279,7 +279,7 @@ namespace komm_rein.api.test.Services
             Facility testItem = new() { ID = Guid.NewGuid(), Name = "Hannes Blumeneck", OwnerSid = "testsid" };
             Facility testItem2 = new() { ID = Guid.NewGuid(), Name = "Salon Sahra", OwnerSid = "testsid2" };
 
-            _repo.Setup(x => x.GetById(testItem.ID)).ReturnsAsync(testItem);
+            _repo.Setup(x => x.GetByIdWithAssociations(testItem.ID)).ReturnsAsync(testItem);
 
             IFacilityService service = new FacilityService(_repo.Object);
 
@@ -324,7 +324,7 @@ namespace komm_rein.api.test.Services
                  }
             };
 
-            _repo.Setup(x => x.GetById(repoItem.ID)).ReturnsAsync(repoItem);
+            _repo.Setup(x => x.GetByIdWithAssociations(repoItem.ID)).ReturnsAsync(repoItem);
 
             IFacilityService service = new FacilityService(_repo.Object);
 
