@@ -22,5 +22,7 @@ namespace kommrein.ui.web.ViewModel
         public int? ChildrenCount { get; set; }
         
         public Guid ID { get;  set; }
+        public Guid FacilityID { get; internal set; }
+        public string VerificationUri { get; internal set; }
     }
 }

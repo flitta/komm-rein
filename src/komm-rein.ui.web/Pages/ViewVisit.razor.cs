@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -43,10 +44,12 @@ namespace komm_rein.ui.web.Pages
             {
                 Signature = signed.Signature,
                 ID = signed.Payload.ID,
+                FacilityID = signed.Payload.Facility.ID,
                 Name = signed.Payload.Facility.Name,
                 From = signed.Payload.From,
                 To = signed.Payload.To,
-                PaxCount = signed.Payload.Households.Sum(h => h.NumberOfPersons + h.NumberOfChildren)
+                PaxCount = signed.Payload.Households.Sum(h => h.NumberOfPersons + h.NumberOfChildren),
+                VerificationUri = $"https://terminshopping.app/verifizieren/{signed.Payload.Facility.ID}/{signed.Payload.ID}/{signed.Signature}",
             };
 
             loaded = true;
@@ -58,5 +61,6 @@ namespace komm_rein.ui.web.Pages
             await _service.Cancel(new komm_rein.model.Visit() { ID = model.ID });
             NavigationManager.NavigateTo("/meine-termine");
         }
+
     }
 }

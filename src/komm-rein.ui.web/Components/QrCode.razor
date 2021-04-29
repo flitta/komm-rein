@@ -1,0 +1,25 @@
+﻿@inject IJSRuntime JSRuntime
+
+<div id="QrCode"></div>
+
+@code {
+    [Parameter]
+    public string QrValue { get; set; }
+
+    protected string imageBase64;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+
+        if (!firstRender)
+        {
+            var qrData = new { id = "QrCode", width = 600, height = 600, colorDark = "#000000", colorLight = "#FFFFFF", value = QrValue };
+
+            var js = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "/js/plugins/qrcode.wrapper.js");
+            await js.InvokeVoidAsync("showQrCode", qrData);
+        }
+    }
+
+
+
+}
