@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using System.Security;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace komm_rein.api.test.Services
 {
@@ -884,6 +885,52 @@ namespace komm_rein.api.test.Services
             // Assert
             var targetSlot = result.First(s => s.From == visit_new.From);
             targetSlot.Status.Should().Be(SlotStatus.Full);
+        }
+
+        [Fact]
+        public async Task Verify()
+        {
+            var protection = new Mock<IProtectionService>();
+
+            // arrange
+            Visit visit = new()
+            {
+                Facility = _facility,
+                From = _fixedNowDate.AddHours(10),
+                To = _fixedNowDate.AddHours(10).AddMinutes(15),
+                Households = new List<Household> { new() { NumberOfPersons = 1, NumberOfChildren = 1 } }
+            };
+
+            _repo.Setup(x => x.GetVisit(_facility.ID, visit.ID, "test_sid")).ReturnsAsync(visit);
+            protection.Setup(x => x.Verify(It.IsAny<String>(), It.IsAny<Visit>())).Returns(true);
+
+            var service = new FacilityService(_repo.Object, protection.Object);
+
+            var result = await service.Verify(_facility.ID, visit.ID, "some_test_string", "test_sid");
+            result.ID.Should().Be(visit.ID);
+        }
+
+        [Fact]
+        public async Task VerifyFailed()
+        {
+            var protection = new Mock<IProtectionService>();
+
+            // arrange
+            Visit visit = new()
+            {
+                Facility = _facility,
+                From = _fixedNowDate.AddHours(10),
+                To = _fixedNowDate.AddHours(10).AddMinutes(15),
+                Households = new List<Household> { new() { NumberOfPersons = 1, NumberOfChildren = 1 } }
+            };
+
+            _repo.Setup(x => x.GetVisit(_facility.ID, visit.ID, "test_sid")).ReturnsAsync(visit);
+            protection.Setup(x => x.Verify(It.IsAny<String>(), It.IsAny<Visit>())).Returns(false);
+
+            var service = new FacilityService(_repo.Object, protection.Object);
+
+            var result = await service.Verify(_facility.ID, visit.ID, "some_test_string", "test_sid");
+            result.ID.Should().Be(Guid.Empty);
         }
 
     }

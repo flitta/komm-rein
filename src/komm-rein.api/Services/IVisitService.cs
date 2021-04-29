@@ -14,7 +14,7 @@ namespace komm_rein.api.Services
         
         ValueTask<Signed<Visit>> BookVisit(string name, DateTime from, DateTime to, int pax, int kids, string sid);
 
-        ValueTask<Visit> GetByIdForOwner(Guid id, string sid);
+        ValueTask<Signed<Visit>> GetByIdForOwner(Guid id, string sid);
 
         ValueTask<Visit> Cancel(Guid id, string sid);
     }

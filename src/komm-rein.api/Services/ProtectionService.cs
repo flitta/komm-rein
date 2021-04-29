@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.DataProtection;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,14 +62,13 @@ namespace komm_rein.api.Services
                 ? _protector.Protect(jsonHash, expiration.Value)
                 : _protector.Protect(jsonHash);
 
-            return Convert.ToBase64String(jsonHashEncrypted);
+            return Base64UrlEncoder.Encode(jsonHashEncrypted);
         }
            
         public bool Verify<T>(string signature, T item)
         {
-            byte[] inputBytesEncrypted = Convert.FromBase64String(signature);
+            byte[] inputBytesEncrypted = Base64UrlEncoder.DecodeBytes(signature);
             byte[] inputBytes = _protector.Unprotect(inputBytesEncrypted);
-                      
             string jsonString = JsonSerializer.Serialize(item);
             byte[] jsonBytes = Encoding.Default.GetBytes(jsonString);
             byte[] jsonHashBytes = _sha512.ComputeHash(jsonBytes);

@@ -30,5 +30,10 @@ namespace kommrein.ui.web.Services
         {
             return await _httpService.Get<Visit[]>(_options.Path);
         }
+
+        public async ValueTask<Signed<Visit>> GetSigned(Guid id)
+        {
+            return await _httpService.Get<Signed<Visit>>($"{_options.Path}/{id}");
+        }
     }
 }

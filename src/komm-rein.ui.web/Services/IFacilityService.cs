@@ -9,6 +9,8 @@ namespace kommrein.ui.web.Services
 {
     public interface IFacilityService : IContextItemClientService<Facility>
     {
+        ValueTask<Visit> VerifyVisit(Guid facilityId, Guid visitId, string signature);
+
         ValueTask<Facility> GetWithSetting(Guid id);
 
         ValueTask<Facility[]> GetMyFacilities();

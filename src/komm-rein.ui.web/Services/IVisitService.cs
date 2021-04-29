@@ -14,5 +14,8 @@ namespace kommrein.ui.web.Services
         Task Cancel(Visit visit);
 
         ValueTask<Visit[]> GetMyVisits();
+
+        ValueTask<Signed<Visit>> GetSigned(Guid id);
+
     }
 }

@@ -72,5 +72,14 @@ namespace komm_rein.api.Repositories
                   .Take(100)  
               .ToListAsync();
         }
+
+        public async ValueTask<Visit> GetVisit(Guid facilityId, Guid visitId, string sid)
+        {
+            return await _dbContext.Visits
+                .Include(v => v.Facility)
+                .Include(v => v.Households)
+                .Where(v => v.ID == visitId && v.Facility.ID == facilityId && v.Facility.OwnerSid == sid && !v.IsCanceled)
+                .SingleAsync();
+        }
     }
 }

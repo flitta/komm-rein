@@ -47,7 +47,7 @@ namespace komm_rein.api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Visit>> Get(Guid id)
+        public async Task<ActionResult<Signed<Visit>>> Get(Guid id)
         {
             try
             {

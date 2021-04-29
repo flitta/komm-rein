@@ -87,7 +87,7 @@ namespace komm_rein.api.Services
             return list.ToArray();
         }
 
-        public async ValueTask<Visit> GetByIdForOwner(Guid id, string sid)
+        public async ValueTask<Signed<Visit>> GetByIdForOwner(Guid id, string sid)
         {
             var item = await _repository.GetByIdForOwner(id, sid);
 
@@ -96,7 +96,9 @@ namespace komm_rein.api.Services
                 throw new SecurityException();
             }
 
-            return item.ToDto();
+            Visit visit = item.ToDto();
+
+            return new Signed<Visit>(visit, _protectionService.Sign(visit));
         }
     }
 }

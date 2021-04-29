@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 namespace komm_rein.ui.web.Pages
 {
     [Authorize]
-    public partial class ViewVisit
+    public partial class VerifyVisit
     {
         protected bool loaded = false;
 
@@ -28,35 +28,33 @@ namespace komm_rein.ui.web.Pages
         protected NavigationManager NavigationManager { get; set; }
 
         [Inject]
-        protected IVisitService _service { get; set; }
+        protected IFacilityService _service { get; set; }
+
+        [Parameter] 
+        public string FacilityID { get; set; }
 
         [Parameter]
-        public string ID { get; set; }
+        public string VisitID { get; set; }
 
-        protected VisitViewModel model = new VisitViewModel();
+        [Parameter]
+        public string Signature { get; set; }
+
+
+        protected VisitViewModel model = null;
+
 
         protected override async Task OnInitializedAsync()
         {
-            var signed = await _service.GetSigned(new Guid(ID));
+            var visit = await _service.VerifyVisit(new Guid(FacilityID), new Guid(VisitID), Signature);
 
-            model = new()
+            if(visit != null)
             {
-                Signature = signed.Signature,
-                ID = signed.Payload.ID,
-                Name = signed.Payload.Facility.Name,
-                From = signed.Payload.From,
-                To = signed.Payload.To,
-                PaxCount = signed.Payload.Households.Sum(h => h.NumberOfPersons + h.NumberOfChildren)
-            };
+                model = new() { ID = visit.ID, Name = visit.Facility.Name, From = visit.From, To = visit.To, PaxCount = visit.Households.Sum(h => h.NumberOfPersons + h.NumberOfChildren) };
+            }
 
             loaded = true;
             StateHasChanged();
         }
 
-        protected async Task Cancel()
-        {
-            await _service.Cancel(new komm_rein.model.Visit() { ID = model.ID });
-            NavigationManager.NavigateTo("/meine-termine");
-        }
     }
 }

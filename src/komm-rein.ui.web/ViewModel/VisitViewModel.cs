@@ -9,6 +9,8 @@ namespace kommrein.ui.web.ViewModel
 {
     public class VisitViewModel
     {
+        public string Signature { get; set; }
+
         public string Name { get; set; }
 
         public DateTime From { get; set; }

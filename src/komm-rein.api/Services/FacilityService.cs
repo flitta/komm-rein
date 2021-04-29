@@ -337,6 +337,19 @@ namespace komm_rein.api.Services
             return await _repository.GetAll();
         }
 
-       
+        public async ValueTask<Visit> Verify(Guid facilityId, Guid visitId, string signature, string sid)
+        {
+            var visit = (await _repository.GetVisit(facilityId, visitId, sid))
+                .ToDto();
+
+            if(_protectionService.Verify(signature, visit))
+            {
+                return visit;
+            }
+            else
+            {
+                return new Visit();
+            }
+        }
     }
 }

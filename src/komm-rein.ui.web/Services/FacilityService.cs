@@ -40,5 +40,10 @@ namespace kommrein.ui.web.Services
         {
             return await _httpService.Post<Slot[]>($"{_options.Path}/{name}/slots/{day}", visit);
         }
+
+        public async ValueTask<Visit> VerifyVisit(Guid facilityId, Guid visitId, string signature)
+        {
+            return await _httpService.Get<Visit>($"{_options.Path}/{facilityId}/{visitId}/{signature}/verify");
+        }
     }
 }

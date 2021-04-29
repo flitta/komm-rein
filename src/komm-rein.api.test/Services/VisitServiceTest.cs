@@ -236,14 +236,14 @@ namespace komm_rein.api.test.Services
 
             _repo.Setup(x => x.GetByIdForOwner(visit.ID, sid)).ReturnsAsync(visit);
 
-            var service = new VisitService(_repo.Object, _facilityService.Object, null, null);
+            var service = new VisitService(_repo.Object, _facilityService.Object, null, new Mock<IProtectionService>().Object);
 
             // Act
             var result = await service.GetByIdForOwner(visit.ID, visit.OwnerSid);
 
             // Assert
-            result.Should().NotBeNull();
-            result.ID.Should().Be(visit.ID);
+            result.Payload.Should().NotBeNull();
+            result.Payload.ID.Should().Be(visit.ID);
         }
 
         [Fact]

@@ -36,5 +36,6 @@ namespace komm_rein.api.Services
 
         ValueTask<Slot[]> GetSlots(string name, DateTime day, int pax, int? kids);
 
+        ValueTask<Visit> Verify(Guid facilityId, Guid visitId, string signature, string sid);
     }
 }

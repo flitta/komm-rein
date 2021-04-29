@@ -166,5 +166,20 @@ namespace komm_rein.api.Controllers
                 return BadRequest();
             }
         }
+
+        [HttpGet("{facilityId}/{visitId}/{signature}/verify")]
+        public async Task<ActionResult<Visit>> VerifyVisit(Guid facilityId, Guid visitId, string signature)
+        {
+            try
+            {
+                var result = await _service.Verify(facilityId, visitId, signature, User.Sid());
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex, $"Bad request in GET verify");
+                return BadRequest();
+            }
+        }
     }
 }

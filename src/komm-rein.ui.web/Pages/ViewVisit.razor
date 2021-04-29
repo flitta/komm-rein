@@ -23,7 +23,26 @@
     </div>
     <div class="row">
         <div class="col-1">
-         <button class="btn btn-primary" @onclick="Cancel">Stornieren</button>
+            <h5>ID:</h5>
+        </div>
+        <div class="col-4">
+            <span>@model.ID</span>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-1">
+            <h5>Signature:</h5>
+        </div>
+        <div class="col-4">
+            <span>@System.Net.WebUtility.UrlEncode(model.Signature)</span>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-1">
+            <button class="btn btn-primary" @onclick="Cancel">Stornieren</button>
         </div>
     </div>
 </div>
