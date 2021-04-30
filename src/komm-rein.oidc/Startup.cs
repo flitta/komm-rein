@@ -93,7 +93,9 @@ namespace komm_rein.oidc
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            // will be deployed behind proxy:
+            //app.UseHttpsRedirection();
+
             app.UseStaticFiles();
 
             app.UseRouting();

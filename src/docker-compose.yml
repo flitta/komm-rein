@@ -1,12 +1,18 @@
 version: '3.4'
+
 services:
+  komm-rein.api:
+    image: ${DOCKER_REGISTRY-}kommreinapi
+    build:
+      context: .
+      dockerfile: komm-rein.api/Dockerfile
+    depends_on:
+       - db
+       - komm-rein.oidc
+  komm-rein.oidc:
+    image: ${DOCKER_REGISTRY-}kommreinoidc
+    build:
+      context: .
+      dockerfile: komm-rein.oidc/Dockerfile
   db:
     image: postgres
-    volumes:
-      - ./db-data:/var/lib/postgresql/data
-      - ./db-backub:/var/backup
-    environment:
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: komm_rein
-    ports:
-      - "5432:5432"

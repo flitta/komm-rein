@@ -103,7 +103,8 @@ namespace komm_rein.api
                 app.UseSwaggerUI(c => c.SwaggerEndpoint($"/swagger/{API_VERSION}/swagger.json", $"{API_NAME} {API_VERSION}"));
             }
 
-            app.UseHttpsRedirection();
+            // will be deployed behind proxy
+            // app.UseHttpsRedirection();
 
             app.UseRouting();
 
