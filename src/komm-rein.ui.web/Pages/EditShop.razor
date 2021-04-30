@@ -191,6 +191,11 @@ else
                     <button type="submit" class="btn btn-primary" @onclick="HandleValidSubmit">Speichern</button>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary" @onclick="@(e => NavigationManager.NavigateTo($"/shop-termine/{model.ID}"))">Termine anzeigen</button>
+                </div>
+            </div>
         </div>
     </EditForm>
 }

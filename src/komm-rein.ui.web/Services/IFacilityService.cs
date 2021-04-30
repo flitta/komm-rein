@@ -9,16 +9,20 @@ namespace kommrein.ui.web.Services
 {
     public interface IFacilityService : IContextItemClientService<Facility>
     {
-        ValueTask<Visit> VerifyVisit(Guid facilityId, Guid visitId, string signature);
+        Task<Visit> VerifyVisit(Guid facilityId, Guid visitId, string signature);
 
-        ValueTask<Facility> GetWithSetting(Guid id);
+        Task<Facility> GetWithSetting(Guid id);
 
-        ValueTask<Facility[]> GetMyFacilities();
+        Task<Facility[]> GetMyFacilities();
 
-        ValueTask<Slot[]> GetSlots(string name, DateTime day, Visit visit);
+        Task<Slot[]> GetSlots(string name, DateTime day, Visit visit);
 
-        ValueTask<FacilitySettings> UpdateSettings(Facility item);
+        Task<FacilitySettings> UpdateSettings(Facility item);
 
-        ValueTask<OpeningHours[]> UpdateOpeningHours(Facility item);
+        Task<OpeningHours[]> UpdateOpeningHours(Facility item);
+
+        Task<Visit[]> GetMyVisits(Guid facilityId);
+
+        Task<Visit> GetShopsVisit(Guid facilityId, Guid visitId);
     }
 }

@@ -1,0 +1,27 @@
+﻿@page "/shop-termin/{facilityId}/{visitId}"
+
+<div class="container">
+
+    @if (model != null)
+    {
+        <div class="row">
+            <div class="col-6">
+                <h4>Termin in: @model.Facility.Name</h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-1">
+                <h5>Von:</h5>
+            </div>
+            <div class="col-2">
+                <span>@model.From.ToShortTimeString()</span>
+            </div>
+            <div class="col-1">
+                <h5>Bis:</h5>
+            </div>
+            <div class="col-2">
+                <span>@model.To.ToShortTimeString()</span>
+            </div>
+        </div>
+    }
+</div>

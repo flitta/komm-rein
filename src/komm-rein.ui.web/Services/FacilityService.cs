@@ -16,34 +16,44 @@ namespace kommrein.ui.web.Services
         {
         }
 
-        public async ValueTask<Facility[]> GetMyFacilities()
+        public Task<Facility[]> GetMyFacilities()
         {
-            return await _httpService.Get<Facility[]>(_options.Path);
+            return _httpService.Get<Facility[]>(_options.Path);
         }
 
-        public async ValueTask<Facility> GetWithSetting(Guid id)
+        public Task<Facility> GetWithSetting(Guid id)
         {
-            return await _httpService.Get<Facility>($"{_options.Path}/withsettings/{id}");
+            return _httpService.Get<Facility>($"{_options.Path}/withsettings/{id}");
         }
 
-        public async ValueTask<FacilitySettings> UpdateSettings(Facility item)
+        public Task<FacilitySettings> UpdateSettings(Facility item)
         {
-            return await _httpService.Put($"{_options.Path}/{item.ID}/settings", item.Settings);
+            return _httpService.Put($"{_options.Path}/{item.ID}/settings", item.Settings);
         }
 
-        public async ValueTask<OpeningHours[]> UpdateOpeningHours(Facility item)
+        public Task<OpeningHours[]> UpdateOpeningHours(Facility item)
         {
-            return await _httpService.Put($"{_options.Path}/{item.ID}/openinghours", item.OpeningHours.ToArray());
+            return _httpService.Put($"{_options.Path}/{item.ID}/openinghours", item.OpeningHours.ToArray());
         }
 
-        public async ValueTask<Slot[]> GetSlots(string name, DateTime day, Visit visit)
+        public Task<Slot[]> GetSlots(string name, DateTime day, Visit visit)
         {
-            return await _httpService.Post<Slot[]>($"{_options.Path}/{name}/slots/{day}", visit);
+            return _httpService.Post<Slot[]>($"{_options.Path}/{name}/slots/{day}", visit);
         }
 
-        public async ValueTask<Visit> VerifyVisit(Guid facilityId, Guid visitId, string signature)
+        public  Task<Visit> VerifyVisit(Guid facilityId, Guid visitId, string signature)
         {
-            return await _httpService.Get<Visit>($"{_options.Path}/{facilityId}/{visitId}/{signature}/verify");
+            return  _httpService.Get<Visit>($"{_options.Path}/{facilityId}/{visitId}/{signature}/verify");
+        }
+
+        public Task<Visit[]> GetMyVisits(Guid facilityId)
+        {
+            return _httpService.Get<Visit[]>($"{_options.Path}/{facilityId}/visits");
+        }
+
+        public Task<Visit> GetShopsVisit(Guid facilityId, Guid visitId)
+        {
+            return _httpService.Get<Visit>($"{_options.Path}/{facilityId}/visit/{visitId}");
         }
     }
 }

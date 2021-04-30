@@ -30,6 +30,9 @@ namespace komm_rein.ui.web.Pages
         [Inject]
         protected IFacilityService _service { get; set; }
 
+        [Inject]
+        protected NavigationManager NavigationManager { get; set; }
+
         protected override void OnInitialized()
         {
             editContext = new EditContext(model);
