@@ -14,6 +14,6 @@ namespace komm_rein.api.Repositories
 
         ValueTask<T> SaveItem(T item);
 
-        ValueTask<T> GetById(Guid id);
+        Task<T> GetById(Guid id);
     }
 }

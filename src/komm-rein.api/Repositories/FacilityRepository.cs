@@ -8,22 +8,22 @@ using System.Threading.Tasks;
 
 namespace komm_rein.api.Repositories
 {
-    public class FacilityRepository : ContextItemRepository<Facility>,  IFacilityRepository
+    public class FacilityRepository : ContextItemRepository<Facility>, IFacilityRepository
     {
-      
+
         public FacilityRepository(KraDbContext dbContext)
-            :base(dbContext)
+            : base(dbContext)
         {
         }
 
-        public async ValueTask<Facility> GetById(Guid id)
+        public Task<Facility> GetById(Guid id)
         {
-            return await _dbContext.Facilities.SingleAsync(x => x.ID == id);
+            return _dbContext.Facilities.SingleAsync(x => x.ID == id);
         }
 
-        public async ValueTask<Facility> GetByIdWithAssociations(Guid id)
+        public Task<Facility> GetByIdWithAssociations(Guid id)
         {
-            return await _dbContext.Facilities
+            return _dbContext.Facilities
                   .Include(p => p.OpeningHours)
                   .Include(p => p.Settings)
                   .Include(p => p.MainAddress)
@@ -31,9 +31,9 @@ namespace komm_rein.api.Repositories
                 .SingleAsync(x => x.ID == id);
         }
 
-        public async ValueTask<Facility> GetByNameWithAssociations(string name)
+        public Task<Facility> GetByNameWithAssociations(string name)
         {
-            return await _dbContext.Facilities
+            return _dbContext.Facilities
                   .Include(p => p.OpeningHours)
                   .Include(p => p.Settings)
                   .Include(p => p.MainAddress)
@@ -41,44 +41,54 @@ namespace komm_rein.api.Repositories
                 .SingleAsync(x => x.Name.ToLower() == name.ToLower());
         }
 
-        public async ValueTask<IEnumerable<Visit>> GetVisits(Guid facilityId, DateTime from, DateTime to)
+        public Task<List<Visit>> GetVisits(Guid facilityId, DateTime from, DateTime to)
         {
-            return await _dbContext.Visits.Include(v => v.Households).Where(v => v.Facility.ID == facilityId 
+            return _dbContext.Visits.Include(v => v.Households).Where(v => v.Facility.ID == facilityId
             && !v.IsCanceled
-            && v.From >= from 
+            && v.From >= from
             && v.To <= to)
                 .ToListAsync();
         }
 
-        public async ValueTask<Facility> GetWithSettings(Guid id)
+        public Task<List<Visit>> GetVisits(Guid facilityId, DateTime from, int? page, int? pageSize)
         {
-            return await _dbContext.Facilities.Include(p => p.Settings).SingleAsync(x => x.ID == id);
+            var query = _dbContext.Visits.Include(v => v.Households).Where(v => v.Facility.ID == facilityId
+                    && !v.IsCanceled
+                    && v.From >= from)
+                .Paging(page, pageSize);
+
+            return query.ToListAsync();
         }
 
-        public async ValueTask<Facility> GetWithOpeningHours(Guid id)
+        public Task<Facility> GetWithSettings(Guid id)
         {
-            return await _dbContext.Facilities.Include(p => p.OpeningHours).SingleAsync(x => x.ID == id);
+            return _dbContext.Facilities.Include(p => p.Settings).SingleAsync(x => x.ID == id);
         }
 
-        public async ValueTask<Facility> GetByName(string name)
+        public Task<Facility> GetWithOpeningHours(Guid id)
         {
-            return await _dbContext.Facilities
+            return _dbContext.Facilities.Include(p => p.OpeningHours).SingleAsync(x => x.ID == id);
+        }
+
+        public Task<Facility> GetByName(string name)
+        {
+            return _dbContext.Facilities
                 .FirstAsync(x => x.Name == name);
         }
 
-        public async ValueTask<List<Facility>> GetAll()
+        public Task<List<Facility>> GetAll()
         {
-            return await _dbContext.Facilities
-                  .Take(100)  
+            return _dbContext.Facilities
+                  .Take(100)
               .ToListAsync();
         }
 
-        public async ValueTask<Visit> GetVisit(Guid facilityId, Guid visitId, string sid)
+        public Task<Visit> GetVisit(Guid visitId)
         {
-            return await _dbContext.Visits
+            return _dbContext.Visits
                 .Include(v => v.Facility)
                 .Include(v => v.Households)
-                .Where(v => v.ID == visitId && v.Facility.ID == facilityId && v.Facility.OwnerSid == sid && !v.IsCanceled)
+                .Where(v => v.ID == visitId)
                 .SingleAsync();
         }
     }

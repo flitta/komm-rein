@@ -119,9 +119,6 @@ namespace komm_rein.api.Services
             return await GetSlotsForVisit(name, day, visit, DateTime.Now);
         }
 
-
-       
-
         public async ValueTask<Slot[]> GetSlotsForVisit(Guid facilityId, DateTime day, Visit visit)
         {
             return await GetSlotsForVisit(facilityId, day, visit, DateTime.Now);
@@ -339,10 +336,14 @@ namespace komm_rein.api.Services
 
         public async ValueTask<Visit> Verify(Guid facilityId, Guid visitId, string signature, string sid)
         {
-            var visit = (await _repository.GetVisit(facilityId, visitId, sid))
-                .ToDto();
+            var visit = await _repository.GetVisit(visitId);
+            
+            if (visit.Facility.OwnerSid != sid || visit.Facility.ID != facilityId)
+            {
+                throw new SecurityException();
+            }
 
-            if(_protectionService.Verify(signature, visit))
+            if (_protectionService.Verify(signature, visit.ToDto()))
             {
                 return visit;
             }
@@ -350,6 +351,36 @@ namespace komm_rein.api.Services
             {
                 return new Visit();
             }
+        }
+
+        public async ValueTask<Visit[]> GetVisits(Guid facilityId, string sid, int? pageCount, int? pageSize)
+        {
+            var facility = await _repository.GetById(facilityId);
+            if (facility.OwnerSid != sid)
+            {
+                throw new SecurityException();
+            }
+
+            var result = await _repository.GetVisits(facilityId, DateTime.Today, pageCount, pageSize);
+
+            return result.Select(v => v.ToDto()).ToArray();
+        }
+
+        public ValueTask<Visit[]> GetVisits(Guid facilityId, string sid)
+        {
+            return GetVisits(facilityId, sid, null, null);
+        }
+
+        public async ValueTask<Visit> GetVisit(Guid facilityId, Guid visitId, string sid)
+        {
+
+            var visit = await _repository.GetVisit(visitId);
+            if (visit.Facility.OwnerSid != sid || visit.Facility.ID != facilityId)
+            {
+                throw new SecurityException();
+            }
+
+            return visit.ToDto();
         }
     }
 }

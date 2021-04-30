@@ -9,20 +9,23 @@ namespace komm_rein.api.Repositories
 {
     public interface IFacilityRepository : IContextItemRepository<Facility>
     {
-        ValueTask<Facility> GetByNameWithAssociations(string name);
+        Task<Facility> GetByNameWithAssociations(string name);
 
-        ValueTask<Facility> GetByIdWithAssociations(Guid id);
+        Task<Facility> GetByIdWithAssociations(Guid id);
 
-        public ValueTask<IEnumerable<Visit>> GetVisits(Guid facilityId, DateTime from, DateTime to);
+        Task<List <Visit>> GetVisits(Guid facilityId, DateTime from, DateTime to);
 
-        ValueTask<Visit> GetVisit(Guid facilityId, Guid visitId, string sid);
-            
-        ValueTask<Facility> GetWithSettings(Guid facilityId);
+        Task<List<Visit>> GetVisits(Guid facilityId, DateTime from, int? page, int? pageSize);
 
-        ValueTask<Facility> GetWithOpeningHours(Guid id);
+
+        Task<Facility> GetWithSettings(Guid facilityId);
+
+        Task<Facility> GetWithOpeningHours(Guid id);
+
+        Task<Facility> GetByName(string name);
+
+        Task<List<Facility>> GetAll();
         
-        ValueTask<Facility> GetByName(string name);
-
-        ValueTask<List<Facility>> GetAll();
+        Task<Visit> GetVisit(Guid visitId);
     }
 }

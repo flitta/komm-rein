@@ -20,6 +20,7 @@ namespace komm_rein.api.test.Services
         {
             ID = Guid.NewGuid(),
             Name = "Test Facility",
+            OwnerSid = "test_sid",
             Settings = new()
             {
                 SlotSize = TimeSpan.FromMinutes(15),
@@ -901,12 +902,12 @@ namespace komm_rein.api.test.Services
                 Households = new List<Household> { new() { NumberOfPersons = 1, NumberOfChildren = 1 } }
             };
 
-            _repo.Setup(x => x.GetVisit(_facility.ID, visit.ID, "test_sid")).ReturnsAsync(visit);
+            _repo.Setup(x => x.GetVisit(visit.ID)).ReturnsAsync(visit);
             protection.Setup(x => x.Verify(It.IsAny<String>(), It.IsAny<Visit>())).Returns(true);
 
             var service = new FacilityService(_repo.Object, protection.Object);
 
-            var result = await service.Verify(_facility.ID, visit.ID, "some_test_string", "test_sid");
+            var result = await service.Verify(_facility.ID, visit.ID, "some_test_string", _facility.OwnerSid);
             result.ID.Should().Be(visit.ID);
         }
 
@@ -924,12 +925,12 @@ namespace komm_rein.api.test.Services
                 Households = new List<Household> { new() { NumberOfPersons = 1, NumberOfChildren = 1 } }
             };
 
-            _repo.Setup(x => x.GetVisit(_facility.ID, visit.ID, "test_sid")).ReturnsAsync(visit);
+            _repo.Setup(x => x.GetVisit(visit.ID)).ReturnsAsync(visit);
             protection.Setup(x => x.Verify(It.IsAny<String>(), It.IsAny<Visit>())).Returns(false);
 
             var service = new FacilityService(_repo.Object, protection.Object);
 
-            var result = await service.Verify(_facility.ID, visit.ID, "some_test_string", "test_sid");
+            var result = await service.Verify(_facility.ID, visit.ID, "some_test_string", _facility.OwnerSid);
             result.ID.Should().Be(Guid.Empty);
         }
 

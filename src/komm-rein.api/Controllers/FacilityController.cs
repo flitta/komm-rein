@@ -181,5 +181,37 @@ namespace komm_rein.api.Controllers
                 return BadRequest();
             }
         }
+
+        [HttpGet("{id}/visits")]
+        [AllowAnonymous]
+        public async Task<ActionResult<Visit[]>> Visits(Guid id)
+        {
+            try
+            {
+                var result = await _service.GetVisits(id, User.Sid());
+                return result.Select(r => r.ToDto()).ToArray();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex, $"Bad request in GET Facility/Openinghours, id: {id}");
+                return BadRequest();
+            }
+        }
+
+        [HttpGet("{facilityId}/visit/{visitId}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<Visit>> GetVisit(Guid facilityId, Guid visitId)
+        {
+            try
+            {
+                var result = await _service.GetVisit(facilityId, visitId, User.Sid());
+                return result.ToDto();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex, $"Bad request");
+                return BadRequest();
+            }
+        }
     }
 }

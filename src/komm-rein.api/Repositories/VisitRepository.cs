@@ -16,22 +16,22 @@ namespace komm_rein.api.Repositories
         {
         }
 
-        public async ValueTask<IList<Visit>> GetAllForSid(string sid)
+        public Task<List<Visit>> GetAllForSid(string sid)
         {
-            return await _dbContext.Visits
+            return _dbContext.Visits
                 .Include(v => v.Facility)
                 .Where(x => x.OwnerSid == sid && x.From.Date >= DateTime.Today && !x.IsCanceled)
                 .ToListAsync();
         }
 
-        public async ValueTask<Visit> GetById(Guid id)
+        public async Task<Visit> GetById(Guid id)
         {
             return await _dbContext.Visits.FindAsync(id);
         }
 
-        public async ValueTask<Visit> GetByIdForOwner(Guid id, string sid)
+        public Task<Visit> GetByIdForOwner(Guid id, string sid)
         {
-            return await _dbContext.Visits
+            return _dbContext.Visits
                 .Include(v => v.Facility)
                 .Include(v => v.Households)
                 .Where(x => x.ID == id && x.OwnerSid == sid )
