@@ -1,0 +1,32 @@
+version: '3.4'
+
+services:
+  komm-rein.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+    ports:
+      - "80"
+      - "44309:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+  komm-rein.oidc:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+    ports:
+      - "80"
+      - "44342:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+  db:
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+      - ./db-backub:/var/backup
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: komm_rein
+    ports:
+      - "5432:5432"

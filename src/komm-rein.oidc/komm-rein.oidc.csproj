@@ -5,6 +5,8 @@
     <UserSecretsId>aspnet-komm_rein.oidc-ABD27554-DE78-4203-9278-D4FC29AB776D</UserSecretsId>
     <RootNamespace>komm_rein.oidc</RootNamespace>
     <Configurations>Debug;Release;UI integration;Backend only</Configurations>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,6 +24,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.13" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
     <PackageReference Include="SendGrid" Version="9.22.0" />
 
