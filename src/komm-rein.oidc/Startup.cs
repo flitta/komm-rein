@@ -38,7 +38,8 @@ namespace komm_rein.oidc
 
             //email sender
             services.AddTransient<IEmailSender, EmailSender>();
-            services.Configure<AuthMessageSenderOptions>(Configuration);
+           
+            services.Configure<AuthMessageSenderOptions>(options => Configuration.GetSection("SendGrid").Bind(options));
 
             services.AddRazorPages();
 
